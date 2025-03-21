@@ -1,0 +1,21 @@
+<mat-form-field
+  appearance="outline"
+  color="primary"
+  hintLabel="(Experimentelles Feature)"
+  class="mb-3"
+>
+  <mat-label>Suche nach Adresse</mat-label>
+  <input matInput [formControl]="inputControl" [matAutocomplete]="auto" />
+</mat-form-field>
+<mat-autocomplete
+  #auto="matAutocomplete"
+  (optionSelected)="optionSelected($event)"
+  [displayWith]="formatAddress"
+  autoActiveFirstOption
+>
+  <mat-option *ngFor="let value of filteredOptions | async" [value]="value">
+    {{ value | stringFormat : formatAddress }}
+  </mat-option>
+</mat-autocomplete>
+
+<ng-container #fieldComponent></ng-container>

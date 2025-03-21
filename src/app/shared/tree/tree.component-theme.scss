@@ -1,0 +1,36 @@
+@use '@angular/material' as mat;
+@import '@angular/material/theming';
+
+@mixin tree-component-theme($theme) {
+  $primary: map-get($theme, primary);
+  $warn: map-get($theme, warn);
+  $foreground: map-get($theme, foreground);
+
+  app-tree {
+    .mat-tree-node {
+      a {
+        color: mat.m2-get-color-from-palette($foreground, text);
+      }
+
+      button {
+        color: mat.m2-get-color-from-palette($primary, default);
+      }
+
+      .disabled {
+        pointer-events: none;
+      }
+    }
+
+    .active-node {
+      background-color: mat.m2-get-color-from-palette($primary, default, .1);
+    }
+
+    .invalid-node {
+      color: #0F62FE;
+    }
+
+    .valid-node {
+      color: #0F62FE;
+    }
+  }
+}

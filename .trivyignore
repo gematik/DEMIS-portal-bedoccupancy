@@ -1,0 +1,9 @@
+# Runs with UID <= 10000 - Nginx User has Id 101 in the container
+KSV020
+# Runs with UID <= 10000 - Nginx User has Id 101 in the container
+KSV021
+# Non-default /proc masks set - Not detected by Trivy
+KSV027
+
+# libcrypto3 & libssl3
+CVE-2024-12797 exp:2025-03-31
