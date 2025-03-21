@@ -1,0 +1,250 @@
+////#region GlobalImports
+//
+//// Button Styles
+//@import "styles/global/button";
+//
+//// Formly Global Styles
+//@import "styles/global/formly";
+//
+//html,
+//body {
+//  height: 100%;
+//}
+//body {
+//  margin: 0;
+//  font-family: Roboto, "Helvetica Neue", sans-serif;
+//}
+//
+//button,
+//span,
+//div,
+//p,
+//h1,
+//h2,
+//h3,
+//h4,
+//h5,
+//h6,
+//label,
+//input,
+//textarea,
+//select {
+//  font-family: Roboto, "Helvetica Neue", sans-serif;
+//}
+//
+////#endregion GlobalStyles
+//
+////#region ApplicationStyles
+//
+//.app-submit-notification-dialog-panel {
+//  .mat-dialog-container {
+//    display: flex;
+//    flex-direction: column;
+//    flex-grow: 1;
+//
+//    //padding: 0 24px 0 24px !important;
+//  }
+//}
+//
+//mat-radio-group {
+//  display: flex;
+//  flex-direction: column;
+//  margin: 5px 0;
+//}
+//
+//mat-radio-group > mat-radio-button {
+//  margin: 5px;
+//}
+//
+//.margin-right-exp-label-correction {
+//  margin-right: -4.7% !important;
+//}
+//
+//.mat-dialog-actions {
+//  justify-content: flex-end;
+//}
+//
+//.text-muted {
+//  color: #777;
+//}
+//
+//.spinner {
+//  padding: 10em;
+//  text-align: center;
+//
+//  mat-spinner {
+//    margin: auto;
+//  }
+//
+//  p {
+//    margin-top: 2em;
+//  }
+//}
+//
+//app-side-navigation {
+//  // justify-content: space-between;
+//  min-height: 100%;
+//
+//  app-paste-box {
+//    margin: 3rem;
+//  }
+//}
+//
+//.oneTimeCode {
+//  opacity: 0;
+//  position: absolute;
+//  top: 0;
+//  left: 0;
+//  height: 0;
+//  width: 0;
+//  z-index: -1;
+//}
+//
+//.bed-occupancy-contact-button {
+//  color: #005eb8;
+//
+//  button {
+//    font-weight: 500;
+//    font-size: 15px;
+//  }
+//}
+//
+//
+//
+
+// from copy disease
+/* You can add global styles to this file, and also import other style files */
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+
+.compile-error {
+  color: red;
+  font-weight: bold;
+}
+
+h1.platzhalter {
+  margin: 10em 16em;
+}
+
+#clinical-status {
+  flex-direction: row;
+}
+
+.oneTimeCode {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 0;
+  width: 25%;
+  z-index: -1;
+}
+
+.QUESTIONNAIRE-TITLE div {
+  font-size: 150%;
+  padding-bottom: 0.5rem;
+}
+
+.tabs-navigation > div {
+  height: calc(100vh - 130px);
+  width: 100%;
+}
+
+app-tabs-navigation mat-tab-group.tabs-navigation {
+  flex-direction: row;
+}
+app-tabs-navigation div.mat-mdc-tab-labels {
+  flex-direction: column;
+}
+app-tabs-navigation
+span.mdc-tab-indicator__content.mdc-tab-indicator__content--underline {
+  visibility: hidden;
+}
+app-tabs-navigation div.mat-mdc-tab-labels mat-icon {
+  color: rgb(15, 98, 254);
+  margin-right: 0.5rem;
+}
+app-tabs-navigation div.mdc-tab {
+  justify-content: left;
+  text-align: left;
+  white-space: normal;
+  width: 20rem;
+}
+
+app-tabs-navigation span.mdc-tab__text-label > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+app-tabs-navigation .mat-mdc-tab .mdc-tab__text-label {
+  color: #000000;
+}
+
+app-tabs-navigation .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+  font-weight: bold;
+  font-size: 100%;
+  color: #000000;
+}
+
+.MISSING_MELDETATBESTAND {
+  color: red;
+  font-size: 200%;
+  text-align: center;
+}
+
+.MISSING_MELDETATBESTAND div {
+  margin-top: 100px;
+}
+
+.hidden-invalidator {
+  display: none;
+}
+
+.repetition-wrapper {
+  width: 100%;
+}
+
+app-tabs-navigation .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+  color: #000000 !important;
+}
+
+button[mat-icon-button] {
+  border: none;
+  background-color: transparent;
+}
+
+.loading-message {
+  font-size: 300%;
+  padding: 3rem;
+}
+
+.md-48 {
+  vertical-align: bottom;
+}
+
+.LinkId_diseaseChoice {
+  margin-top: 15px;
+}
+
+.autocomplete-option {
+  span {
+    width: 100%;
+    mat-checkbox {
+      width: 100%;
+    }
+  }
+}
+#icon-success {
+  color: #13c100;
+  position: relative;
+  padding-right: 5px
+}
+
+#icon-error {
+  color: red;
+  position: relative;
+  top: 5px;
+  padding-right: 5px;
+}
+

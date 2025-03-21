@@ -1,0 +1,12 @@
+:host ::ng-deep {
+  .info-notification-text {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 4px;
+    margin-bottom: 8px;
+
+    span.message {
+      padding-top: 4px;
+    }
+  }
+}

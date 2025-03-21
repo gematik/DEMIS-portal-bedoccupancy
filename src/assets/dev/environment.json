@@ -1,0 +1,5 @@
+{
+  "production": false,
+  "pathToGateway": "/gateway/notification/api/ng/reports/bedOccupancy",
+  "pathToHospitalLocations": "/services/hospital-locations"
+}

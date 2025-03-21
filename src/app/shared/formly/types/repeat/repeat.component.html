@@ -1,0 +1,38 @@
+<div *ngFor="let field of field.fieldGroup; let i = index" class="row">
+  <div *ngIf="props.additionalHeader" class="col-md-12 bs-linebreak">
+    <h2 *ngIf="field.parent.fieldGroup.length > 1">
+      {{ props.additionalHeader + " " + (i + 1) }}
+    </h2>
+  </div>
+  <formly-field
+    class="col-sm-10"
+    [id]="setIdName('repeat-field', field, i)"
+    [field]="field"
+  ></formly-field>
+  <div class="col-sm-2 d-flex align-items-center">
+    <button
+      *ngIf="!isLonely(field, props.isContact) || !props.keepLastItem"
+      [id]="setIdName('btn-delete', field, i)"
+      mat-icon-button
+      color="primary"
+      type="button"
+      (click)="remove(i)"
+      data-cy="remove-button"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+</div>
+<div class="align-self-end">
+  <button
+    mat-stroked-button
+    [id]="setAddButtonIdName(props['addText'])"
+    type="button"
+    color="primary"
+    class="mt-2 mb-5 mr-5"
+    (click)="add()"
+  >
+    <mat-icon>add</mat-icon>
+    {{ props["addText"] }}
+  </button>
+</div>
