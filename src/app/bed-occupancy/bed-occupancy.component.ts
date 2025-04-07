@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BedOccupancy } from 'src/api/notification';

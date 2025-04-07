@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { EErrorKeys } from './error-keys.enum';
 
 export type PartialRecord<K extends keyof any, T> = Partial<Record<K, T>>;

@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { PinOperations } from '../enums/pin-operations.enum';
 import { PinStatus } from '../enums/pin-status.enum';
 

@@ -12,11 +12,9 @@
  limitations under the Licence.
  */
 
-
-
 import { Component, Inject, OnInit, SecurityContext, TemplateRef, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { Notification, OkResponse } from 'src/api/notification';
+import { BedOccupancy, Notification, OkResponse } from 'src/api/notification';
 import { NGXLogger } from 'ngx-logger';
 import { ErrorResult, MessageType, SuccessResult } from '../../models/ui/message';
 import { FhirNotificationService } from '../../services/fhir-notification.service';
@@ -41,7 +39,7 @@ export class SubmitNotificationDialogComponent implements OnInit {
   @ViewChild('responseFail', { static: true })
   responseFailTemplate?: TemplateRef<any>;
 
-  notification!: Notification;
+  notification!: BedOccupancy;
   activeTemplate?: TemplateRef<any>;
   result: SuccessResult | ErrorResult | null = null;
   pdfDownload?: SafeUrl;
@@ -57,7 +55,7 @@ export class SubmitNotificationDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.notification = { ...this.data.notification };
+    this.notification = { ...this.data.notification.bedOccupancy };
     this.submitNotification();
   }
 
@@ -88,6 +86,7 @@ export class SubmitNotificationDialogComponent implements OnInit {
       }
     );
   }
+
   private buildSuccessResult(response: OkResponse) {
     this.result = {
       type: MessageType.SUCCESS,

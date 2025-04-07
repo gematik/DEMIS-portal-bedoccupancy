@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({

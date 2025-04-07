@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { FieldWrapper } from '@ngx-formly/core';

@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { FormlyFieldConfig } from '@ngx-formly/core';
 
 import { BedOccupancyConstants } from 'src/app/bed-occupancy/common/bed-occupancy-constants';

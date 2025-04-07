@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { SanitizeUrlPipe } from './sanatize-url.pipe';
 
 describe('SanatizeUrlPipe', () => {

@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';

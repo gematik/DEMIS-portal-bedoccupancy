@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 export enum ButtonType {
   NEXT_BTN,
   PREVIOUS_BTN,

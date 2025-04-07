@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { Component } from '@angular/core';
 
 @Component({

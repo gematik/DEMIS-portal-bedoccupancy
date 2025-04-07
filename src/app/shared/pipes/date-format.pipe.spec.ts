@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { DateFormatPipe } from './date-format.pipe';
 
 describe('DateFormatPipe', () => {

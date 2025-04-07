@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 export enum BedOccupancyConstants {
   DEMIS_FORM_WRAPPER_TEMPLATE_KEYWORD = 'demis-formly-tab-navigation',
   FORM_TITLE = 'Tägliche Meldung der belegten und betreibbaren Betten',

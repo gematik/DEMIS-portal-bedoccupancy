@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 export interface HospitalLocation {
   id: number;
   ik: string;

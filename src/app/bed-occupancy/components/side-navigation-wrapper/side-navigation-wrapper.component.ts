@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { Component, Input } from '@angular/core';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { BedOccupancyNotificationFormDefinitionService } from '../../services/bed-occupancy-notification-form-definition.service';

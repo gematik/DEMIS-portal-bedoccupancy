@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { Injectable } from '@angular/core';
 
 import { MessageType } from 'src/app/shared/models/ui/message';

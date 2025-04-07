@@ -12,16 +12,14 @@
  limitations under the Licence.
  */
 
-
-
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BedOccupancy, Notification } from 'src/api/notification';
 import { NGXLogger } from 'ngx-logger';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import NotificationTypeEnum = Notification.NotificationTypeEnum;
 import { trimStrings } from '@gematik/demis-portal-core-library';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -31,17 +29,10 @@ export abstract class FhirNotificationService {
     protected logger: NGXLogger
   ) {}
 
-  sendNotification(notification: Notification) {
+  sendNotification(notification: BedOccupancy) {
     // https://service.gematik.de/browse/DSC2-4453  Anforderung 2
-    const trimmedNotification: Notification = trimStrings(notification);
-
-    switch (trimmedNotification.notificationType) {
-      case NotificationTypeEnum.BedOccupancy:
-        return this.confirmSendBedOccupancyNotification(trimmedNotification.bedOccupancy);
-      default:
-        this.logger.error('Unbekannter Meldungstyp: ', trimmedNotification);
-        throw new Error('Unknown notification type: ' + JSON.stringify(trimmedNotification));
-    }
+    const trimmedNotification: BedOccupancy = trimStrings(notification);
+    return this.confirmSendBedOccupancyNotification(trimmedNotification);
   }
 
   private confirmSendBedOccupancyNotification(bedOccupancy: BedOccupancy): Observable<HttpResponse<any>> {

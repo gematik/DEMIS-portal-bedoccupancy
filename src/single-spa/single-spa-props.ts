@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { ReplaySubject } from 'rxjs';
 import { AppProps } from 'single-spa';
 

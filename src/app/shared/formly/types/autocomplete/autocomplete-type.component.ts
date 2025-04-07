@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FieldTypeConfig } from '@ngx-formly/core';
 import { FieldType } from '@ngx-formly/material';

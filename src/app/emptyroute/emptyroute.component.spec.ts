@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EmptyrouteComponent } from './emptyroute.component';

@@ -12,17 +12,63 @@
  limitations under the Licence.
  */
 
+import { HttpHeaders } from '@angular/common/http';
+import { NgxLoggerLevel } from 'ngx-logger';
+import { assetUrl } from '../single-spa/asset-url';
 
+interface NgxLoggerConfig {
+  level: number;
+  disableConsoleLogging: boolean;
+  serverLogLevel: number;
+}
 
-import { DynamicEnvironment } from './dynamic-environment';
+interface Configuration {
+  production: boolean;
+  pathToGateway: string;
+  pathToHospitalLocations: string;
+  ngxLoggerConfig: NgxLoggerConfig;
+}
 
-/**
- * Environment file for prod
- */
-class Environment extends DynamicEnvironment {
+class Environment {
+  public bedOccupancyConfig: any;
+  public headers: HttpHeaders;
+
   constructor() {
-    super();
-    this.local = false;
+    this.headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+  }
+
+  private get config(): Configuration {
+    return this.bedOccupancyConfig;
+  }
+
+  public get pathToEnvironment() {
+    return assetUrl('../environment.json');
+  }
+
+  public get isProduction(): boolean {
+    return !!this.config?.production;
+  }
+
+  public get defaultNgxLoggerConfig(): NgxLoggerConfig {
+    return {
+      level: NgxLoggerLevel.OFF,
+      disableConsoleLogging: true,
+      serverLogLevel: NgxLoggerLevel.OFF,
+    };
+  }
+
+  public get pathToGateway(): string {
+    return this.bedOccupancyConfig.pathToGateway;
+  }
+
+  public get pathToBedOccupancy(): string {
+    return this.pathToGateway;
+  }
+
+  public get pathToHospitalLocations(): string {
+    return this.bedOccupancyConfig.pathToHospitalLocations;
   }
 }
 

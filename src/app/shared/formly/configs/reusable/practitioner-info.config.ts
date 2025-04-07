@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { PractitionerInfo } from 'src/api/notification';
 import { FormlyConstants } from '../formly-constants';
 import { formlyInputField, formlyRow } from './commons';

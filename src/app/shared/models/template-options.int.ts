@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 export interface TemplateOptions {
   value: string;
   label: string;

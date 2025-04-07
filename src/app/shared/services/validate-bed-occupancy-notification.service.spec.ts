@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { TestBed } from '@angular/core/testing';
 
 import { ValidateBedOccupancyNotificationService } from './validate-bed-occupancy-notification.service';

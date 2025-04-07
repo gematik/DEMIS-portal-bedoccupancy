@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FieldType, FormlyFieldConfig } from '@ngx-formly/core';

@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 export class ValueSets {
   // value sets remain for potential future use
   static readonly COUNTRY = 'https://demis.rki.de/fhir/ValueSet/state';

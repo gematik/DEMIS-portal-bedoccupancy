@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { formlyRow } from './commons';
 
 export const oneTimeCodeConfigField = formlyRow([

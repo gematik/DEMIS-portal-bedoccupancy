@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 export enum PinStatus {
   VERIFIED = 'Verified',
   NUMBER_0 = 0,

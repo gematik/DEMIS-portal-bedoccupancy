@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { Component, ElementRef, EventEmitter, HostListener, Output } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 

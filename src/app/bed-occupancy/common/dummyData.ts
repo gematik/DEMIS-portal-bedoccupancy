@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { GERMANY_COUNTRY_CODE } from '../../shared/common-utils';
 
 export const bedOccupancyDummyData: any = {
