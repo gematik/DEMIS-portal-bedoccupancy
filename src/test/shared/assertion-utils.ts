@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { MockedComponentFixture } from 'ng-mocks';
 import { MatFormFieldControlHarness } from '@angular/material/form-field/testing/control';
 

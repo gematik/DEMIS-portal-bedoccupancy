@@ -70,17 +70,13 @@ a {
 }
 
 ::ng-deep .mat-mdc-button {
-  .mdc-button__label {
-    letter-spacing: 0;
-  }
-
   &:hover {
     background-color: #f1f4f4;
   }
 }
 
 mat-toolbar {
-  background: rgb(249, 252, 252);
+  background: #FFFFFF;
   justify-content: space-between;
   max-width: 1140px;
 

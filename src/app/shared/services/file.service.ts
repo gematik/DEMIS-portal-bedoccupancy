@@ -12,11 +12,8 @@
  limitations under the Licence.
  */
 
-
-
 import { Injectable } from '@angular/core';
-import { Notification } from 'src/api/notification';
-import NotificationTypeEnum = Notification.NotificationTypeEnum;
+import { BedOccupancy } from 'src/api/notification';
 
 @Injectable({
   providedIn: 'root',
@@ -51,12 +48,7 @@ export class FileService {
    *    BedOccupancy: YYMMDDhhmmss STANDORTID.pdf
    *    with YYMMDDhhmmss as currentTime
    */
-  getFileNameByNotificationType(notification: Notification) {
-    switch (notification.notificationType) {
-      case NotificationTypeEnum.BedOccupancy:
-        return this.getCurrentTime() + ' ' + notification.bedOccupancy.notifierFacility.locationID + this.abbreviation;
-      default:
-        return this.getCurrentTime() + this.abbreviation;
-    }
+  getFileNameByNotificationType(notification: BedOccupancy) {
+    return this.getCurrentTime() + ' ' + notification.notifierFacility.locationID + this.abbreviation;
   }
 }

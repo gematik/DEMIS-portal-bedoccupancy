@@ -12,32 +12,17 @@
  limitations under the Licence.
  */
 
-
-
 import { Injectable } from '@angular/core';
-import {
-  ContactPointInfo,
-  FacilityAddressInfo,
-  FacilityInfo,
-  NotifiedPerson,
-  NotifiedPersonAddressInfo,
-  NotifierFacility,
-  PractitionerInfo,
-} from 'src/api/notification';
+import { ContactPointInfo, FacilityAddressInfo, FacilityInfo, NotifierFacility, PractitionerInfo } from 'src/api/notification';
 import { GERMANY_COUNTRY_CODE } from '../common-utils';
 import {
   checkAdditionalInfoText,
-  isEndDateLaterThanStartDate,
   termValidation,
-  validateBSNR,
-  validateDateInput,
   validateEmail,
   validateGermanZip,
   validateHouseNumber,
   validateInternationalZip,
-  validateName,
   validateNotBlank,
-  validatePartialDateInput,
   validatePhoneNo,
   validateStreet,
 } from '../notification-form-validation-module';
@@ -53,18 +38,6 @@ import ContactTypeEnum = ContactPointInfo.ContactTypeEnum;
 
 @Injectable({ providedIn: 'root' })
 export class ValidateNotificationService {
-  constructor() {}
-
-  validateNotifierFacility(notifierFacility: NotifierFacility, requiredBsNr = true): boolean {
-    return (
-      !!notifierFacility &&
-      this.validatePractitionerInfo(notifierFacility.contact) &&
-      this.validateGermanAddress(notifierFacility.address) &&
-      this.validateContactPointInfoFacility(notifierFacility.contacts) &&
-      this.validateFacilityInfo(notifierFacility.facilityInfo, requiredBsNr)
-    );
-  }
-
   validateNotifierFacilityBedOccupancyTemp(notifierFacility: NotifierFacility): boolean {
     return (
       !!notifierFacility &&
@@ -87,10 +60,6 @@ export class ValidateNotificationService {
     return required ? !!term && !validateStreet(term) && !validateNotBlank(term) : !term || !validateStreet(term);
   }
 
-  validateName(term: string, required: boolean): boolean {
-    return required ? !!term && !validateName(term) : !term || !validateName(term);
-  }
-
   isAdditionalInfoTextValid(term: string | undefined, required: boolean): boolean {
     return required ? !!term && !checkAdditionalInfoText(term) : !term || !checkAdditionalInfoText(term);
   }
@@ -101,14 +70,6 @@ export class ValidateNotificationService {
 
   validateHouseNumber(houseNumber: string | undefined, required: boolean): boolean {
     return required ? !!houseNumber && !validateHouseNumber(houseNumber) : !houseNumber || !validateHouseNumber(houseNumber);
-  }
-
-  validateDate(date: string | undefined, required: boolean): boolean {
-    return required ? !!date && !validateDateInput(date) : !date || !validateDateInput(date);
-  }
-
-  validateBsNr(facilityInfo: FacilityInfo): boolean {
-    return !!facilityInfo?.existsBsnr ? !!facilityInfo.bsnr && !validateBSNR(facilityInfo.bsnr) : true;
   }
 
   validateFacilityInfoBedOccupancyTemp(facilityInfo: FacilityInfo) {
@@ -130,17 +91,6 @@ export class ValidateNotificationService {
     return !!address && !!address.street && !!address.houseNumber && !!address.zip && !!address.city && !!address.country;
   }
 
-  validateInternationalAddress(address: NotifiedPersonAddressInfo | undefined): boolean {
-    return (
-      !!address &&
-      this.validateStreet(address.street, false) &&
-      this.validateHouseNumber(address.houseNumber, false) &&
-      this.validateZipCode(address.zip) &&
-      this.validateString(address.city, false) &&
-      !!address.country
-    );
-  }
-
   validatePhoneNumber(phoneNumber: string, required: boolean): boolean {
     return required ? !!phoneNumber && !validatePhoneNo(phoneNumber) : !phoneNumber || !validatePhoneNo(phoneNumber);
   }
@@ -151,10 +101,6 @@ export class ValidateNotificationService {
 
   validateContactPointInfoFacility(contactPointInfo: ContactPointInfo[]): boolean {
     return contactPointInfo.length > 0 && this.validateContacts(contactPointInfo);
-  }
-
-  validateContactPointInfoNotifiedPerson(contactPointInfo: ContactPointInfo[] | undefined): boolean {
-    return !contactPointInfo || this.validateContacts(contactPointInfo);
   }
 
   validateContacts(contactPointInfos: ContactPointInfo[] | undefined): boolean {
@@ -168,13 +114,6 @@ export class ValidateNotificationService {
       }
     });
     return result;
-  }
-
-  validateFacilityInfo(facilityInfo: FacilityInfo, requiredBsNr: boolean) {
-    if (!this.validateString(facilityInfo.institutionName, true)) return false;
-    if (validateNotBlank(facilityInfo.institutionName)) return false;
-    if (requiredBsNr && !this.validateBsNr(facilityInfo)) return false;
-    return true;
   }
 
   async phoneValidator(data: any): Promise<boolean> {

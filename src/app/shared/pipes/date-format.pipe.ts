@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { Pipe, PipeTransform } from '@angular/core';
 import { format } from 'date-fns';
 import { UI_DATE_FORMAT } from '../common-utils';

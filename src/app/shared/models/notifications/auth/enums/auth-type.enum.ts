@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 export enum AuthType {
   DEFAULT = 'default',
   SMCB = 'smcb',

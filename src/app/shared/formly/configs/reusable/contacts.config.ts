@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { ContactPointInfo } from 'src/api/notification';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { EMAIL_MAX_LENGTH, PHONE_MAX_LENGTH } from '../../../common-utils';

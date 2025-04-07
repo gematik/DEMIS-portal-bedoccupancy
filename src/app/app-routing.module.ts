@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { BedOccupancyComponent } from './bed-occupancy/bed-occupancy.component';

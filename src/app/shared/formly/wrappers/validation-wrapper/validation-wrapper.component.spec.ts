@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ValidationWrapperComponent } from './validation-wrapper.component';

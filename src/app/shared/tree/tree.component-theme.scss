@@ -1,5 +1,6 @@
 @use '@angular/material' as mat;
 @import '@angular/material/theming';
+// TODO: cleanup
 
 @mixin tree-component-theme($theme) {
   $primary: map-get($theme, primary);

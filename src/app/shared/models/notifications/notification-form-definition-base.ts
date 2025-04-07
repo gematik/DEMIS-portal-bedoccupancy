@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { Injector } from '@angular/core';
 import { StepNode } from '../../tree/tree.component';
 

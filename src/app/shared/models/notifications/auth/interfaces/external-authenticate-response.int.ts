@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 export interface Base64Signature {
   Type: string;
   Value: string;

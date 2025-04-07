@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ChangeDetectorRef } from '@angular/core';

@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { TranslateService } from '@ngx-translate/core';
 import { FormlyExtension, FormlyFieldConfig } from '@ngx-formly/core';
 import * as _ from 'lodash-es';

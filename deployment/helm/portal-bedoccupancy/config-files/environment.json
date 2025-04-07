@@ -1,0 +1,6 @@
+{
+  "production": {{ .Values.config.production }},
+  "pathToGateway": "{{ .Values.config.pathToGateway }}",
+  "pathToHospitalLocations": "{{ .Values.config.pathToHospitalLocations }}"
+}
+

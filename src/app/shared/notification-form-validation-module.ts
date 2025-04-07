@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { FieldTypeConfig, FormlyFieldConfig, FormlyModule } from '@ngx-formly/core';
 

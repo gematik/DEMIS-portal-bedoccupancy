@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { CardTypes } from '../enums/card-types.enum';
 
 export interface Card {

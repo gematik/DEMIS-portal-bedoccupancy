@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { TestBed } from '@angular/core/testing';
 
 import { ContactPointInfo, FacilityAddressInfo } from 'src/api/notification';
@@ -71,18 +69,10 @@ describe('ValidateNotificationTestService', () => {
     expect(service.validateContactPointInfoFacility([{ contactType: phone, value: validPhone }])).toBe(true);
   });
 
-  it('should fail validateContactPointInfoNotifiedPerson when no contact points given', () => {
-    expect(service.validateContactPointInfoNotifiedPerson([])).toBe(true);
-  });
-
   describe('test street validation', () => {
     for (const chr of dangerousCharArrayForStreet) {
       it(`should fail validateGermanAddress on "${chr}" in street`, () => {
         expect(service.validateGermanAddress(validAddressInfo(`Test st${chr}reet`))).toBeFalsy();
-      });
-
-      it(`should fail validateInternationalAddress on "${chr}" in street`, () => {
-        expect(service.validateInternationalAddress(validAddressInfo(`Test st${chr}reet`))).toBeFalsy();
       });
     }
 

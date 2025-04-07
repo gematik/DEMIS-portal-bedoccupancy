@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { Injectable, Injector } from '@angular/core';
 import { BedOccupancy } from 'src/api/notification';
 import { NotificationConstants } from 'src/app/shared/notification-constants';

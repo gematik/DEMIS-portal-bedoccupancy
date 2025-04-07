@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { Injectable } from '@angular/core';
 import { Storage } from '../models/ui/storage';
 

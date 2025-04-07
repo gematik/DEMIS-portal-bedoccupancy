@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 export interface Storage {
   setItem(key: string, value: unknown): void;
   getItem(key: string): unknown;

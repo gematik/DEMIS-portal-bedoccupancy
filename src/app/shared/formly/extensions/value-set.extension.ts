@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { FormlyExtension, FormlyFieldConfig } from '@ngx-formly/core';
 import { ValueSetService } from '../../../core/services/value-set.service';
 

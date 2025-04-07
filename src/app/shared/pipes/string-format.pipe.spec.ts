@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { StringFormatPipe } from './string-format.pipe';
 
 describe('StringFormatPipe', () => {

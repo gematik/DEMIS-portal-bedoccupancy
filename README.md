@@ -99,7 +99,7 @@ Alternatively, a Docker-based development environment is available in the reposi
 
 ```sh
 docker build -t portal-bedoccupency .
-docker run --rm -it -v .://project  portal-bedoccupency
+docker run --rm -it -v .://project portal-bedoccupency
 npm install
 npm run build-api
 npm run build

@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 export enum PinOperations {
   NUMBER_0 = 0,
   NUMBER_1 = 1,

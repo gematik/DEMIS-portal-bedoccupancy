@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { PinStatusResponse } from './pin-status-response.int';
 import { Card } from './card.int';
 

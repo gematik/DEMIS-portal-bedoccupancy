@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';

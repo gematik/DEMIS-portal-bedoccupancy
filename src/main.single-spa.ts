@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { enableProdMode, NgZone } from '@angular/core';
 
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';

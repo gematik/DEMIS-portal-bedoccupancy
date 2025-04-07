@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 const singleSpaAngularWebpack = require('single-spa-angular/lib/webpack').default;
 
 module.exports = (angularWebpackConfig, options) => {

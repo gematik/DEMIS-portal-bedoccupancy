@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { Pipe, PipeTransform } from '@angular/core';
 import { ValueSetService } from '../services/value-set.service';
 import { map } from 'rxjs/operators';

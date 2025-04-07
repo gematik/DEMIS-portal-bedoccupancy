@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 export interface AuthState {
   locationUrl?: string; // ??? woe
   authChallenge?: string;

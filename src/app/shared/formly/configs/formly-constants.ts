@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 export enum FormlyConstants {
   LAYOUT_FULL_LINE = 'col-md-11 align-self-start',
   LAYOUT_HEADER = 'col-sm-11 mt-sm-3',

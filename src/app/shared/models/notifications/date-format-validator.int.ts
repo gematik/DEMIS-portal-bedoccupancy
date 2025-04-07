@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 export interface DateFormatValidator {
   regExp: RegExp;
   dateFormatNotCorrectMsg: string;

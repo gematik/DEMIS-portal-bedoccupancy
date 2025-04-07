@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 export interface SuccessResult extends DialogNotificationData {
   receiptContentType: string;
   receiptContent: string;

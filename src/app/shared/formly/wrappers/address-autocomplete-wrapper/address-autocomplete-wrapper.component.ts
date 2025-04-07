@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { Component, Injector, OnInit } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
 import { FieldWrapper } from '@ngx-formly/core';

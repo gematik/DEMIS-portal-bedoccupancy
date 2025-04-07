@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { HarnessLoader } from '@angular/cdk/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatInputHarness } from '@angular/material/input/testing';

@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { FormlyFieldConfig } from '@ngx-formly/core';
 
 import {

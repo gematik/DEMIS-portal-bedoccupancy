@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { SubmitNotificationDialogComponent } from './submit-notification-dialog.component';

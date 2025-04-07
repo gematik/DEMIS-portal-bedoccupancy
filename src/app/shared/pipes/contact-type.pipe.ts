@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { Pipe, PipeTransform } from '@angular/core';
 import { ContactPointInfo } from 'src/api/notification';
 

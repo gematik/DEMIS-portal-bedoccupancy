@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 export enum EErrorKeys {
   genericError = 'errorMessages.genericError',
   default = 'errorMessages.default',

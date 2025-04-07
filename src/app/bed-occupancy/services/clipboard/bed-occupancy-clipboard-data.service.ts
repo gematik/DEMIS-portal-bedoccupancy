@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { Injectable } from '@angular/core';
 import { BedOccupancyQuestion } from 'src/api/notification';
 import { NGXLogger } from 'ngx-logger';

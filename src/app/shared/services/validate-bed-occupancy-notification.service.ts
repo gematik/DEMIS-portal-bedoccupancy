@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { Injectable } from '@angular/core';
 import { BedOccupancy, BedOccupancyNotifierFacility, BedOccupancyQuestion, OccupiedBeds, OperableBeds } from 'src/api/notification';
 import { checkNumberOfBeds } from '../notification-form-validation-module';

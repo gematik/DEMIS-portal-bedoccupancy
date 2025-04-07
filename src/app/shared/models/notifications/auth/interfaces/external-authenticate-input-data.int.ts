@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 export interface ExternalAuthenticateInputData {
   binaryString?: string;
 }

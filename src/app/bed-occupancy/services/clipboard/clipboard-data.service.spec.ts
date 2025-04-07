@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 import { TestBed } from '@angular/core/testing';
 
 import { ClipboardDataService } from './clipboard-data.service';

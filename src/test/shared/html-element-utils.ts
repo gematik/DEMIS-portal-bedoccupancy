@@ -12,8 +12,6 @@
  limitations under the Licence.
  */
 
-
-
 export function getHtmlButtonElement(nativeElement: any, selector: string) {
   return nativeElement.querySelector(selector) as HTMLButtonElement;
 }
