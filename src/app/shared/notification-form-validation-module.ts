@@ -1,15 +1,17 @@
 /*
- Copyright (c) 2025 gematik GmbH
- Licensed under the EUPL, Version 1.2 or - as soon they will be approved by
- the European Commission - subsequent versions of the EUPL (the "Licence");
- You may not use this work except in compliance with the Licence.
-    You may obtain a copy of the Licence at:
-    https://joinup.ec.europa.eu/software/page/eupl
-        Unless required by applicable law or agreed to in writing, software
- distributed under the Licence is distributed on an "AS IS" basis,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the Licence for the specific language governing permissions and
- limitations under the Licence.
+    Copyright (c) 2025 gematik GmbH
+    Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+    European Commission – subsequent versions of the EUPL (the "Licence").
+    You may not use this work except in compliance with the Licence.
+    You find a copy of the Licence in the "Licence" file or at
+    https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the Licence is distributed on an "AS IS" basis,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+    In case of changes by gematik find details in the "Readme" file.
+    See the Licence for the specific language governing permissions and limitations under the Licence.
+    *******
+    For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import { AbstractControl, ValidationErrors } from '@angular/forms';
@@ -52,7 +54,6 @@ import {
   ZIP_INTERNATIONAL_ERROR_MSG,
   ZIP_INTERNATIONAL_REG_EXP,
 } from './common-utils';
-import { DateFormatValidator } from './models/notifications/date-format-validator.int';
 
 export const NotificationFormValidationModule = FormlyModule.forRoot({
   validators: [
@@ -104,20 +105,6 @@ export const NotificationFormValidationModule = FormlyModule.forRoot({
 
 export function validateBSNR(bsNummer: string): any {
   return !!bsNummer ? (matchesRegExp(BSNR_REG_EXP, bsNummer) ? null : setValidationMessage(BSNR_ERROR_MSG)) : null;
-}
-
-// keep for now
-export function validatePartialDate(date: DateTime, dateFormatValidator?: DateFormatValidator): any {
-  const regExp: RegExp = dateFormatValidator?.regExp ?? DATE_FORMAT_DD_MM_YYYY_REG_EXP;
-  const dateFormatNotCorrectMsg: string = dateFormatValidator?.dateFormatNotCorrectMsg ?? DATE_FORMAT_ERROR_MSG;
-
-  return date?.isValid
-    ? matchesRegExp(regExp, date.toFormat(UI_LUXON_DATE_FORMAT))
-      ? !isEmptyOrInFutureDate(date.toJSDate())
-        ? setValidationMessage(DATE_IN_FUTURE_ERROR_MSG)
-        : null
-      : setValidationMessage(dateFormatNotCorrectMsg)
-    : null;
 }
 
 function dateExist(date: string): boolean {

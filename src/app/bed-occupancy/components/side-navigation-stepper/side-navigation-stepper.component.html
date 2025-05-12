@@ -7,8 +7,8 @@
   @for(step of steps; track step.id) {
     <mat-step
       label="{{ step.props.label }}"
-      [completed]="step.formControl.touched && isTouchedAndValid(step)"
-      [hasError]="step.formControl.touched && !isTouchedAndValid(step)"
+      [completed]="isTouchedAndValid(step)"
+      [hasError]="!isTouchedAndValid(step)"
     >
       <!-- Done (weird but its angular state "edit") -->
       <ng-template matStepperIcon="edit">

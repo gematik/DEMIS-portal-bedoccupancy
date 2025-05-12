@@ -23,28 +23,30 @@ config:
   ## these are physical routes, relative to the pod URL of this micro frontend, not angular ones
   pathToGateway: ../gateway/notification/api/ng/reports/bedOccupancy
   pathToHospitalLocations: ../services/hospital-locations
-  files: {}
+  files: { }
+  featureFlags: #Always set this to false here; feature flags will then be activated as needed via the stage configurations.
+    FEATURE_FLAG_PORTAL_ERROR_DIALOG: false
 
 # Extra Labels to be added
 # E.g.
 # customLabels:
 #   my-label: my-label-value
-customLabels: {}
+customLabels: { }
 
 # Extra labels for deployments
-deploymentLabels: {}
+deploymentLabels: { }
 
 # Extra Environment Variables to be defined
 # customEnvVars
 #   key: value
-customEnvVars: {}
-  #PORTAL_CSP_HOSTNAME: DEFINED_IN_EACH_STAGE_ENVIRONMENT
+customEnvVars: { }
+#PORTAL_CSP_HOSTNAME: DEFINED_IN_EACH_STAGE_ENVIRONMENT
 
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
   # Annotations to add to the service account
-  annotations: {}
+  annotations: { }
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
@@ -52,17 +54,17 @@ serviceAccount:
 # The Pull Policy for the Image
 imagePullPolicy: IfNotPresent
 # Define Image Pull Secrets if using private registry
-imagePullSecrets: []
+imagePullSecrets: [ ]
 nameOverride: "portal-bedoccupancy"
 fullnameOverride: "portal-bedoccupancy"
 
-podLabels: {}
+podLabels: { }
 
 # Annotations for Workload
-annotations: {}
+annotations: { }
 
 # Annotations for Pods
-podAnnotations: {}
+podAnnotations: { }
 
 # Pod Security Context - applies to all containers in a Pod
 podSecurityContext:
@@ -122,9 +124,9 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80
 
-nodeSelector: {}
+nodeSelector: { }
 
-tolerations: []
+tolerations: [ ]
 
 istio:
   enable: false

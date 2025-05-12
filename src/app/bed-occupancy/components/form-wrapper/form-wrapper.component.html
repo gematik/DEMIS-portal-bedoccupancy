@@ -1,15 +1,15 @@
 <app-side-navigation-wrapper
-  [headline]="field.fieldGroup[selectedIndex].props.title"
-  [currentStep]="selectedIndex"
-  [maxNumberOfSteps]="field.fieldGroup.length"
-  [steps]="field.fieldGroup"
   [currentStepHeadline]="field.fieldGroup[selectedIndex].props.label"
+  [currentStep]="selectedIndex"
+  [headline]="field.fieldGroup[selectedIndex].props.title"
+  [maxNumberOfSteps]="field.fieldGroup.length"
   [model]="field.model"
+  [steps]="field.fieldGroup"
 >
   <mat-tab-group
     [selectedIndex]="selectedIndex"
-    class="mat-tab-container"
     animationDuration="0000"
+    class="mat-tab-container"
   >
     @for (tab of field.fieldGroup; track tab.id) {
       <mat-tab
@@ -21,57 +21,41 @@
         <mat-toolbar>
           <mat-toolbar-row>
             <div>
-              <div>
-                <a
-                  routerLink="./"
-                  fragment="{{ field.fieldGroup[selectedIndex].props.anchor }}"
-                >
-                  @if(!$first) {
-                    <button
-                      class="btn btn--color btn--shape"
-                      type="button"
-                      (click)="previousStep()"
-                      id="btn-nav-action-back"
-                    >
-                      <mat-icon
-                        fontIcon="arrow_back"
-                        class="margin-right"
-                      ></mat-icon>
-                      Zurück
-                    </button>
-                  }
+              @if (!$first) {
+                <a fragment="{{ field.fieldGroup[selectedIndex].props.anchor }}" routerLink="./">
+                  <button (click)="previousStep()" class="btn navigate--color style" id="btn-nav-action-back"
+                          mat-button type="button">
+                    <mat-icon class="btn__icon margin--right" fontIcon="arrow_back_ios"></mat-icon>
+                    Zurück
+                  </button>
                 </a>
-                <a
-                  routerLink="./"
-                  fragment="{{ field.fieldGroup[selectedIndex].props.anchor }}"
-                >
-                  @if (!$last) {
-                    <button
-                      class="btn btn--color btn--shape btn--forward"
-                      type="button"
-                      (click)="nextStep()"
-                      id="btn-nav-action-next"
-                    >
-                      Weiter
-                      <mat-icon
-                        fontIcon="arrow_forward"
-                        class="margin-left"
-                      ></mat-icon>
-                    </button>
-                  }
-                </a>
-              </div>
+              }
             </div>
             <div>
-              <button
-                class="btn btn--color btn--shape"
-                [disabled]="!form.valid"
-                type="submit"
-                id="btn-send-notification"
-              >
-                Senden
-                <mat-icon class="margin-left" fontIcon="send"></mat-icon>
-              </button>
+              <div class="div display--flex">
+                <div>
+                  @if (!$last) {
+                    <a
+                      fragment="{{ field.fieldGroup[selectedIndex].props.anchor }}"
+                      routerLink="./"
+                    >
+                      <button (click)="nextStep()"
+                              class="btn navigate--color style forward" id="btn-nav-action-next"
+                              mat-button type="button">
+                        Weiter
+                        <mat-icon class="btn__icon margin-left" fontIcon="arrow_forward_ios" iconPositionEnd></mat-icon>
+                      </button>
+                    </a>
+                  }
+                </div>
+                <div class="div margin--left">
+                  <button [disabled]="!form.valid" class="btn style dark--color" id="btn-send-notification"
+                          mat-button type="submit">
+                    Abschicken
+                    <mat-icon class="btn__icon margin--left rotate" fontIcon="send" iconPositionEnd></mat-icon>
+                  </button>
+                </div>
+              </div>
             </div>
           </mat-toolbar-row>
         </mat-toolbar>
