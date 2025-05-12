@@ -1,21 +1,22 @@
 /*
- Copyright (c) 2025 gematik GmbH
- Licensed under the EUPL, Version 1.2 or - as soon they will be approved by
- the European Commission - subsequent versions of the EUPL (the "Licence");
- You may not use this work except in compliance with the Licence.
-    You may obtain a copy of the Licence at:
-    https://joinup.ec.europa.eu/software/page/eupl
-        Unless required by applicable law or agreed to in writing, software
- distributed under the Licence is distributed on an "AS IS" basis,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the Licence for the specific language governing permissions and
- limitations under the Licence.
+    Copyright (c) 2025 gematik GmbH
+    Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+    European Commission – subsequent versions of the EUPL (the "Licence").
+    You may not use this work except in compliance with the Licence.
+    You find a copy of the Licence in the "Licence" file or at
+    https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the Licence is distributed on an "AS IS" basis,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+    In case of changes by gematik find details in the "Readme" file.
+    See the Licence for the specific language governing permissions and limitations under the Licence.
+    *******
+    For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 import { Injectable } from '@angular/core';
 
 import { MessageType } from 'src/app/shared/models/ui/message';
-import { merge } from 'lodash-es';
 import { NGXLogger } from 'ngx-logger';
 
 import { ErrorMessageDialogComponent } from 'src/app/shared/dialogs/message-dialog/error-message-dialog.component';
@@ -24,6 +25,8 @@ import { ClipboardErrorTexts } from './clipboard-enums';
 import { MatDialog } from '@angular/material/dialog';
 import { catchError, from, Observable, of, take } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
+import { MessageDialogService } from '@gematik/demis-portal-core-library';
 
 export type ClipboardRules = Record<string, (key: string, partialModel: any) => any | Promise<any>>;
 
@@ -33,7 +36,8 @@ export type ClipboardRules = Record<string, (key: string, partialModel: any) => 
 export abstract class ClipboardDataService {
   protected constructor(
     public dialog: MatDialog,
-    protected logger: NGXLogger
+    protected logger: NGXLogger,
+    protected messageDialogeService: MessageDialogService
   ) {}
 
   // getClipboardKVs(): Observable<string[][]>{
@@ -95,15 +99,19 @@ export abstract class ClipboardDataService {
   }
 
   openErrorDialog(): void {
-    this.dialog.open(
-      ErrorMessageDialogComponent,
-      ErrorMessageDialogComponent.getErrorDialogClose({
-        title: ClipboardErrorTexts.CLIPBOARD_ERROR_DIALOG_TITLE,
-        message: ClipboardErrorTexts.CLIPBOARD_ERROR_DIALOG_MESSAGE,
-        messageDetails: ClipboardErrorTexts.CLIPBOARD_ERROR_DIALOG_MESSAGE_DETAILS,
-        type: MessageType.WARNING,
-      })
-    );
+    if (environment.bedOccupancyConfig.featureFlags?.FEATURE_FLAG_PORTAL_ERROR_DIALOG) {
+      this.messageDialogeService.showErrorDialogInsertDataFromClipboard();
+    } else {
+      this.dialog.open(
+        ErrorMessageDialogComponent,
+        ErrorMessageDialogComponent.getErrorDialogClose({
+          title: ClipboardErrorTexts.CLIPBOARD_ERROR_DIALOG_TITLE,
+          message: ClipboardErrorTexts.CLIPBOARD_ERROR_DIALOG_MESSAGE,
+          messageDetails: ClipboardErrorTexts.CLIPBOARD_ERROR_DIALOG_MESSAGE_DETAILS,
+          type: MessageType.WARNING,
+        })
+      );
+    }
   }
 
   private getStringAfterChar = (fullString: string, char: string) => {
