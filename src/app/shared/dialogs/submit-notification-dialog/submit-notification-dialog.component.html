@@ -9,7 +9,7 @@
 </ng-template>
 
 <ng-template #responseSuccess let-result="result">
-  <h1 mat-dialog-title id="success-title" >
+  <h1 mat-dialog-title id="success-title">
     <mat-icon class="mr-3" id="icon-success">check_circle</mat-icon>
     {{ "Meldung wurde erfolgreich gesendet!" }}
   </h1>
@@ -20,7 +20,7 @@
     <p id="success-result">
       Hier erhalten Sie Ihre Bestätigung:
       <a target="_blank" download="{{ fileName }}" [href]="pdfDownload"
-        >Meldungsquittung (PDF)</a
+      >Meldungsquittung (PDF)</a
       >
     </p>
     <p id="success-info">
@@ -28,10 +28,10 @@
       des Robert Koch-Instituts:
       <a [href]="'mailto:' + result.authorEmail">{{ result.authorEmail }}</a>
     </p>
-    <!-- p><app-pdf-viewer [pdfContent]="pdfDownload"></app-pdf-viewer> </p -->
   </div>
   <div mat-dialog-actions class="mt-3" align="end">
     <button
+      class="btn style"
       mat-flat-button
       color="primary"
       id="btn-back-to-homepage"
@@ -99,7 +99,7 @@
   </div>
 </ng-template>
 
-<div  id="submit-container" class="d-flex flex-column flex-grow-1">
+<div id="submit-container" class="d-flex flex-column flex-grow-1">
   <ng-container
     *ngTemplateOutlet="activeTemplate; context: { result: result }"
   ></ng-container>

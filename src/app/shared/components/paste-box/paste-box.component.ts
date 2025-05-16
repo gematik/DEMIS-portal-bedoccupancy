@@ -16,12 +16,15 @@
 
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
+/**
+ * @deprecated Not needed anymore, once FEATURE_FLAG_PORTAL_PASTEBOX will be removed
+ */
 @Component({
   selector: 'app-paste-box',
   templateUrl: './paste-box.component.html',
   styleUrls: ['./paste-box.component.scss'],
 })
-export class PasteBoxComponent implements OnInit {
+export class BedOccupancyPasteBoxComponent implements OnInit {
   @Output() paste = new EventEmitter<void>();
   @Input() buttonId!: string;
 

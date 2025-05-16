@@ -24,7 +24,6 @@ import { addressFormConfigFields } from '../reusable/address.config';
 import { contactsFormConfigFields } from '../reusable/contacts.config';
 import { oneTimeCodeConfigField } from '../reusable/oneTimeCode.config';
 import { practitionerInfoFormConfigFields } from '../reusable/practitioner-info.config';
-import { formlyInputField } from '../reusable/commons';
 
 function setData(field: FormlyFieldConfig, hospitalLocation: any, ikNumber: string) {
   field?.parent?.parent?.formControl?.patchValue({

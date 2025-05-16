@@ -30,6 +30,9 @@ import { MessageDialogService } from '@gematik/demis-portal-core-library';
 
 export type ClipboardRules = Record<string, (key: string, partialModel: any) => any | Promise<any>>;
 
+/**
+ * @deprecated Not needed anymore, once FEATURE_FLAG_PORTAL_PASTEBOX will be removed
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -40,24 +43,11 @@ export abstract class ClipboardDataService {
     protected messageDialogeService: MessageDialogService
   ) {}
 
-  // getClipboardKVs(): Observable<string[][]>{
-  //   return from(window.navigator.clipboard.readText()).pipe(
-  //     take(1),
-  //     map(clipboard => {
-  //       if (!matchesRegExp(/^URL .*/, clipboard)) {
-  //         throw 'invalid clipboard: it does not start with "URL "';
-  //       }
-  //       const urlParams = clipboard.substring(4);
-  //       const kvs: string[][] = decodeURI(urlParams)
-  //         .split('&')
-  //         .map((s) => s.split('=').map((s) => s.trim()));
-  //       if (kvs.length === 0) {
-  //         throw 'empty parameter list';
-  //       }
-  //       return kvs;
-  //   }));
-  // }
-
+  /**
+   * @deprecated Not needed anymore, once FEATURE_FLAG_PORTAL_PASTEBOX will be removed
+   *
+   * @returns
+   */
   validateClipBoardData(): Observable<Map<string, string>> {
     return from(window.navigator.clipboard.readText()).pipe(
       take(1),
@@ -81,6 +71,12 @@ export abstract class ClipboardDataService {
     );
   }
 
+  /**
+   * @deprecated Not needed anymore, once FEATURE_FLAG_PORTAL_PASTEBOX will be removed
+   *
+   * @param data
+   * @returns
+   */
   convertClipBoardDataToMap(data: string): Map<string, string> {
     data = decodeURI(data).trim();
     let clipBoardMap = new Map<string, string>();
@@ -98,6 +94,11 @@ export abstract class ClipboardDataService {
     return clipBoardMap;
   }
 
+  /**
+   * @deprecated Not needed anymore, once FEATURE_FLAG_PORTAL_PASTEBOX will be removed
+   *
+   * @returns
+   */
   openErrorDialog(): void {
     if (environment.bedOccupancyConfig.featureFlags?.FEATURE_FLAG_PORTAL_ERROR_DIALOG) {
       this.messageDialogeService.showErrorDialogInsertDataFromClipboard();
@@ -114,58 +115,21 @@ export abstract class ClipboardDataService {
     }
   }
 
+  /**
+   * @deprecated Not needed anymore, once FEATURE_FLAG_PORTAL_PASTEBOX will be removed
+   *
+   * @returns
+   */
   private getStringAfterChar = (fullString: string, char: string) => {
     return fullString.substring(fullString.indexOf(char) + 1);
   };
 
+  /**
+   * @deprecated Not needed anymore, once FEATURE_FLAG_PORTAL_PASTEBOX will be removed
+   *
+   * @returns
+   */
   private getStringBeforeChar = (fullString: string, char: string) => {
     return fullString.substring(0, fullString.indexOf(char));
   };
-
-  //   async fillModelFromClipBoard(model: any, rules: ClipboardRules) {
-  //     const keyValuePairs = await this.getClipboardKVs();
-  //     const problems: string[] = await this.fillModel(
-  //       model,
-  //       rules,
-  //       keyValuePairs
-  //     );
-  //     if (problems.length > 0)
-  //       this.logger.error('Fehlerhafte Datem vom KIS:', ...problems);
-  //     window.navigator.clipboard.writeText('');
-  //   }
-  //
-  //   async fillModel(
-  //     model: any,
-  //     rules: ClipboardRules,
-  //     keyValuePairs: string[][]
-  //   ): Promise<string[]> {
-  //     const problems: string[] = [];
-  //     for (let [key, value] of keyValuePairs) {
-  //       if (value === '') {
-  //         continue;
-  //       }
-  //       if (value === undefined) {
-  //         problems.push(`PT_4713 Falsche Syntax nahe: ${key}`);
-  //         continue;
-  //       }
-  //       const rule = rules[key];
-  //       if (!rule) {
-  //         problems.push(`PT_4714 Ungültiger Parametername: ${key}`);
-  //         continue;
-  //       }
-  //       const promiseOrStruct = rule(value, model);
-  //
-  //       if (isPromise(promiseOrStruct)) {
-  //         const struct = await promiseOrStruct;
-  //         merge(model, struct);
-  //       } else {
-  //         merge(model, promiseOrStruct);
-  //       }
-  //     }
-  //     return problems;
-  //   }
-}
-
-export function isPromise(val: any | Promise<any>): val is Promise<any> {
-  return val && (<Promise<any>>val).then !== undefined;
 }

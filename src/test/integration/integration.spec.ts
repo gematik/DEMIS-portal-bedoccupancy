@@ -16,7 +16,7 @@
 
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ComponentFixture, discardPeriodicTasks, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -35,6 +35,14 @@ import { getButton, getInput, getSelect, selectOption } from 'src/test/shared/ma
 import { MatInputHarness } from '@angular/material/input/testing';
 // import {checkDescribingError} from "src/test/shared/assertion-utils";
 import { ChangeDetectorRef } from '@angular/core';
+import { NGXLogger } from 'ngx-logger';
+import { FormlyModule } from '@ngx-formly/core';
+import { BedOccupancyConstants } from 'src/app/bed-occupancy/common/bed-occupancy-constants';
+import { FormWrapperComponent } from 'src/app/bed-occupancy/components/form-wrapper/form-wrapper.component';
+import { FormlyMaterialModule } from '@ngx-formly/material';
+import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
+import { FormlySelectModule } from '@ngx-formly/core/select';
+import { environment } from 'src/environments/environment';
 
 const TEST_DATA = {
   hospitalLocation: {
@@ -73,153 +81,237 @@ const overrides = {
 };
 
 describe('Bed Occupancy - Integration Tests', () => {
-  let component: BedOccupancyComponent;
   let fixture: MockedComponentFixture<BedOccupancyComponent>;
   let loader: HarnessLoader;
 
-  let fetchHospitalLocationsSpy: jasmine.Spy;
-  let transformDataSpy: jasmine.Spy;
-  let setLocalStorageBedOccupancyDataSpy: jasmine.Spy;
-  let openSubmitDialogSpy: jasmine.Spy;
-
-  beforeEach(() =>
-    MockBuilder([BedOccupancyComponent, NoopAnimationsModule, SharedModule, BedOccupancyModule, ReactiveFormsModule, MatFormFieldModule])
+  const testSetup = () =>
+    MockBuilder([
+      BedOccupancyComponent,
+      NoopAnimationsModule,
+      SharedModule,
+      BedOccupancyModule,
+      ReactiveFormsModule,
+      MatFormFieldModule,
+      FormlyModule.forRoot({
+        types: [
+          {
+            name: BedOccupancyConstants.DEMIS_FORM_WRAPPER_TEMPLATE_KEYWORD,
+            component: FormWrapperComponent,
+          },
+        ],
+      }),
+      FormlyMaterialModule,
+      FormlyMatDatepickerModule,
+      FormlySelectModule,
+    ])
       .provide(MockProvider(BedOccupancyStorageService, overrides.bedOccupancyStorageService))
       .provide(MockProvider(FhirBedOccupancyService))
-      .provide(MockProvider(BedOccupancyClipboardDataService, overrides.bedOccupancyClipboardDataService))
-      .provide(MockProvider(BedOccupancyNotificationFormDefinitionService, overrides.bedOccupancyNotificationFormDefinitionService))
+      .provide(BedOccupancyClipboardDataService)
+      .provide(BedOccupancyNotificationFormDefinitionService)
       .provide(MockProvider(ActivatedRoute, overrides.activatedRoute))
-  );
+      .provide(MockProvider(NGXLogger));
 
-  beforeEach(() => {
-    fixture = MockRender(BedOccupancyComponent);
-    fetchHospitalLocationsSpy = TestBed.inject(BedOccupancyStorageService).fetchHospitalLocations as jasmine.Spy;
-    transformDataSpy = spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData');
-    setLocalStorageBedOccupancyDataSpy = spyOn(TestBed.inject(BedOccupancyStorageService), 'setLocalStorageBedOccupancyData');
-    openSubmitDialogSpy = spyOn(TestBed.inject(FhirBedOccupancyService), 'openSubmitDialog');
-    component = fixture.point.componentInstance;
-    loader = TestbedHarnessEnvironment.loader(fixture);
-    fixture.detectChanges();
-  });
+  const itShouldSendWhenFormIsFilledCorrectlyByClipboard = () => {
+    it('should send, when form is filled correctly with the help from the clipboard', async () => {
+      // Form page 1
+      const institutionNameSelect = await getSelect(loader, '#institutionName');
+      const firstnameInput = await getInput(loader, '#firstname');
+      const lastnameInput = await getInput(loader, '#lastname');
+      const phoneNoInput = await getInput(loader, '[data-cy=phoneNo]');
+      const emailInput = await getInput(loader, '[data-cy=email]');
+      const nextButton = await getButton(loader, '#btn-nav-action-next');
 
-  it('should not send, when nothing is inserted', async () => {
-    const submitButton = getHtmlButtonElement(fixture.nativeElement, '#btn-send-notification');
-    expect(submitButton).toBeTruthy();
-    expect(submitButton.disabled).toBeTrue();
-  });
+      await selectOption(institutionNameSelect, TEST_DATA.hospitalLocation.label);
+      await firstnameInput.setValue('Homer');
+      await lastnameInput.setValue('Simpson');
+      await phoneNoInput.setValue('0800123456');
+      await emailInput.setValue('homer@simpson.com');
+      await nextButton.click();
+      fixture.detectChanges();
 
-  it('should have a validation error when nothing is inserted and someone blurs from an input', async () => {
-    // get the input and set some invalid value
-    const firstnameInput = await getInput(loader, '#firstname');
-    await firstnameInput.setValue('');
-    await firstnameInput.blur(); // Do not forget to blur the input! Otherwise the validation error will not be triggered in the material form field
+      // Form page 2 - filled from clipboard
+      spyOn(navigator.clipboard, 'readText').and.resolveTo('URL B.adultsOccupied=47&B.childrenOccupied=11&B.adultsOperable=33&B.childrenOperable=5');
+      spyOn(navigator.clipboard, 'writeText');
+      const pasteButton = await getButton(loader, '#btn-fill-form');
 
-    // check if the error is displayed
-    fixture.detectChanges();
-    const describedby = await (await firstnameInput.host()).getAttribute('aria-describedby');
-    expect(describedby).withContext('input should have a describedby attribute').toBeTruthy();
-    const errorElement = fixture.nativeElement.querySelector(`mat-error#${describedby}`);
-    expect(errorElement).withContext('error element should be present').toBeTruthy();
-    const formlyError = errorElement.querySelector('formly-validation-message');
-    expect(formlyError).withContext('formly error should be present').toBeTruthy();
-    expect(formlyError.textContent).toContain('Diese Angabe wird benötigt');
-  });
+      await pasteButton.click();
+      fixture.detectChanges();
 
-  it('should send, when form is filled correctly', async () => {
-    // Form page 1
-    const institutionNameSelect = await getSelect(loader, '#institutionName');
-    const firstnameInput = await getInput(loader, '#firstname');
-    const lastnameInput = await getInput(loader, '#lastname');
-    await (await getButton(loader, '#btn-telefonnummer-hinzufügen')).click();
-    const phoneNoInput = await getInput(loader, '[data-cy=phoneNo]');
-    await (await getButton(loader, '#btn-email-adresse-hinzufügen')).click();
-    const emailInput = await getInput(loader, '[data-cy=email]');
-    const nextButton = getHtmlButtonElement(fixture.nativeElement, '#btn-nav-action-next');
+      const submitButton = await getButton(loader, '#btn-send-notification');
 
-    await selectOption(institutionNameSelect, TEST_DATA.hospitalLocation.label);
-    await firstnameInput.setValue('Homer');
-    await lastnameInput.setValue('Simpson');
-    await phoneNoInput.setValue('0800123456');
-    await emailInput.setValue('homer@simpson.com');
-    await nextButton.click();
+      expect(await submitButton.isDisabled()).toBeFalse();
+    });
+  };
 
-    // Form page 2
-    const occupiedBedsAdultsInput = await getInput(loader, '#occupied-beds-adults-number-of-beds');
-    const occupiedBedsChildrenInput = await getInput(loader, '#occupied-beds-children-number-of-beds');
+  describe('without feature flags', () => {
+    beforeEach(testSetup);
 
-    await occupiedBedsAdultsInput.setValue('10');
-    await occupiedBedsChildrenInput.setValue('5');
+    beforeEach(() => {
+      fixture = MockRender(BedOccupancyComponent);
+      spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData');
+      spyOn(TestBed.inject(BedOccupancyStorageService), 'setLocalStorageBedOccupancyData');
+      spyOn(TestBed.inject(FhirBedOccupancyService), 'openSubmitDialog');
+      loader = TestbedHarnessEnvironment.loader(fixture);
+      fixture.detectChanges();
+    });
 
-    const submitButton = getHtmlButtonElement(fixture.nativeElement, '#btn-send-notification');
+    it('should not send, when nothing is inserted', async () => {
+      const submitButton = getHtmlButtonElement(fixture.nativeElement, '#btn-send-notification');
+      expect(submitButton).toBeTruthy();
+      expect(submitButton.disabled).toBeTrue();
+    });
 
-    expect(await submitButton.disabled).toBeFalse();
-  });
-  describe('Validation of email and phone number', () => {
-    const parameters = {
-      email: [
-        { value: 'auch-ungueltig.de', expectedResult: 'Keine gültige E-Mail (Beispiel: meine.Email@email.de)' },
-        { value: '_@test_Me.too', expectedResult: 'Keine gültige E-Mail (Beispiel: meine.Email@email.de)' },
-        {
-          value: 'keinesonderzeichen´êa@ü?.djkd',
-          expectedResult: 'Keine gültige E-Mail (Beispiel: meine.Email@email.de)',
-        },
-        {
-          value:
-            'genau321Zeichen_nach_dem@Lorem-ipsum-dolor-sit-amet--consetetur-sadipscing-elitr--sed-diam-nonumy-eirmod-tempor-invidunt-ut-labore-et-dolore-magna-aliquyam-erat--sed-diam-voluptua.-At-vero-eos-et-accusam-et-justo-duo-dolores-et-ea-rebum.-Stet-clita-kasd-gubergren--no-sea-takimata-sanctus-est-Lorem-ipsum-dolor-sit-amet.-Lorem-ipsum-dolor-sit.com',
-          expectedResult: 'Keine gültige E-Mail (Beispiel: meine.Email@email.de)',
-        },
-      ],
-      phoneNumber: [
-        {
-          value: '1741236589',
-          expectedResult: 'Die Telefonnummer muss mit 0 oder + beginnen, gefolgt von mindestens 6 Ziffern.',
-        },
-        {
-          value: '01234',
-          expectedResult: 'Die Telefonnummer muss mit 0 oder + beginnen, gefolgt von mindestens 6 Ziffern.',
-        },
-        {
-          value: '0123456789abc',
-          expectedResult: 'Die Telefonnummer muss mit 0 oder + beginnen, gefolgt von mindestens 6 Ziffern.',
-        },
-        {
-          value: '(0049)1741236589',
-          expectedResult: 'Die Telefonnummer muss mit 0 oder + beginnen, gefolgt von mindestens 6 Ziffern.',
-        },
-      ],
-    };
-    parameters.email.forEach(parameter => {
-      it(`for the email, the value: '${parameter.value}' should throw the error: '${parameter.expectedResult}'`, async () => {
-        await (await getButton(loader, '#btn-email-adresse-hinzufügen')).click();
-        const emailInput = await getInput(loader, '[data-cy=email]');
-        await emailInput.setValue(parameter.value);
-        await emailInput.blur();
+    it('should have a validation error when nothing is inserted and someone blurs from an input', async () => {
+      // get the input and set some invalid value
+      const firstnameInput = await getInput(loader, '#firstname');
+      await firstnameInput.setValue('');
+      await firstnameInput.blur(); // Do not forget to blur the input! Otherwise the validation error will not be triggered in the material form field
 
-        await checkDescribingError(emailInput, parameter.expectedResult);
+      // check if the error is displayed
+      fixture.detectChanges();
+      const describedby = await (await firstnameInput.host()).getAttribute('aria-describedby');
+      expect(describedby).withContext('input should have a describedby attribute').toBeTruthy();
+      const errorElement = fixture.nativeElement.querySelector(`mat-error#${describedby}`);
+      expect(errorElement).withContext('error element should be present').toBeTruthy();
+      const formlyError = errorElement.querySelector('formly-validation-message');
+      expect(formlyError).withContext('formly error should be present').toBeTruthy();
+      expect(formlyError.textContent).toContain('Diese Angabe wird benötigt');
+    });
+
+    it('should send, when form is filled correctly', async () => {
+      // Form page 1
+      const institutionNameSelect = await getSelect(loader, '#institutionName');
+      const firstnameInput = await getInput(loader, '#firstname');
+      const lastnameInput = await getInput(loader, '#lastname');
+      const phoneNoInput = await getInput(loader, '[data-cy=phoneNo]');
+      const emailInput = await getInput(loader, '[data-cy=email]');
+      const nextButton = getHtmlButtonElement(fixture.nativeElement, '#btn-nav-action-next');
+
+      await selectOption(institutionNameSelect, TEST_DATA.hospitalLocation.label);
+      await firstnameInput.setValue('Homer');
+      await lastnameInput.setValue('Simpson');
+      await phoneNoInput.setValue('0800123456');
+      await emailInput.setValue('homer@simpson.com');
+      await nextButton.click();
+
+      // Form page 2
+      const occupiedBedsAdultsInput = await getInput(loader, '#occupied-beds-adults-number-of-beds');
+      const occupiedBedsChildrenInput = await getInput(loader, '#occupied-beds-children-number-of-beds');
+
+      await occupiedBedsAdultsInput.setValue('10');
+      await occupiedBedsChildrenInput.setValue('5');
+
+      const submitButton = getHtmlButtonElement(fixture.nativeElement, '#btn-send-notification');
+
+      expect(await submitButton.disabled).toBeFalse();
+    });
+
+    describe('Validation of email and phone number', () => {
+      const parameters = {
+        email: [
+          { value: 'auch-ungueltig.de', expectedResult: 'Keine gültige E-Mail (Beispiel: meine.Email@email.de)' },
+          { value: '_@test_Me.too', expectedResult: 'Keine gültige E-Mail (Beispiel: meine.Email@email.de)' },
+          {
+            value: 'keinesonderzeichen´êa@ü?.djkd',
+            expectedResult: 'Keine gültige E-Mail (Beispiel: meine.Email@email.de)',
+          },
+          {
+            value:
+              'genau321Zeichen_nach_dem@Lorem-ipsum-dolor-sit-amet--consetetur-sadipscing-elitr--sed-diam-nonumy-eirmod-tempor-invidunt-ut-labore-et-dolore-magna-aliquyam-erat--sed-diam-voluptua.-At-vero-eos-et-accusam-et-justo-duo-dolores-et-ea-rebum.-Stet-clita-kasd-gubergren--no-sea-takimata-sanctus-est-Lorem-ipsum-dolor-sit-amet.-Lorem-ipsum-dolor-sit.com',
+            expectedResult: 'Keine gültige E-Mail (Beispiel: meine.Email@email.de)',
+          },
+        ],
+        phoneNumber: [
+          {
+            value: '1741236589',
+            expectedResult: 'Die Telefonnummer muss mit 0 oder + beginnen, gefolgt von mindestens 6 Ziffern.',
+          },
+          {
+            value: '01234',
+            expectedResult: 'Die Telefonnummer muss mit 0 oder + beginnen, gefolgt von mindestens 6 Ziffern.',
+          },
+          {
+            value: '0123456789abc',
+            expectedResult: 'Die Telefonnummer muss mit 0 oder + beginnen, gefolgt von mindestens 6 Ziffern.',
+          },
+          {
+            value: '(0049)1741236589',
+            expectedResult: 'Die Telefonnummer muss mit 0 oder + beginnen, gefolgt von mindestens 6 Ziffern.',
+          },
+        ],
+      };
+      parameters.email.forEach(parameter => {
+        it(`for the email, the value: '${parameter.value}' should throw the error: '${parameter.expectedResult}'`, async () => {
+          await (await getButton(loader, '#btn-email-adresse-hinzufügen')).click();
+          const emailInput = await getInput(loader, '[data-cy=email]');
+          await emailInput.setValue(parameter.value);
+          await emailInput.blur();
+
+          await checkDescribingError(emailInput, parameter.expectedResult);
+        });
+      });
+      parameters.phoneNumber.forEach(parameter => {
+        it(`for the phone number, the value: '${parameter.value}' should throw the error: '${parameter.expectedResult}'`, async () => {
+          await (await getButton(loader, '#btn-telefonnummer-hinzufügen')).click();
+          const phoneNoInput = await getInput(loader, '[data-cy=phoneNo]');
+          await phoneNoInput.setValue(parameter.value);
+          await phoneNoInput.blur();
+
+          await checkDescribingError(phoneNoInput, parameter.expectedResult);
+        });
       });
     });
-    parameters.phoneNumber.forEach(parameter => {
-      it(`for the phone number, the value: '${parameter.value}' should throw the error: '${parameter.expectedResult}'`, async () => {
-        await (await getButton(loader, '#btn-telefonnummer-hinzufügen')).click();
-        const phoneNoInput = await getInput(loader, '[data-cy=phoneNo]');
-        await phoneNoInput.setValue(parameter.value);
-        await phoneNoInput.blur();
 
-        await checkDescribingError(phoneNoInput, parameter.expectedResult);
-      });
+    it('should handle magic (aka HexHex) button click', async () => {
+      const hexHexButton = getHtmlButtonElement(fixture.point.nativeElement, '#btn-magic');
+      hexHexButton.click();
+      fixture.detectChanges();
+
+      const submitButton = await getButton(loader, '#btn-send-notification');
+
+      expect(await submitButton.isDisabled()).toBeFalse();
     });
+
+    itShouldSendWhenFormIsFilledCorrectlyByClipboard();
+
+    async function checkDescribingError(input: MatInputHarness, expectedResult: string) {
+      fixture.detectChanges();
+      const describedby = await (await input.host()).getAttribute('aria-describedby');
+      expect(describedby).withContext('input should have a describedby attribute').toBeTruthy();
+      const errorElement = fixture.nativeElement.querySelector(`mat-error#${describedby}`);
+      expect(errorElement).withContext('error element should be present').toBeTruthy();
+      const formlyError = errorElement.querySelector('formly-validation-message');
+      expect(formlyError).withContext('formly error should be present').toBeTruthy();
+      expect(formlyError.textContent).toContain(expectedResult);
+    }
   });
 
-  async function checkDescribingError(input: MatInputHarness, expectedResult: String) {
-    fixture.detectChanges();
-    const describedby = await (await input.host()).getAttribute('aria-describedby');
-    expect(describedby).withContext('input should have a describedby attribute').toBeTruthy();
-    const errorElement = fixture.nativeElement.querySelector(`mat-error#${describedby}`);
-    expect(errorElement).withContext('error element should be present').toBeTruthy();
-    const formlyError = errorElement.querySelector('formly-validation-message');
-    expect(formlyError).withContext('formly error should be present').toBeTruthy();
-    expect(formlyError.textContent).toContain(expectedResult);
-  }
+  describe('With feature flags', () => {
+    describe('FEATURE_FLAG_PORTAL_PASTEBOX and FEATURE_FLAG_PORTAL_REPEAT', () => {
+      beforeEach(testSetup);
+
+      beforeEach(() => {
+        environment.bedOccupancyConfig = {
+          featureFlags: {
+            FEATURE_FLAG_PORTAL_PASTEBOX: true,
+            FEATURE_FLAG_PORTAL_REPEAT: true,
+          },
+        };
+        fixture = MockRender(BedOccupancyComponent);
+        spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData');
+        spyOn(TestBed.inject(BedOccupancyStorageService), 'setLocalStorageBedOccupancyData');
+        spyOn(TestBed.inject(FhirBedOccupancyService), 'openSubmitDialog');
+        loader = TestbedHarnessEnvironment.loader(fixture);
+        fixture.detectChanges();
+      });
+
+      itShouldSendWhenFormIsFilledCorrectlyByClipboard();
+    });
+
+    afterAll(() => {
+      delete environment.bedOccupancyConfig.featureFlags;
+    });
+  });
 });
 
 describe('Validation of occupied and available beds', () => {
