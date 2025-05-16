@@ -26,6 +26,8 @@ config:
   files: { }
   featureFlags: #Always set this to false here; feature flags will then be activated as needed via the stage configurations.
     FEATURE_FLAG_PORTAL_ERROR_DIALOG: false
+    FEATURE_FLAG_PORTAL_REPEAT: false
+    FEATURE_FLAG_PORTAL_PASTEBOX: false
 
 # Extra Labels to be added
 # E.g.

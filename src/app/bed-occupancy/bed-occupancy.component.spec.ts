@@ -22,8 +22,11 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
+import { MessageDialogService } from '@gematik/demis-portal-core-library';
 import { MockBuilder, MockedComponentFixture, MockProvider, MockRender } from 'ng-mocks';
+import { NGXLogger } from 'ngx-logger';
 import { of, throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { ErrorMessageDialogComponent } from '../shared/dialogs/message-dialog/error-message-dialog.component';
 import { HospitalLocation } from '../shared/models/hospital-location';
 import { BedOccupancyStorageService } from '../shared/services/bed-occupancy-storage.service';
@@ -34,8 +37,6 @@ import { BedOccupancyModule } from './bed-occupancy.module';
 import { BedOccupancyConstants } from './common/bed-occupancy-constants';
 import { BedOccupancyNotificationFormDefinitionService } from './services/bed-occupancy-notification-form-definition.service';
 import { BedOccupancyClipboardDataService } from './services/clipboard/bed-occupancy-clipboard-data.service';
-import { environment } from '../../environments/environment';
-import { MessageDialogService } from '@gematik/demis-portal-core-library';
 
 const TEST_DATA = {
   hospitalLocation: {
@@ -91,6 +92,7 @@ describe('BedOccupancyComponent', () => {
         .provide(MockProvider(BedOccupancyClipboardDataService, overrides.bedOccupancyClipboardDataService))
         .provide(MockProvider(BedOccupancyNotificationFormDefinitionService, overrides.bedOccupancyNotificationFormDefinitionService))
         .provide(MockProvider(ActivatedRoute, overrides.activatedRoute))
+        .provide(MockProvider(NGXLogger))
     );
 
     beforeEach(() => {
@@ -206,6 +208,7 @@ describe('BedOccupancyComponent', () => {
         .provide(MockProvider(BedOccupancyClipboardDataService, overrides.bedOccupancyClipboardDataService))
         .provide(MockProvider(BedOccupancyNotificationFormDefinitionService, overrides.bedOccupancyNotificationFormDefinitionService))
         .provide(MockProvider(ActivatedRoute, overrides.activatedRoute))
+        .provide(MockProvider(NGXLogger))
     );
 
     beforeEach(() => {

@@ -1,12 +1,14 @@
 <mat-drawer-container>
   <mat-drawer class="tabs-navigation" mode="side" opened>
     <div>
-      <app-side-navigation-stepper
-        [currentStep]="currentStep"
-        [steps]="steps"
-      ></app-side-navigation-stepper>
+      <app-side-navigation-stepper [steps]="steps" [currentStep]="currentStep"></app-side-navigation-stepper>
       <app-hexhexbutton (paste)="handleHexhexButtonClick()"></app-hexhexbutton>
+      @if(FEATURE_FLAG_PORTAL_PASTEBOX) {
+      <gem-demis-paste-box (dataPasted)="onClipboardDataPasted($event)"></gem-demis-paste-box>
+      }
+      @else {
       <app-paste-box (paste)="handlePasteBoxClick()"></app-paste-box>
+      }
     </div>
   </mat-drawer>
   <mat-drawer-content>

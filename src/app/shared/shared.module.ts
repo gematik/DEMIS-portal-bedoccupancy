@@ -48,7 +48,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DemisPortalSharedModule } from '@gematik/demis-portal-core-library';
+import { DemisPortalSharedModule, FormlyRepeaterComponent } from '@gematik/demis-portal-core-library';
 
 @NgModule({
   declarations: [
@@ -63,7 +63,10 @@ import { DemisPortalSharedModule } from '@gematik/demis-portal-core-library';
     CommonModule,
     NotificationFormValidationModule,
     FormlyModule.forRoot({
-      types: [{ name: 'repeat', component: RepeatComponent }],
+      types: [
+        { name: 'repeater', component: FormlyRepeaterComponent },
+        { name: 'repeat', component: RepeatComponent },
+      ],
       wrappers: [
         { name: 'validation', component: ValidationWrapperComponent },
         { name: 'expansion-panel', component: ExpansionPanelWrapperComponent },

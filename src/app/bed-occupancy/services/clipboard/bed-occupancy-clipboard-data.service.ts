@@ -38,7 +38,10 @@ export class BedOccupancyClipboardDataService extends ClipboardDataService {
 
   clipboardData$ = this.clipboardData.asObservable();
 
-  fillBedOccupancyWithClipBoardData() {
+  /**
+   * @deprecated Use {@link updateBedOccupancy} instead, once FEATURE_FLAG_PORTAL_PASTEBOX will be removed
+   */
+  fillBedOccupancyWithClipBoardData(): void {
     this.validateClipBoardData()
       .pipe(take(1))
       .subscribe(validatedMap => {
@@ -48,7 +51,7 @@ export class BedOccupancyClipboardDataService extends ClipboardDataService {
       });
   }
 
-  private updateBedOccupancy(clipboardMap: Map<string, string>): void {
+  updateBedOccupancy(clipboardMap: Map<string, string>): void {
     const bedquestion = this.setBedOccupancyQuestionFromClipBoard(clipboardMap);
     this.clipboardData.next({
       bedOccupancyQuestion: bedquestion,

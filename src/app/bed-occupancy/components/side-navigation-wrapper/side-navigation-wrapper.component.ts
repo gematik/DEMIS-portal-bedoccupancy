@@ -14,10 +14,11 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormlyFieldConfig } from '@ngx-formly/core';
-import { BedOccupancyNotificationFormDefinitionService } from '../../services/bed-occupancy-notification-form-definition.service';
-import { BedOccupancyClipboardDataService } from '../../services/clipboard/bed-occupancy-clipboard-data.service';
+import { BedOccupancyNotificationFormDefinitionService } from 'src/app/bed-occupancy/services/bed-occupancy-notification-form-definition.service';
+import { BedOccupancyClipboardDataService } from 'src/app/bed-occupancy/services/clipboard/bed-occupancy-clipboard-data.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-side-navigation-wrapper',
@@ -32,16 +33,25 @@ export class SideNavigationWrapperComponent {
   @Input() steps: FormlyFieldConfig[];
   @Input() model: any;
 
-  constructor(
-    private BedOccupancyClipboardDataService: BedOccupancyClipboardDataService,
-    private BedOccupancyNotificationFormDefinitionService: BedOccupancyNotificationFormDefinitionService
-  ) {}
+  readonly bedOccupancyClipboardDataService = inject(BedOccupancyClipboardDataService);
+  private readonly bedOccupancyNotificationFormDefinitionService = inject(BedOccupancyNotificationFormDefinitionService);
 
+  get FEATURE_FLAG_PORTAL_PASTEBOX() {
+    return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_PASTEBOX ?? false;
+  }
+
+  onClipboardDataPasted(clipboardData: Map<string, string>) {
+    this.bedOccupancyClipboardDataService.updateBedOccupancy(clipboardData);
+  }
+
+  /**
+   * @deprecated Use {@link onClipboardDataPasted} instead, once FEATURE_FLAG_PORTAL_PASTEBOX will be removed
+   */
   handlePasteBoxClick() {
-    this.BedOccupancyClipboardDataService.fillBedOccupancyWithClipBoardData();
+    this.bedOccupancyClipboardDataService.fillBedOccupancyWithClipBoardData();
   }
 
   handleHexhexButtonClick() {
-    this.BedOccupancyNotificationFormDefinitionService.handleHexHex();
+    this.bedOccupancyNotificationFormDefinitionService.handleHexHex();
   }
 }

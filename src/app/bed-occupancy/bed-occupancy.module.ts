@@ -30,7 +30,7 @@ import { FormlyModule } from '@ngx-formly/core';
 import { FormlySelectModule } from '@ngx-formly/core/select';
 import { AuthInterceptor } from '../shared/auth.interceptor';
 import { HexhexbuttonComponent } from '../shared/components/hexhexbutton/hexhexbutton.component';
-import { PasteBoxComponent } from '../shared/components/paste-box/paste-box.component';
+import { BedOccupancyPasteBoxComponent } from '../shared/components/paste-box/paste-box.component';
 import { BedOccupancyComponent } from './bed-occupancy.component';
 import { BedOccupancyConstants } from './common/bed-occupancy-constants';
 import { FormWrapperComponent } from './components/form-wrapper/form-wrapper.component';
@@ -41,6 +41,7 @@ import { BedOccupancyClipboardDataService } from './services/clipboard/bed-occup
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
 import { MatButton } from '@angular/material/button';
+import { PasteBoxComponent } from '@gematik/demis-portal-core-library';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { MatButton } from '@angular/material/button';
     SideNavigationStepperComponent,
     BedOccupancyComponent,
     HexhexbuttonComponent,
-    PasteBoxComponent,
+    // TODO: Remove this component once FEATURE_FLAG_PORTAL_PASTEBOX will be removed
+    BedOccupancyPasteBoxComponent,
   ],
   imports: [
     CommonModule,
@@ -74,6 +76,7 @@ import { MatButton } from '@angular/material/button';
     RouterModule,
     MatIconModule,
     MatButton,
+    PasteBoxComponent,
   ],
   providers: [
     BedOccupancyClipboardDataService,

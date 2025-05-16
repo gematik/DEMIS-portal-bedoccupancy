@@ -18,6 +18,7 @@ import { ContactPointInfo } from 'src/api/notification';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { EMAIL_MAX_LENGTH, PHONE_MAX_LENGTH } from '../../../common-utils';
 import { FormlyConstants } from '../formly-constants';
+import { environment } from '../../../../../environments/environment';
 import ContactTypeEnum = ContactPointInfo.ContactTypeEnum;
 import UsageEnum = ContactPointInfo.UsageEnum;
 
@@ -37,97 +38,109 @@ export const contactsFormConfigFields: (needsContact: boolean, hospitalizationPe
   },
   {
     key: 'contacts',
-    fieldGroup: [
-      {
-        key: 'phoneNumbers',
-        id: 'phoneNumbers',
-        type: 'repeat',
-        className: 'bed-occupancy-contact-button',
-        wrappers: ['validation'],
-        props: {
-          addText: 'Telefonnummer hinzufügen',
-          keepLastItem: needsContact,
-          isContact: true,
-        },
-        fieldArray: {
-          fieldGroupClassName: 'd-flex flex-column',
-          fieldGroup: [
-            {
-              key: 'contactType',
-              defaultValue: ContactTypeEnum.Phone,
-            },
-            {
-              key: 'usage',
-              defaultValue: needsContact ? UsageEnum.Work : undefined,
-            },
-            {
-              className: 'flex-grow-1',
-              type: 'input',
-              // id: 'phoneNo', // keep for Tests
-              key: 'value',
-              defaultValue: '',
-              props: {
-                label: 'Telefonnummer',
-                maxLength: PHONE_MAX_LENGTH,
-                required: true,
-                attributes: { 'data-cy': 'phoneNo' },
-              },
-              validators: {
-                validation: ['phoneValidator'],
-              },
-              validation: {
-                show: true,
-              },
-              expressions: {
-                'validation.show': (model: { value: any }) => !!model.value,
-              },
-            },
-          ],
-        },
-      },
-      {
-        id: 'emailAddresses',
-        key: 'emailAddresses',
-        type: 'repeat',
-        className: 'bed-occupancy-contact-button',
-        wrappers: ['validation'],
-        props: {
-          addText: 'Email-Adresse hinzufügen',
-          keepLastItem: needsContact,
-          isContact: true,
-        },
-        fieldArray: {
-          fieldGroupClassName: 'd-flex flex-column',
-          fieldGroup: [
-            {
-              key: 'contactType',
-              defaultValue: ContactTypeEnum.Email,
-            },
-            {
-              className: 'flex-grow-1',
-              type: 'input',
-              // id: 'email', // keep for Tests
-              key: 'value',
-              defaultValue: '',
-              props: {
-                label: 'Email-Adresse',
-                required: true,
-                maxLength: EMAIL_MAX_LENGTH,
-                attributes: { 'data-cy': 'email' },
-              },
-              validators: {
-                validation: ['emailValidator'],
-              },
-              validation: {
-                show: true,
-              },
-              expressions: {
-                'validation.show': (model: { value: any }) => !!model.value,
-              },
-            },
-          ],
-        },
-      },
-    ],
+    fieldGroup: createContactSection(needsContact),
   },
 ];
+
+function createContactSection(needsContact: boolean): FormlyFieldConfig[] {
+  return [
+    createRepeatableContactField(
+      {
+        key: 'phoneNumbers',
+        inputFeldLabel: 'Telefonnummer',
+        inputMaxLength: PHONE_MAX_LENGTH,
+        validatorName: 'phoneValidator',
+        idForTest: 'phoneNo',
+        requiredExpression: (field: FormlyFieldConfig) => field.form?.get('emailAddresses')?.value.length === 0,
+        defaultContactType: ContactTypeEnum.Phone,
+      },
+      needsContact
+    ),
+
+    createRepeatableContactField(
+      {
+        key: 'emailAddresses',
+        inputFeldLabel: 'Email-Adresse',
+        inputMaxLength: EMAIL_MAX_LENGTH,
+        validatorName: 'emailValidator',
+        idForTest: 'email',
+        requiredExpression: (field: FormlyFieldConfig) => field.form?.get('phoneNumbers')?.value.length === 0,
+        defaultContactType: ContactTypeEnum.Email,
+      },
+      needsContact
+    ),
+  ];
+}
+
+function createRepeatableContactField(config: ContactFieldConfig, needsContact: boolean): FormlyFieldConfig {
+  const featureFlagPortalRepeat = environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_REPEAT;
+
+  return {
+    key: config.key,
+    id: config.key,
+    type: featureFlagPortalRepeat ? 'repeater' : 'repeat',
+    className: 'bed-occupancy-contact-button',
+    wrappers: ['validation'],
+    props: featureFlagPortalRepeat
+      ? {
+          addButtonLabel: config.inputFeldLabel + ' hinzufügen',
+        }
+      : {
+          addText: config.inputFeldLabel + ' hinzufügen',
+          keepLastItem: needsContact,
+          isContact: true,
+        },
+    expressions: featureFlagPortalRepeat
+      ? {
+          'props.required': needsContact ? config.requiredExpression : () => false,
+        }
+      : undefined,
+    defaultValue: needsContact ? [{}] : undefined,
+    fieldArray: {
+      className: featureFlagPortalRepeat ? FormlyConstants.COLMD11 : undefined,
+      fieldGroupClassName: !featureFlagPortalRepeat ? 'd-flex flex-column' : undefined,
+      fieldGroup: [
+        {
+          key: 'contactType',
+          defaultValue: config.defaultContactType,
+        },
+        {
+          key: 'usage',
+          defaultValue: needsContact ? UsageEnum.Work : undefined,
+        },
+        {
+          className: 'flex-grow-1',
+          type: 'input',
+          key: 'value',
+          defaultValue: '',
+          props: {
+            label: config.inputFeldLabel,
+            required: true,
+            maxLength: config.inputMaxLength,
+            attributes: { 'data-cy': config.idForTest },
+          },
+          validators: {
+            validation: [config.validatorName],
+          },
+          validation: {
+            show: true,
+          },
+          expressions: {
+            'validation.show': (model: any) => !!model?.value,
+          },
+        },
+      ],
+    },
+  };
+}
+
+interface ContactFieldConfig {
+  key: 'phoneNumbers' | 'emailAddresses';
+  inputFeldLabel: string;
+  inputMaxLength: number;
+  validatorName: string;
+  idForTest: string;
+  requiredExpression?: (field: FormlyFieldConfig) => boolean;
+  defaultContactType: ContactTypeEnum;
+  requiredSiblingKey?: string;
+}
