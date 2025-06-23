@@ -29,7 +29,9 @@ import { BedOccupancyModule } from './bed-occupancy/bed-occupancy.module';
 import { EmptyrouteComponent } from './emptyroute/emptyroute.component';
 import { environment } from '../environments/environment';
 import { SharedModule } from './shared/shared.module';
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormlyModule } from '@ngx-formly/core';
+import { defaultAppearanceExtension, defaultPlaceholderExtension } from './shared/formly-extensions';
 
 @NgModule({
   declarations: [AppComponent, EmptyrouteComponent],
@@ -46,14 +48,19 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/mat
     BedOccupancyModule,
     MatFormFieldModule,
     LoggerModule.forRoot(environment.defaultNgxLoggerConfig),
+    FormlyModule.forRoot({
+      extensions: [
+        {
+          name: 'default-placeholder',
+          extension: defaultPlaceholderExtension,
+        },
+        {
+          name: 'default-appearance',
+          extension: defaultAppearanceExtension,
+        },
+      ],
+    }),
   ],
-  providers: [
-    IconLoaderService,
-    {
-      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
-      useValue: { appearance: 'fill' },
-    },
-    provideHttpClient(withInterceptorsFromDi()),
-  ],
+  providers: [IconLoaderService, provideHttpClient(withInterceptorsFromDi())],
 })
 export class AppModule {}

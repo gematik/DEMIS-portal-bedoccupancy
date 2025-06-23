@@ -15,10 +15,10 @@
       <mat-tab
         [label]="tab.props.label"
       >
-        <div class="container">
+        <gem-demis-max-height-content-container [elementSelectorsToSubtract]="['app-navbar', '#bedoccupancy-tab-headline', '#bedoccupancy-tab-section-header', '#bedoccupancy-actions-bar']">
           <formly-field [field]="tab"></formly-field>
-        </div>
-        <mat-toolbar>
+        </gem-demis-max-height-content-container>
+        <mat-toolbar id="bedoccupancy-actions-bar">
           <mat-toolbar-row>
             <div>
               @if (!$first) {

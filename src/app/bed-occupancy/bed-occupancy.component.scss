@@ -9,4 +9,8 @@
       padding-top: 4px;
     }
   }
+
+  formly-group.row formly-field formly-wrapper-mat-form-field mat-form-field {
+    margin-bottom: 10px;
+  }
 }
