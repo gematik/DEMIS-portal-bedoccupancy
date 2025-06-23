@@ -71,6 +71,8 @@ export const ZIP_GERMANY_ERROR_MSG: string = 'Die Postleitzahl muss aus 5 Ziffer
 export const ZIP_INTERNATIONAL_ERROR_MSG: string = 'Die Postleitzahl muss aus mindestens 3 Zeichen und einer Ziffer bestehen';
 export const NUMBER_OF_BEDS_ERROR_MSG: string = 'Bitte geben Sie eine positive Zahl kleiner 1000000 ein.';
 export const EMPTY_DROPDOWN_MENU_MSG: string = 'Es konnten keine Standorte zu Ihrem Institutionskennzeichen gefunden werden!';
+export const VALUE_DEFAULT_PLACEHOLDER: string = 'Bitte eingeben';
+export const VALUE_DEFUALT_SELECT_PLACEHOLDER = 'Bitte auswählen';
 
 // FUNCTIONS:...............................
 
