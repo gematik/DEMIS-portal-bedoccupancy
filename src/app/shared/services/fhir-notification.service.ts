@@ -16,7 +16,7 @@
 
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BedOccupancy, Notification } from 'src/api/notification';
+import { BedOccupancy } from 'src/api/notification';
 import { NGXLogger } from 'ngx-logger';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';

@@ -16,14 +16,13 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BedOccupancy, Notification } from 'src/api/notification';
+import { BedOccupancy } from 'src/api/notification';
 import { NGXLogger } from 'ngx-logger';
 import { SubmitNotificationDialogComponent } from '../dialogs/submit-notification-dialog/submit-notification-dialog.component';
 import { FhirNotificationService } from './fhir-notification.service';
 import { ValidateBedOccupancyNotificationService } from './validate-bed-occupancy-notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { cloneObject } from '@gematik/demis-portal-core-library';
-import NotificationTypeEnum = Notification.NotificationTypeEnum;
 
 @Injectable({
   providedIn: 'root',
@@ -78,10 +77,7 @@ export class FhirBedOccupancyService extends FhirNotificationService {
       minHeight: '40vh',
       panelClass: 'app-submit-notification-dialog-panel',
       data: {
-        notification: {
-          notificationType: NotificationTypeEnum.BedOccupancy,
-          bedOccupancy: notification,
-        } as Notification,
+        notification: notification,
         fhirService: this,
       },
     });
