@@ -16,7 +16,7 @@
 
 import { Component, Inject, OnInit, SecurityContext, TemplateRef, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { BedOccupancy, Notification, OkResponse } from 'src/api/notification';
+import { BedOccupancy, OkResponse } from 'src/api/notification';
 import { NGXLogger } from 'ngx-logger';
 import { ErrorResult, MessageType, SuccessResult } from '../../models/ui/message';
 import { FhirNotificationService } from '../../services/fhir-notification.service';
@@ -25,7 +25,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
 export interface SubmitNotificationDialogData {
-  notification: Notification;
+  notification: BedOccupancy;
   fhirService: FhirNotificationService;
 }
 
@@ -57,7 +57,7 @@ export class SubmitNotificationDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.notification = { ...this.data.notification.bedOccupancy };
+    this.notification = { ...this.data.notification };
     this.submitNotification();
   }
 

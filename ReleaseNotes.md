@@ -2,8 +2,11 @@
 
 # Release portal-bedoccupancy
 
+# Release 1.4.5
+- Updated data model
+
 ## Release 1.4.4
-- changed inputs to outline style
+- Changed inputs to outline style
 - Updated Readme license disclaimer
 
 ## Release 1.4.3
