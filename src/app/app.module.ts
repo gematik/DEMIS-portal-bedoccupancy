@@ -32,6 +32,7 @@ import { SharedModule } from './shared/shared.module';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormlyModule } from '@ngx-formly/core';
 import { defaultAppearanceExtension, defaultPlaceholderExtension } from './shared/formly-extensions';
+import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 
 @NgModule({
   declarations: [AppComponent, EmptyrouteComponent],
@@ -61,6 +62,6 @@ import { defaultAppearanceExtension, defaultPlaceholderExtension } from './share
       ],
     }),
   ],
-  providers: [IconLoaderService, provideHttpClient(withInterceptorsFromDi())],
+  providers: [IconLoaderService, provideHttpClient(withInterceptorsFromDi()), JwtHelperService, { provide: JWT_OPTIONS, useValue: {} }],
 })
 export class AppModule {}

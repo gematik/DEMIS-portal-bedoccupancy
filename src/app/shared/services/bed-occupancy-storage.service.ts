@@ -15,19 +15,22 @@
  */
 
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
 import { BedOccupancyNotifierFacility } from 'src/api/notification';
 import { environment } from '../../../environments/environment';
 import { HospitalLocation } from '../models/hospital-location';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BedOccupancyStorageService {
-  constructor(private httpClient: HttpClient) {}
+  private readonly jwtHelper = inject(JwtHelperService);
+
+  constructor(private readonly httpClient: HttpClient) {}
 
   fetchHospitalLocations(): Observable<HospitalLocation[]> {
     const ik = this.getIkNumber();
@@ -38,14 +41,14 @@ export class BedOccupancyStorageService {
 
   getIkNumber(): string {
     const jwt = window['token'];
-    const payload = JSON.parse(atob(jwt.split('.')[1])); // Decode JWT payload
-    const ik = payload.ik;
+    const decodedToken = this.jwtHelper.decodeToken(jwt);
+    const ik = decodedToken.ik;
     // Check if 'ik' matches the regex pattern for 9 digits
     const regex = /^\d{9}$/;
     if (typeof ik === 'string' && regex.test(ik)) {
       return ik;
     }
-    const preferredUsername = payload.preferred_username;
+    const preferredUsername = decodedToken.preferred_username;
     if (!preferredUsername || !preferredUsername.startsWith('5-2-')) {
       console.warn(`the preferredUsername '${preferredUsername}' is blank or does not start with '5-2-'`);
       return null;
