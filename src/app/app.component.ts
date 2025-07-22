@@ -20,6 +20,7 @@ import { Component } from '@angular/core';
   selector: 'bed-occupancy-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  standalone: false,
 })
 export class AppComponent {
   title = 'portal-bedoccupancy';

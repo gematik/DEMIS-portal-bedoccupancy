@@ -2,6 +2,11 @@
 
 # Release portal-bedoccupancy
 
+# Release 1.4.7
+- Update to Angular 19 version
+- Update Portal-Core Library version
+
+
 # Release 1.4.6
 - Fixed JWT token decoding
 

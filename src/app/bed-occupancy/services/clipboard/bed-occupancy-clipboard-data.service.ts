@@ -14,7 +14,7 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BedOccupancyQuestion } from 'src/api/notification';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, take } from 'rxjs';
@@ -27,13 +27,22 @@ import { MessageDialogService } from '@gematik/demis-portal-core-library';
   providedIn: 'root',
 })
 export class BedOccupancyClipboardDataService extends ClipboardDataService {
+  override dialog: MatDialog;
+  override logger: NGXLogger;
+  protected override messageDialogeService: MessageDialogService;
+
   private clipboardData = new BehaviorSubject<any>(null);
-  constructor(
-    public override dialog: MatDialog,
-    public override logger: NGXLogger,
-    protected override messageDialogeService: MessageDialogService
-  ) {
-    super(dialog, logger, messageDialogeService);
+
+  constructor() {
+    const dialog = inject(MatDialog);
+    const logger = inject(NGXLogger);
+    const messageDialogeService = inject(MessageDialogService);
+
+    super();
+
+    this.dialog = dialog;
+    this.logger = logger;
+    this.messageDialogeService = messageDialogeService;
   }
 
   clipboardData$ = this.clipboardData.asObservable();

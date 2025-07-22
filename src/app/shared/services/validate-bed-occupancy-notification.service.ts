@@ -14,7 +14,7 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BedOccupancy, BedOccupancyNotifierFacility, BedOccupancyQuestion, OccupiedBeds, OperableBeds } from 'src/api/notification';
 import { checkNumberOfBeds } from '../notification-form-validation-module';
 import { ValidateNotificationService } from '../services/validate-notification.service';
@@ -23,7 +23,7 @@ import { ValidateNotificationService } from '../services/validate-notification.s
   providedIn: 'root',
 })
 export class ValidateBedOccupancyNotificationService {
-  constructor(private validator: ValidateNotificationService) {}
+  private readonly validator = inject(ValidateNotificationService);
 
   validateNotification(bedOccupancy: BedOccupancy): boolean {
     return (

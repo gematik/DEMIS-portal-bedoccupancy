@@ -15,7 +15,7 @@
  */
 
 import { FocusMonitor } from '@angular/cdk/a11y';
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, inject } from '@angular/core';
 import { FieldWrapper } from '@ngx-formly/core';
 import { Subject } from 'rxjs';
 
@@ -23,15 +23,16 @@ import { Subject } from 'rxjs';
   selector: 'app-validation-wrapper',
   templateUrl: './validation-wrapper.component.html',
   styleUrls: ['./validation-wrapper.component.scss'],
+  standalone: false,
 })
 export class ValidationWrapperComponent extends FieldWrapper implements OnInit {
+  private readonly focusMonitor = inject(FocusMonitor);
+  private readonly elementRef = inject(ElementRef);
+
   stateChanges = new Subject<void>();
   _errorState = false;
 
-  constructor(
-    private focusMonitor: FocusMonitor,
-    private elementRef: ElementRef
-  ) {
+  constructor() {
     super();
   }
 

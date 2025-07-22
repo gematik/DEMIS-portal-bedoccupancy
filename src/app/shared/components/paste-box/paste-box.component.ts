@@ -14,7 +14,7 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, OnInit, output } from '@angular/core';
 
 /**
  * @deprecated Not needed anymore, once FEATURE_FLAG_PORTAL_PASTEBOX will be removed
@@ -23,15 +23,15 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
   selector: 'app-paste-box',
   templateUrl: './paste-box.component.html',
   styleUrls: ['./paste-box.component.scss'],
+  standalone: false,
 })
 export class BedOccupancyPasteBoxComponent implements OnInit {
-  @Output() paste = new EventEmitter<void>();
-  @Input() buttonId!: string;
+  readonly paste = output<void>();
 
   constructor() {}
 
   doPaste() {
-    this.paste.emit();
+    this.paste.emit(undefined);
   }
 
   ngOnInit(): void {}

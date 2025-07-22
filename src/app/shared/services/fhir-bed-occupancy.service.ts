@@ -15,7 +15,7 @@
  */
 
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BedOccupancy } from 'src/api/notification';
 import { NGXLogger } from 'ngx-logger';
 import { SubmitNotificationDialogComponent } from '../dialogs/submit-notification-dialog/submit-notification-dialog.component';
@@ -28,13 +28,19 @@ import { cloneObject } from '@gematik/demis-portal-core-library';
   providedIn: 'root',
 })
 export class FhirBedOccupancyService extends FhirNotificationService {
-  constructor(
-    protected override httpClient: HttpClient,
-    protected override logger: NGXLogger,
-    public dialog: MatDialog,
-    private validateBedOccupancyService: ValidateBedOccupancyNotificationService
-  ) {
-    super(httpClient, logger);
+  protected override httpClient: HttpClient;
+  protected override logger: NGXLogger;
+  dialog = inject(MatDialog);
+  private readonly validateBedOccupancyService = inject(ValidateBedOccupancyNotificationService);
+
+  constructor() {
+    const httpClient = inject(HttpClient);
+    const logger = inject(NGXLogger);
+
+    super();
+
+    this.httpClient = httpClient;
+    this.logger = logger;
   }
 
   transformData(originalData: BedOccupancy): any {

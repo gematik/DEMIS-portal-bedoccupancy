@@ -18,6 +18,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'stringFormat',
+  standalone: false,
 })
 export class StringFormatPipe implements PipeTransform {
   transform(value: any, ...args: any[]): string {

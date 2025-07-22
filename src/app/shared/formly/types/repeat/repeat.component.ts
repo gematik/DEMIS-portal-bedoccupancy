@@ -20,6 +20,7 @@ import { FieldArrayType, FormlyFieldConfig } from '@ngx-formly/core';
 @Component({
   selector: 'app-repeat',
   templateUrl: './repeat.component.html',
+  standalone: false,
 })
 export class RepeatComponent extends FieldArrayType {
   constructor() {

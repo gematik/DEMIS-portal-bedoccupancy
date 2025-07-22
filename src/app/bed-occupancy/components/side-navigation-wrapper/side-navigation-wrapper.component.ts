@@ -14,7 +14,7 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { BedOccupancyNotificationFormDefinitionService } from 'src/app/bed-occupancy/services/bed-occupancy-notification-form-definition.service';
 import { BedOccupancyClipboardDataService } from 'src/app/bed-occupancy/services/clipboard/bed-occupancy-clipboard-data.service';
@@ -24,14 +24,15 @@ import { environment } from 'src/environments/environment';
   selector: 'app-side-navigation-wrapper',
   templateUrl: './side-navigation-wrapper.component.html',
   styleUrls: ['./side-navigation-wrapper.component.scss'],
+  standalone: false,
 })
 export class SideNavigationWrapperComponent {
-  @Input() currentStep = 0;
-  @Input() maxNumberOfSteps = 0;
-  @Input() headline = '';
-  @Input() currentStepHeadline = '';
-  @Input() steps: FormlyFieldConfig[];
-  @Input() model: any;
+  readonly currentStep = input(0);
+  readonly maxNumberOfSteps = input(0);
+  readonly headline = input('');
+  readonly currentStepHeadline = input('');
+  readonly steps = input<FormlyFieldConfig[]>(undefined);
+  readonly model = input<any>(undefined);
 
   readonly bedOccupancyClipboardDataService = inject(BedOccupancyClipboardDataService);
   private readonly bedOccupancyNotificationFormDefinitionService = inject(BedOccupancyNotificationFormDefinitionService);
