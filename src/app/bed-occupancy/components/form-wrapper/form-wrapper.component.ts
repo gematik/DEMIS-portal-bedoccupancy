@@ -14,7 +14,7 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FieldType, FormlyFieldConfig } from '@ngx-formly/core';
 
@@ -22,12 +22,15 @@ import { FieldType, FormlyFieldConfig } from '@ngx-formly/core';
   selector: 'app-form-wrapper',
   templateUrl: './form-wrapper.component.html',
   styleUrls: ['./form-wrapper.component.scss'],
+  standalone: false,
 })
 export class FormWrapperComponent extends FieldType implements OnInit {
+  private readonly route = inject(ActivatedRoute);
+
   selectedIndex = 0;
   currentFragment = '';
 
-  constructor(private route: ActivatedRoute) {
+  constructor() {
     super();
   }
 

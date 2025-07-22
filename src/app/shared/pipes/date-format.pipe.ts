@@ -20,6 +20,7 @@ import { UI_DATE_FORMAT } from '../common-utils';
 
 @Pipe({
   name: 'dateFormat',
+  standalone: false,
 })
 export class DateFormatPipe implements PipeTransform {
   transform(date: Date): string {

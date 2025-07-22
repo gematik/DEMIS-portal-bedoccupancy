@@ -14,7 +14,7 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BedOccupancy } from 'src/api/notification';
 import { HospitalLocation } from 'src/app/shared/models/hospital-location';
@@ -40,8 +40,16 @@ import { MessageDialogService } from '@gematik/demis-portal-core-library';
   selector: 'app-bed-occupancy',
   templateUrl: './bed-occupancy.component.html',
   styleUrls: ['./bed-occupancy.component.scss'],
+  standalone: false,
 })
 export class BedOccupancyComponent implements OnInit, OnDestroy {
+  private readonly bedOccupancyStorageService = inject(BedOccupancyStorageService);
+  dialog = inject(MatDialog);
+  private readonly fhirBedOccupancyService = inject(FhirBedOccupancyService);
+  private readonly BedOccupancyClipboardDataService = inject(BedOccupancyClipboardDataService);
+  private readonly BedOccupancyNotificationFormDefinitionService = inject(BedOccupancyNotificationFormDefinitionService);
+  private readonly messageDialogeService = inject(MessageDialogService);
+
   hospitalLocations: HospitalLocation[] = [];
   hospitalLocationsSubscription: Subscription | undefined;
   form = new FormGroup({});
@@ -74,14 +82,7 @@ export class BedOccupancyComponent implements OnInit, OnDestroy {
   private copyPasteBoxData: Subscription;
   private copyHexHexButtonData: Subscription;
 
-  constructor(
-    private bedOccupancyStorageService: BedOccupancyStorageService,
-    public dialog: MatDialog,
-    private fhirBedOccupancyService: FhirBedOccupancyService,
-    private BedOccupancyClipboardDataService: BedOccupancyClipboardDataService,
-    private BedOccupancyNotificationFormDefinitionService: BedOccupancyNotificationFormDefinitionService,
-    private messageDialogeService: MessageDialogService
-  ) {
+  constructor() {
     this.copyPasteBoxData = this.BedOccupancyClipboardDataService.clipboardData$.subscribe(data => {
       this.handlePasteBoxOrHexhexChange(data);
     });

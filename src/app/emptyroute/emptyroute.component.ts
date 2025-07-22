@@ -20,5 +20,6 @@ import { Component } from '@angular/core';
   selector: 'np-mf-bo-emptyroute',
   templateUrl: './emptyroute.component.html',
   styleUrls: ['./emptyroute.component.scss'],
+  standalone: false,
 })
 export class EmptyrouteComponent {}

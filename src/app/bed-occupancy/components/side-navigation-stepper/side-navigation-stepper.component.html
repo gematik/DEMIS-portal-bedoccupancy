@@ -1,10 +1,10 @@
 <mat-stepper
   orientation="vertical"
-  [selectedIndex]="currentStep"
+  [selectedIndex]="currentStep()"
   (selectionChange)="onStepChange($event)"
   id="stepper-form-test"
 >
-  @for(step of steps; track step.id) {
+  @for(step of steps(); track step.id) {
     <mat-step
       label="{{ step.props.label }}"
       [completed]="isTouchedAndValid(step)"
@@ -23,22 +23,22 @@
       <!-- Active State/Default State-->
       <ng-template matStepperIcon="number" let-index="index">
         <mat-icon
-          id="step-valid-{{ step.fieldGroup[currentStep].key }}"
-          *ngIf="isTouchedAndValid(steps[index])"
+          id="step-valid-{{ step.fieldGroup[currentStep()].key }}"
+          *ngIf="isTouchedAndValid(steps()[index])"
           >done</mat-icon
         >
         <mat-icon
-          id="step-invalid-{{ step.fieldGroup[currentStep].key }}"
+          id="step-invalid-{{ step.fieldGroup[currentStep()].key }}"
           *ngIf="
-            steps[index].formControl.touched && !isTouchedAndValid(steps[index])
+            steps()[index].formControl.touched && !isTouchedAndValid(steps()[index])
           "
           >close</mat-icon
         >
 
         <mat-icon
-          id="step-default-{{ step.fieldGroup[currentStep].key }}"
+          id="step-default-{{ step.fieldGroup[currentStep()].key }}"
           *ngIf="
-            !steps[index].formControl.touched && !isTouchedAndValid(steps[index])
+            !steps()[index].formControl.touched && !isTouchedAndValid(steps()[index])
           "
         ></mat-icon>
       </ng-template>

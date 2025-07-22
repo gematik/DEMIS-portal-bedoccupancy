@@ -90,10 +90,10 @@
           "builder": "@angular-builders/custom-webpack:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "portal-bedoccupancy:build:production"
+              "buildTarget": "portal-bedoccupancy:build:production"
             },
             "development": {
-              "browserTarget": "portal-bedoccupancy:build:development"
+              "buildTarget": "portal-bedoccupancy:build:development"
             }
           },
           "defaultConfiguration": "development"

@@ -14,7 +14,7 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { DialogNotificationData, ErrorResult, MessageType } from '../../models/ui/message';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
@@ -26,11 +26,12 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   selector: 'app-message-dialog',
   templateUrl: './error-message-dialog.component.html',
   styleUrls: ['./error-message-dialog.component.scss'],
+  standalone: false,
 })
 export class ErrorMessageDialogComponent implements OnInit {
-  displayedColumns: string[] = ['field', 'message'];
+  error = inject<ErrorResult>(MAT_DIALOG_DATA);
 
-  constructor(@Inject(MAT_DIALOG_DATA) public error: ErrorResult) {}
+  displayedColumns: string[] = ['field', 'message'];
 
   ngOnInit(): void {}
 

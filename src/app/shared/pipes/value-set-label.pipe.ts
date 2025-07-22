@@ -14,7 +14,7 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, inject } from '@angular/core';
 import { ValueSetService } from '../services/value-set.service';
 import { map } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
@@ -23,7 +23,7 @@ import { Observable, of } from 'rxjs';
   name: 'valueSetLabel',
 })
 export class ValueSetLabelPipe implements PipeTransform {
-  constructor(private valueSetService: ValueSetService) {}
+  private readonly valueSetService = inject(ValueSetService);
 
   transform(value: string, valueSetName: string): Observable<string | undefined> {
     if (value && valueSetName) {

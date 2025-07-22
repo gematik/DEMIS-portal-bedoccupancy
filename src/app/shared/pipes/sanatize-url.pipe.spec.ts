@@ -14,11 +14,21 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
+import { TestBed } from '@angular/core/testing';
 import { SanitizeUrlPipe } from './sanatize-url.pipe';
+import { DomSanitizer } from '@angular/platform-browser';
 
 describe('SanatizeUrlPipe', () => {
+  let pipe: SanitizeUrlPipe;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [SanitizeUrlPipe, DomSanitizer],
+    });
+    pipe = TestBed.inject(SanitizeUrlPipe);
+  });
+
   it('create an instance', () => {
-    const pipe = new SanitizeUrlPipe(null);
     expect(pipe).toBeTruthy();
   });
 });

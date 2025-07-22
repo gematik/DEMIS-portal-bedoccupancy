@@ -35,7 +35,6 @@ import { FormlyModule } from '@ngx-formly/core';
 import { FormlySelectModule } from '@ngx-formly/core/select';
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
-import { SafePipeModule } from 'safe-pipe';
 import { ErrorMessageDialogComponent } from './dialogs/message-dialog/error-message-dialog.component';
 import { SubmitNotificationDialogComponent } from './dialogs/submit-notification-dialog/submit-notification-dialog.component';
 import { RepeatComponent } from './formly/types/repeat/repeat.component';
@@ -85,7 +84,6 @@ import { DemisPortalSharedModule, FormlyRepeaterComponent } from '@gematik/demis
     MatButtonModule,
     MatProgressSpinnerModule,
     MatAutocompleteModule,
-    SafePipeModule,
     MatTabsModule,
     MatCardModule,
     MatTableModule,

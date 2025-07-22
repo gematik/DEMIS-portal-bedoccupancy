@@ -15,7 +15,7 @@
  */
 
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BedOccupancy } from 'src/api/notification';
 import { NGXLogger } from 'ngx-logger';
 import { Observable } from 'rxjs';
@@ -26,10 +26,8 @@ import { trimStrings } from '@gematik/demis-portal-core-library';
   providedIn: 'root',
 })
 export abstract class FhirNotificationService {
-  constructor(
-    protected httpClient: HttpClient,
-    protected logger: NGXLogger
-  ) {}
+  protected httpClient = inject(HttpClient);
+  protected logger = inject(NGXLogger);
 
   sendNotification(notification: BedOccupancy) {
     // https://service.gematik.de/browse/DSC2-4453  Anforderung 2

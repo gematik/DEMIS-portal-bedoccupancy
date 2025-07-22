@@ -14,7 +14,7 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { MessageType } from 'src/app/shared/models/ui/message';
 import { NGXLogger } from 'ngx-logger';
@@ -37,11 +37,9 @@ export type ClipboardRules = Record<string, (key: string, partialModel: any) => 
   providedIn: 'root',
 })
 export abstract class ClipboardDataService {
-  protected constructor(
-    public dialog: MatDialog,
-    protected logger: NGXLogger,
-    protected messageDialogeService: MessageDialogService
-  ) {}
+  dialog = inject(MatDialog);
+  protected logger = inject(NGXLogger);
+  protected messageDialogeService = inject(MessageDialogService);
 
   /**
    * @deprecated Not needed anymore, once FEATURE_FLAG_PORTAL_PASTEBOX will be removed
