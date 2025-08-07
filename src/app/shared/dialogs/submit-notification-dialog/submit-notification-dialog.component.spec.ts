@@ -14,33 +14,132 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
-import { SubmitNotificationDialogComponent } from './submit-notification-dialog.component';
-
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { SubmitNotificationDialogComponent, SubmitNotificationDialogData } from './submit-notification-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { MessageDialogService } from '@gematik/demis-portal-core-library';
+import { throwError } from 'rxjs';
+import { environment } from 'src/environments/environment';
+import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTableModule } from '@angular/material/table';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 describe('SubmitNotificationDialogComponent', () => {
-  let component: SubmitNotificationDialogComponent;
-  let fixture: ComponentFixture<SubmitNotificationDialogComponent>;
-
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [SubmitNotificationDialogComponent],
-      imports: [LoggerTestingModule],
-      providers: [
-        { provide: MAT_DIALOG_DATA, useValue: false },
-        { provide: MatDialogRef, useValue: {} },
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    }).compileComponents();
-    fixture = TestBed.createComponent(SubmitNotificationDialogComponent);
-    component = fixture.componentInstance;
-  }));
+  // Helper to reset the TestBed after each test
+  afterEach(() => {
+    TestBed.resetTestingModule();
+  });
 
   it('should create', () => {
+    const messageDialogServiceSpy = jasmine.createSpyObj('MessageDialogService', ['extractMessageFromError', 'showErrorDialog']);
+    const fhirServiceMock = {
+      sendNotification: jasmine.createSpy('sendNotification').and.returnValue({
+        subscribe: () => {},
+      }),
+    };
+    const testData: SubmitNotificationDialogData = { notification: {} as any, fhirService: fhirServiceMock as any };
+
+    TestBed.configureTestingModule({
+      declarations: [SubmitNotificationDialogComponent],
+      imports: [LoggerTestingModule, MatIconModule, MatExpansionModule, MatTableModule, MatProgressSpinnerModule],
+      providers: [
+        { provide: MAT_DIALOG_DATA, useValue: testData },
+        {
+          provide: MatDialogRef,
+          useValue: {
+            close: () => {},
+          },
+        },
+        { provide: MessageDialogService, useValue: messageDialogServiceSpy },
+      ],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(SubmitNotificationDialogComponent);
+    const component = fixture.componentInstance;
     expect(component).toBeTruthy();
+  });
+
+  it('should call showErrorDialog when feature flag is true', fakeAsync(() => {
+    environment.bedOccupancyConfig = {
+      featureFlags: { FEATURE_FLAG_PORTAL_ERROR_DIALOG_ON_SUBMIT: true },
+    };
+
+    const messageDialogServiceSpy = jasmine.createSpyObj('MessageDialogService', ['extractMessageFromError', 'showErrorDialog']);
+    messageDialogServiceSpy.extractMessageFromError.and.returnValue('Fehlermeldungstext aus ErrorMessage');
+    const fhirServiceMock = { sendNotification: jasmine.createSpy('sendNotification') };
+    const testData: SubmitNotificationDialogData = { notification: {} as any, fhirService: fhirServiceMock as any };
+
+    TestBed.configureTestingModule({
+      declarations: [SubmitNotificationDialogComponent],
+      imports: [LoggerTestingModule, MatIconModule, MatExpansionModule, MatTableModule, MatProgressSpinnerModule],
+      providers: [
+        { provide: MAT_DIALOG_DATA, useValue: testData },
+        {
+          provide: MatDialogRef,
+          useValue: {
+            close: () => {},
+          },
+        },
+        { provide: MessageDialogService, useValue: messageDialogServiceSpy },
+      ],
+    }).compileComponents();
+
+    const errorResponse = { message: 'Fehler', validationErrors: [] };
+    fhirServiceMock.sendNotification.and.returnValue(throwError({ error: errorResponse }));
+
+    const fixture = TestBed.createComponent(SubmitNotificationDialogComponent);
+    fixture.detectChanges();
+    tick();
+
+    expect(messageDialogServiceSpy.extractMessageFromError).toHaveBeenCalledWith(errorResponse);
+    expect(messageDialogServiceSpy.showErrorDialog).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        errorTitle: 'Meldung konnte nicht zugestellt werden!',
+        errors: [
+          jasmine.objectContaining({
+            text: 'Fehlermeldungstext aus ErrorMessage',
+            queryString: 'Fehlermeldungstext aus ErrorMessage',
+          }),
+        ],
+      })
+    );
+  }));
+
+  it('should set result to error when feature flag is false', () => {
+    environment.bedOccupancyConfig = {
+      featureFlags: { FEATURE_FLAG_PORTAL_ERROR_DIALOG_ON_SUBMIT: false },
+    };
+
+    const messageDialogServiceSpy = jasmine.createSpyObj('MessageDialogService', ['extractMessageFromError', 'showErrorDialog']);
+    const fhirServiceMock = { sendNotification: jasmine.createSpy('sendNotification') };
+    const testData: SubmitNotificationDialogData = { notification: {} as any, fhirService: fhirServiceMock as any };
+
+    TestBed.configureTestingModule({
+      declarations: [SubmitNotificationDialogComponent],
+      imports: [LoggerTestingModule, MatIconModule, MatExpansionModule, MatTableModule, MatProgressSpinnerModule],
+      providers: [
+        { provide: MAT_DIALOG_DATA, useValue: testData },
+        {
+          provide: MatDialogRef,
+          useValue: {
+            close: () => {},
+          },
+        },
+        { provide: MessageDialogService, useValue: messageDialogServiceSpy },
+      ],
+    }).compileComponents();
+
+    const errorResponse = { message: 'Fehler', validationErrors: [] };
+    fhirServiceMock.sendNotification.and.returnValue(throwError({ error: errorResponse }));
+
+    const fixture = TestBed.createComponent(SubmitNotificationDialogComponent);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component.result).toBeTruthy();
+    expect(component.result?.message).toContain('Es ist ein Fehler aufgetreten');
+    expect(messageDialogServiceSpy.showErrorDialog).not.toHaveBeenCalled();
   });
 });

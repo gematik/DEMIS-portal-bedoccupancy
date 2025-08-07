@@ -1,7 +1,7 @@
-{
-  "production": {{ .Values.config.production }},
-  "pathToGateway": "{{ .Values.config.pathToGateway }}",
-  "pathToHospitalLocations": "{{ .Values.config.pathToHospitalLocations }}",
-  "featureFlags": {{ .Values.config.featureFlags | toJson }}
-}
-
+{{- $configMapData := dict }}
+{{- $_ := set $configMapData "production" .Values.config.production }}
+{{- $endpointsRoot := ternary .Values.config.newApiEndpoints .Values.config (eq (.Values.config.featureFlags.FEATURE_FLAG_NEW_API_ENDPOINTS | toString) "true" ) }}
+{{- $_ = set $configMapData "pathToGateway" $endpointsRoot.pathToGateway }}
+{{- $_ = set $configMapData "pathToHospitalLocations" $endpointsRoot.pathToHospitalLocations }}
+{{- $_ = set $configMapData "featureFlags" .Values.config.featureFlags }}
+{{- $configMapData | toPrettyJson }}

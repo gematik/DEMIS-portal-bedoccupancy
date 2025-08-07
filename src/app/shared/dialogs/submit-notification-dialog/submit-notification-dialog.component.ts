@@ -21,8 +21,10 @@ import { NGXLogger } from 'ngx-logger';
 import { ErrorResult, MessageType, SuccessResult } from '../../models/ui/message';
 import { FhirNotificationService } from '../../services/fhir-notification.service';
 import { FileService } from '../../services/file.service';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { environment } from '../../../../environments/environment';
+import { MessageDialogService } from '@gematik/demis-portal-core-library';
 
 export interface SubmitNotificationDialogData {
   notification: BedOccupancy;
@@ -54,6 +56,8 @@ export class SubmitNotificationDialogComponent implements OnInit {
   pdfDownload?: SafeUrl;
   displayedColumns: string[] = ['field', 'message'];
   fileName?: string;
+  dialogRef = inject(MatDialogRef<SubmitNotificationDialogComponent>);
+  messageDialogService = inject(MessageDialogService);
 
   ngOnInit() {
     this.notification = { ...this.data.notification };
@@ -103,13 +107,27 @@ export class SubmitNotificationDialogComponent implements OnInit {
   }
 
   private setResultToError(response: any) {
-    this.result = {
-      type: MessageType.ERROR,
-      message: 'Es ist ein Fehler aufgetreten.',
-      messageDetails: response?.message,
-      locations: [],
-      validationErrors: response?.validationErrors,
-    } as ErrorResult;
+    if (environment.bedOccupancyConfig.featureFlags?.FEATURE_FLAG_PORTAL_ERROR_DIALOG_ON_SUBMIT) {
+      const errorMessage = this.messageDialogService.extractMessageFromError(response);
+      this.dialogRef.close(); //closes the underlying dialog "Meldung wird gesendet"
+      this.messageDialogService.showErrorDialog({
+        errorTitle: 'Meldung konnte nicht zugestellt werden!',
+        errors: [
+          {
+            text: errorMessage,
+            queryString: errorMessage || '',
+          },
+        ],
+      });
+    } else {
+      this.result = {
+        type: MessageType.ERROR,
+        message: 'Es ist ein Fehler aufgetreten.',
+        messageDetails: response?.message,
+        locations: [],
+        validationErrors: response?.validationErrors,
+      } as ErrorResult;
+    }
   }
 
   private triggerDownload(url: string) {

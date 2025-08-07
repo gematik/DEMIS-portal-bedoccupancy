@@ -51,18 +51,18 @@
   </h1>
   <div mat-dialog-content class="d-flex flex-column flex-grow-1 pb-1">
     <div id="fail-message">
-      <p>{{ result.message }}</p>
+      <p>{{ result?.message }}</p>
     </div>
 
     <div>
       <mat-accordion>
-        <mat-expansion-panel *ngIf="result.messageDetails">
+        <mat-expansion-panel *ngIf="result?.messageDetails">
           <mat-expansion-panel-header>
             <mat-panel-title> Mehr Details</mat-panel-title>
           </mat-expansion-panel-header>
 
           <p>
-            <b id="fail-messagedetails">{{ result.messageDetails }}</b>
+            <b id="fail-messagedetails">{{ result?.messageDetails }}</b>
           </p>
 
           <div *ngIf="!!result.validationErrors">

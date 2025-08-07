@@ -2,10 +2,13 @@
 
 # Release portal-bedoccupancy
 
+# Release 1.5.0
+- Add new API endpoints activated by feature flag FEATURE_FLAG_NEW_API_ENDPOINTS
+- Switch to errorDialog from CoreLibrary for submit (FEATURE_FLAG_PORTAL_ERROR_DIALOG_ON_SUBMIT)
+
 # Release 1.4.7
 - Update to Angular 19 version
 - Update Portal-Core Library version
-
 
 # Release 1.4.6
 - Fixed JWT token decoding
