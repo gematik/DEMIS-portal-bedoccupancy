@@ -87,7 +87,7 @@ describe('SubmitNotificationDialogComponent', () => {
     }).compileComponents();
 
     const errorResponse = { message: 'Fehler', validationErrors: [] };
-    fhirServiceMock.sendNotification.and.returnValue(throwError({ error: errorResponse }));
+    fhirServiceMock.sendNotification.and.returnValue(throwError(() => ({ error: errorResponse })));
 
     const fixture = TestBed.createComponent(SubmitNotificationDialogComponent);
     fixture.detectChanges();
@@ -132,7 +132,7 @@ describe('SubmitNotificationDialogComponent', () => {
     }).compileComponents();
 
     const errorResponse = { message: 'Fehler', validationErrors: [] };
-    fhirServiceMock.sendNotification.and.returnValue(throwError({ error: errorResponse }));
+    fhirServiceMock.sendNotification.and.returnValue(throwError(() => ({ error: errorResponse })));
 
     const fixture = TestBed.createComponent(SubmitNotificationDialogComponent);
     const component = fixture.componentInstance;

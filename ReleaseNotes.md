@@ -2,6 +2,13 @@
 
 # Release portal-bedoccupancy
 
+# Release 1.5.1
+- Fixed a bug, where validation errors where not shown
+- Fixed local code generation from API specification
+- Upgraded dependencies
+- Added test:coverage npm script to run a single test run with coverage report
+- Use submit- and spinner-dialog from Portal-Core (FEATURE_FLAG_PORTAL_SUBMIT)
+
 # Release 1.5.0
 - Add new API endpoints activated by feature flag FEATURE_FLAG_NEW_API_ENDPOINTS
 - Switch to errorDialog from CoreLibrary for submit (FEATURE_FLAG_PORTAL_ERROR_DIALOG_ON_SUBMIT)

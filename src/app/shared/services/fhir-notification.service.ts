@@ -22,6 +22,9 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { trimStrings } from '@gematik/demis-portal-core-library';
 
+/**
+ * @deprecated Can be removed as soon as feature flag "FEATURE_FLAG_PORTAL_SUBMIT" is active on all stages
+ */
 @Injectable({
   providedIn: 'root',
 })

@@ -91,7 +91,11 @@ export class BedOccupancyComponent implements OnInit, OnDestroy {
       this.handlePasteBoxOrHexhexChange(bedOccupancyDummyData);
     });
 
-    this.sendFunction = bo => this.fhirBedOccupancyService.openSubmitDialog(bo);
+    this.sendFunction = bo => {
+      if (environment.bedOccupancyConfig.featureFlags?.FEATURE_FLAG_PORTAL_SUBMIT) {
+        this.fhirBedOccupancyService.submitNotification(bo);
+      } else this.fhirBedOccupancyService.openSubmitDialog(bo);
+    };
   }
 
   handlePasteBoxOrHexhexChange(data: any) {

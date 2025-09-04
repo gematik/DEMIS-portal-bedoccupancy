@@ -14,15 +14,17 @@
     For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { BedOccupancy } from 'src/api/notification';
+import { BedOccupancy, ValidationError } from 'src/api/notification';
 import { NGXLogger } from 'ngx-logger';
 import { SubmitNotificationDialogComponent } from '../dialogs/submit-notification-dialog/submit-notification-dialog.component';
 import { FhirNotificationService } from './fhir-notification.service';
-import { ValidateBedOccupancyNotificationService } from './validate-bed-occupancy-notification.service';
 import { MatDialog } from '@angular/material/dialog';
-import { cloneObject } from '@gematik/demis-portal-core-library';
+import { cloneObject, MessageDialogService, trimStrings, SubmitDialogProps } from '@gematik/demis-portal-core-library';
+import { environment } from '../../../environments/environment';
+import { FileService } from './file.service';
+import { finalize } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +33,8 @@ export class FhirBedOccupancyService extends FhirNotificationService {
   protected override httpClient: HttpClient;
   protected override logger: NGXLogger;
   dialog = inject(MatDialog);
-  private readonly validateBedOccupancyService = inject(ValidateBedOccupancyNotificationService);
+  private readonly messageDialogService = inject(MessageDialogService);
+  private readonly fileService = inject(FileService);
 
   constructor() {
     const httpClient = inject(HttpClient);
@@ -66,16 +69,14 @@ export class FhirBedOccupancyService extends FhirNotificationService {
     return transformedData;
   }
 
-  validateNotification(notification: any): boolean {
-    const bedOccupancy: BedOccupancy = notification as BedOccupancy;
-    return this.validateBedOccupancyService.validateNotification(bedOccupancy);
-  }
-
   override sendNotification(notification: BedOccupancy) {
     let clonedNotificationObject: BedOccupancy = cloneObject(notification);
     return super.sendNotification(clonedNotificationObject);
   }
 
+  /**
+   * @deprecated Use {@link submitNotification} instead, once FEATURE_FLAG_PORTAL_SUBMIT will be removed
+   */
   openSubmitDialog(notification: BedOccupancy) {
     this.dialog.open(SubmitNotificationDialogComponent, {
       disableClose: true,
@@ -87,5 +88,70 @@ export class FhirBedOccupancyService extends FhirNotificationService {
         fhirService: this,
       },
     });
+  }
+
+  submitNotification(notification: BedOccupancy) {
+    this.messageDialogService.showSpinnerDialog({ message: 'Meldung wird gesendet' });
+
+    const trimmedNotification = trimStrings(notification);
+    this.httpClient
+      .post(environment.pathToBedOccupancy, JSON.stringify(trimmedNotification), {
+        headers: FhirBedOccupancyService.getEnvironmentHeaders(),
+        observe: 'response',
+      })
+      .pipe(
+        finalize(() => {
+          this.messageDialogService.closeSpinnerDialog();
+        })
+      )
+      .subscribe({
+        next: (response: HttpResponse<any>) => {
+          const submitDialogData = this.createSubmitDialogData(response, notification);
+          this.messageDialogService.showSubmitDialog(submitDialogData);
+        },
+        error: err => {
+          this.logger.error('error', err);
+          const errors = this.extractErrorDetails(err);
+          this.messageDialogService.showErrorDialog({
+            errorTitle: 'Meldung konnte nicht zugestellt werden!',
+            errors,
+          });
+        },
+      });
+  }
+
+  private createSubmitDialogData(response: HttpResponse<any>, notification: BedOccupancy): SubmitDialogProps {
+    const content = encodeURIComponent(response.body.content);
+    const href = 'data:application/actet-stream;base64,' + content;
+    return {
+      authorEmail: response.body.authorEmail,
+      fileName: this.fileService.getFileNameByNotificationType(notification),
+      href: href,
+      notificationId: response.body.notificationId,
+      timestamp: response.body.timestamp,
+    };
+  }
+
+  private extractErrorDetails(err: any): { text: string; queryString: string }[] {
+    const response = err?.error ?? err;
+    const errorMessage = this.messageDialogService.extractMessageFromError(response);
+    const validationErrors = response?.validationErrors || [];
+    if (validationErrors.length > 0) {
+      return validationErrors.map((ve: ValidationError) => ({
+        text: ve.message,
+        queryString: ve.message || '',
+      }));
+    } else {
+      return [
+        {
+          text: errorMessage,
+          queryString: errorMessage || '',
+        },
+      ];
+    }
+  }
+
+  private static getEnvironmentHeaders(): HttpHeaders {
+    return environment.headers;
   }
 }

@@ -16,7 +16,7 @@
 
 import { Component, OnInit, SecurityContext, TemplateRef, ViewChild, inject } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { BedOccupancy, OkResponse } from 'src/api/notification';
+import { BedOccupancy, OkResponse, ValidationError } from 'src/api/notification';
 import { NGXLogger } from 'ngx-logger';
 import { ErrorResult, MessageType, SuccessResult } from '../../models/ui/message';
 import { FhirNotificationService } from '../../services/fhir-notification.service';
@@ -31,6 +31,9 @@ export interface SubmitNotificationDialogData {
   fhirService: FhirNotificationService;
 }
 
+/**
+ * @deprecated Not needed anymore, once FEATURE_FLAG_PORTAL_SUBMIT will be removed
+ */
 @Component({
   selector: 'app-submit-notification-dialog',
   templateUrl: './submit-notification-dialog.component.html',
@@ -110,14 +113,25 @@ export class SubmitNotificationDialogComponent implements OnInit {
     if (environment.bedOccupancyConfig.featureFlags?.FEATURE_FLAG_PORTAL_ERROR_DIALOG_ON_SUBMIT) {
       const errorMessage = this.messageDialogService.extractMessageFromError(response);
       this.dialogRef.close(); //closes the underlying dialog "Meldung wird gesendet"
-      this.messageDialogService.showErrorDialog({
-        errorTitle: 'Meldung konnte nicht zugestellt werden!',
-        errors: [
+      const validationErrors = response.validationErrors || [];
+      let errors;
+      if (validationErrors.length > 0) {
+        errors = validationErrors.map((ve: ValidationError) => ({
+          text: ve.message,
+          queryString: ve.message || '',
+        }));
+      } else {
+        errors = [
           {
             text: errorMessage,
             queryString: errorMessage || '',
           },
-        ],
+        ];
+      }
+
+      this.messageDialogService.showErrorDialog({
+        errorTitle: 'Meldung konnte nicht zugestellt werden!',
+        errors,
       });
     } else {
       this.result = {
