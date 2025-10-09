@@ -18,7 +18,6 @@ import { ContactPointInfo } from 'src/api/notification';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { EMAIL_MAX_LENGTH, PHONE_MAX_LENGTH } from '../../../common-utils';
 import { FormlyConstants } from '../formly-constants';
-import { environment } from '../../../../../environments/environment';
 import ContactTypeEnum = ContactPointInfo.ContactTypeEnum;
 import UsageEnum = ContactPointInfo.UsageEnum;
 
@@ -73,32 +72,18 @@ function createContactSection(needsContact: boolean): FormlyFieldConfig[] {
 }
 
 function createRepeatableContactField(config: ContactFieldConfig, needsContact: boolean): FormlyFieldConfig {
-  const featureFlagPortalRepeat = environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_REPEAT;
-
   return {
     key: config.key,
     id: config.key,
-    type: featureFlagPortalRepeat ? 'repeater' : 'repeat',
+    type: 'repeater',
     className: 'bed-occupancy-contact-button',
     wrappers: ['validation'],
-    props: featureFlagPortalRepeat
-      ? {
-          addButtonLabel: config.inputFeldLabel + ' hinzufügen',
-        }
-      : {
-          addText: config.inputFeldLabel + ' hinzufügen',
-          keepLastItem: needsContact,
-          isContact: true,
-        },
-    expressions: featureFlagPortalRepeat
-      ? {
-          'props.required': needsContact ? config.requiredExpression : () => false,
-        }
-      : undefined,
+    props: { addButtonLabel: config.inputFeldLabel + ' hinzufügen' },
+    expressions: { 'props.required': needsContact ? config.requiredExpression : () => false },
     defaultValue: needsContact ? [{}] : undefined,
     fieldArray: {
-      className: featureFlagPortalRepeat ? FormlyConstants.COLMD11 : undefined,
-      fieldGroupClassName: !featureFlagPortalRepeat ? 'd-flex flex-column' : undefined,
+      className: FormlyConstants.COLMD11,
+      fieldGroupClassName: undefined,
       fieldGroup: [
         {
           key: 'contactType',

@@ -2,6 +2,12 @@
 
 # Release portal-bedoccupancy
 
+# Release 1.5.3
+- Removed FEATURE_FLAG_PORTAL_REPEAT
+- add configmap checksum as annotation to force pod restart on configmap change
+- Update @angular-devkit/build-angular to 19.2.17
+- Update @gematik/demis-portal-core-library to 2.2.3
+
 # Release 1.5.1
 - Fixed a bug, where validation errors where not shown
 - Fixed local code generation from API specification
