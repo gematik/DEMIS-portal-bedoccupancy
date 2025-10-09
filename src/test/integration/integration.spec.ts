@@ -242,7 +242,7 @@ describe('Bed Occupancy - Integration Tests', () => {
       };
       parameters.email.forEach(parameter => {
         it(`for the email, the value: '${parameter.value}' should throw the error: '${parameter.expectedResult}'`, async () => {
-          await (await getButton(loader, '#btn-email-adresse-hinzufügen')).click();
+          await (await getButton(loader, '#emailAddresses-add-button')).click();
           const emailInput = await getInput(loader, '[data-cy=email]');
           await emailInput.setValue(parameter.value);
           await emailInput.blur();
@@ -252,7 +252,7 @@ describe('Bed Occupancy - Integration Tests', () => {
       });
       parameters.phoneNumber.forEach(parameter => {
         it(`for the phone number, the value: '${parameter.value}' should throw the error: '${parameter.expectedResult}'`, async () => {
-          await (await getButton(loader, '#btn-telefonnummer-hinzufügen')).click();
+          await (await getButton(loader, '#phoneNumbers-add-button')).click();
           const phoneNoInput = await getInput(loader, '[data-cy=phoneNo]');
           await phoneNoInput.setValue(parameter.value);
           await phoneNoInput.blur();
@@ -287,14 +287,13 @@ describe('Bed Occupancy - Integration Tests', () => {
   });
 
   describe('With feature flags', () => {
-    describe('FEATURE_FLAG_PORTAL_PASTEBOX and FEATURE_FLAG_PORTAL_REPEAT', () => {
+    describe('FEATURE_FLAG_PORTAL_PASTEBOX', () => {
       beforeEach(testSetup);
 
       beforeEach(() => {
         environment.bedOccupancyConfig = {
           featureFlags: {
             FEATURE_FLAG_PORTAL_PASTEBOX: true,
-            FEATURE_FLAG_PORTAL_REPEAT: true,
           },
         };
         fixture = MockRender(BedOccupancyComponent);
@@ -376,14 +375,14 @@ describe('Validation of occupied and available beds', () => {
     await waitForStability();
 
     // Add phone number
-    await (await getButton(loader, '#btn-telefonnummer-hinzufügen')).click();
+    await (await getButton(loader, '#phoneNumbers-add-button')).click();
     await waitForStability();
     const phoneNoInput = await getInput(loader, '[data-cy=phoneNo]');
     await phoneNoInput.setValue('0800123456');
     await waitForStability();
 
     // Add email
-    await (await getButton(loader, '#btn-email-adresse-hinzufügen')).click();
+    await (await getButton(loader, '#emailAddresses-add-button')).click();
     await waitForStability();
     const emailInput = await getInput(loader, '[data-cy=email]');
     await emailInput.setValue('homer@simpson.com');
