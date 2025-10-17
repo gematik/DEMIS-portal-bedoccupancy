@@ -91,7 +91,7 @@ describe('BedOccupancyClipboardDataService', () => {
       expect(dataFromClipboard.occupiedBeds.adultsNumberOfBeds).toBe(8);
     });
 
-    it('should use clipboard values when given otherwise undefiened', () => {
+    it('should use clipboard values', () => {
       const testMapPartial = new Map([
         [BedOccupancyQuestionClipboard.CHILDREN_OCCUPIED, '9'],
         [BedOccupancyQuestionClipboard.CHILDREN_OPERABLE, '7'],
@@ -103,18 +103,18 @@ describe('BedOccupancyClipboardDataService', () => {
       expect(dataFromClipboard.occupiedBeds.adultsNumberOfBeds).toBeUndefined();
     });
 
-    it('should use clipboard values when given otherwise data with undefined values', () => {
+    it('should use clipboard values when given otherwise  with undefined values', () => {
       const testMapPartial = new Map([
         [BedOccupancyQuestionClipboard.CHILDREN_OCCUPIED, undefined],
-        [BedOccupancyQuestionClipboard.ADULTS_OCCUPIED, '8'],
+        [BedOccupancyQuestionClipboard.ADULTS_OCCUPIED, '0'],
         [BedOccupancyQuestionClipboard.CHILDREN_OPERABLE, undefined],
         [BedOccupancyQuestionClipboard.ADULTS_OPERABLE, '6'],
       ]);
       const dataFromClipboard = service.setBedOccupancyQuestionFromClipBoard(testMapPartial);
+      expect(dataFromClipboard.occupiedBeds.childrenNumberOfBeds).toBeUndefined();
+      expect(dataFromClipboard.occupiedBeds.adultsNumberOfBeds).toBe(0);
       expect(dataFromClipboard.operableBeds.childrenNumberOfBeds).toBeUndefined();
       expect(dataFromClipboard.operableBeds.adultsNumberOfBeds).toBe(6);
-      expect(dataFromClipboard.occupiedBeds.childrenNumberOfBeds).toBeUndefined();
-      expect(dataFromClipboard.occupiedBeds.adultsNumberOfBeds).toBe(8);
     });
   });
 });

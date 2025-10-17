@@ -41,7 +41,7 @@ import { BedOccupancyClipboardDataService } from './services/clipboard/bed-occup
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
 import { MatButton } from '@angular/material/button';
-import { MaxHeightContentContainerComponent, PasteBoxComponent } from '@gematik/demis-portal-core-library';
+import { MaxHeightContentContainerComponent, PasteBoxComponent, SectionHeaderComponent, TiledContentComponent } from '@gematik/demis-portal-core-library';
 
 @NgModule({
   declarations: [
@@ -78,6 +78,8 @@ import { MaxHeightContentContainerComponent, PasteBoxComponent } from '@gematik/
     MatButton,
     PasteBoxComponent,
     MaxHeightContentContainerComponent,
+    SectionHeaderComponent,
+    TiledContentComponent,
   ],
   providers: [
     BedOccupancyClipboardDataService,

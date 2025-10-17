@@ -40,9 +40,7 @@ describe('FhirBedOccupancyService', () => {
       pathToHospitalLocations: '/services/hospital-locations',
       featureFlags: {
         FEATURE_FLAG_PORTAL_ERROR_DIALOG: true,
-        FEATURE_FLAG_PORTAL_ERROR_DIALOG_ON_SUBMIT: true,
         FEATURE_FLAG_PORTAL_PASTEBOX: true,
-        FEATURE_FLAG_PORTAL_SUBMIT: true,
       },
     };
   });
