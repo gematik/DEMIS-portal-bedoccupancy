@@ -41,6 +41,10 @@ export class SideNavigationWrapperComponent {
     return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_PASTEBOX ?? false;
   }
 
+  get FEATURE_FLAG_PORTAL_PAGE_STRUCTURE() {
+    return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_PAGE_STRUCTURE ?? false;
+  }
+
   onClipboardDataPasted(clipboardData: Map<string, string>) {
     this.bedOccupancyClipboardDataService.updateBedOccupancy(clipboardData);
   }

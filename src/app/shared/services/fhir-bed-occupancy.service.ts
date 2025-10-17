@@ -18,10 +18,8 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { BedOccupancy, ValidationError } from 'src/api/notification';
 import { NGXLogger } from 'ngx-logger';
-import { SubmitNotificationDialogComponent } from '../dialogs/submit-notification-dialog/submit-notification-dialog.component';
-import { FhirNotificationService } from './fhir-notification.service';
 import { MatDialog } from '@angular/material/dialog';
-import { cloneObject, MessageDialogService, trimStrings, SubmitDialogProps } from '@gematik/demis-portal-core-library';
+import { MessageDialogService, trimStrings, SubmitDialogProps } from '@gematik/demis-portal-core-library';
 import { environment } from '../../../environments/environment';
 import { FileService } from './file.service';
 import { finalize } from 'rxjs/operators';
@@ -29,9 +27,9 @@ import { finalize } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root',
 })
-export class FhirBedOccupancyService extends FhirNotificationService {
-  protected override httpClient: HttpClient;
-  protected override logger: NGXLogger;
+export class FhirBedOccupancyService {
+  protected httpClient: HttpClient;
+  protected logger: NGXLogger;
   dialog = inject(MatDialog);
   private readonly messageDialogService = inject(MessageDialogService);
   private readonly fileService = inject(FileService);
@@ -39,8 +37,6 @@ export class FhirBedOccupancyService extends FhirNotificationService {
   constructor() {
     const httpClient = inject(HttpClient);
     const logger = inject(NGXLogger);
-
-    super();
 
     this.httpClient = httpClient;
     this.logger = logger;
@@ -58,36 +54,13 @@ export class FhirBedOccupancyService extends FhirNotificationService {
           ...(originalData.notifierFacility.contacts?.emailAddresses || []),
         ];
 
-    const transformedData: any = {
+    return {
       notifierFacility: {
         ...originalData.notifierFacility,
         contacts: transformedContacts,
       },
       bedOccupancyQuestion: originalData.bedOccupancyQuestion,
     };
-
-    return transformedData;
-  }
-
-  override sendNotification(notification: BedOccupancy) {
-    let clonedNotificationObject: BedOccupancy = cloneObject(notification);
-    return super.sendNotification(clonedNotificationObject);
-  }
-
-  /**
-   * @deprecated Use {@link submitNotification} instead, once FEATURE_FLAG_PORTAL_SUBMIT will be removed
-   */
-  openSubmitDialog(notification: BedOccupancy) {
-    this.dialog.open(SubmitNotificationDialogComponent, {
-      disableClose: true,
-      maxWidth: '50vw',
-      minHeight: '40vh',
-      panelClass: 'app-submit-notification-dialog-panel',
-      data: {
-        notification: notification,
-        fhirService: this,
-      },
-    });
   }
 
   submitNotification(notification: BedOccupancy) {

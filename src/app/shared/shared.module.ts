@@ -36,7 +36,6 @@ import { FormlySelectModule } from '@ngx-formly/core/select';
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
 import { ErrorMessageDialogComponent } from './dialogs/message-dialog/error-message-dialog.component';
-import { SubmitNotificationDialogComponent } from './dialogs/submit-notification-dialog/submit-notification-dialog.component';
 import { RepeatComponent } from './formly/types/repeat/repeat.component';
 import { ExpansionPanelWrapperComponent } from './formly/wrappers/expansion-panel-wrapper/expansion-panel.wrapper';
 import { ValidationWrapperComponent } from './formly/wrappers/validation-wrapper/validation-wrapper.component';
@@ -50,14 +49,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DemisPortalSharedModule, FormlyRepeaterComponent } from '@gematik/demis-portal-core-library';
 
 @NgModule({
-  declarations: [
-    ErrorMessageDialogComponent,
-    SubmitNotificationDialogComponent,
-    ExpansionPanelWrapperComponent,
-    ValidationWrapperComponent,
-    RepeatComponent,
-    StringFormatPipe,
-  ],
+  declarations: [ErrorMessageDialogComponent, ExpansionPanelWrapperComponent, ValidationWrapperComponent, RepeatComponent, StringFormatPipe],
   imports: [
     CommonModule,
     NotificationFormValidationModule,

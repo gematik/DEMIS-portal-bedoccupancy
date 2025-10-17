@@ -82,7 +82,7 @@ describe('BedOccupancyComponent', () => {
   let fetchHospitalLocationsSpy: jasmine.Spy;
   let transformDataSpy: jasmine.Spy;
   let setLocalStorageBedOccupancyDataSpy: jasmine.Spy;
-  let openSubmitDialogSpy: jasmine.Spy;
+  let submitNotificationSpy: jasmine.Spy;
 
   describe('Unit Tests', () => {
     beforeEach(() =>
@@ -100,7 +100,7 @@ describe('BedOccupancyComponent', () => {
       fetchHospitalLocationsSpy = TestBed.inject(BedOccupancyStorageService).fetchHospitalLocations as jasmine.Spy;
       transformDataSpy = spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData');
       setLocalStorageBedOccupancyDataSpy = spyOn(TestBed.inject(BedOccupancyStorageService), 'setLocalStorageBedOccupancyData');
-      openSubmitDialogSpy = spyOn(TestBed.inject(FhirBedOccupancyService), 'openSubmitDialog');
+      submitNotificationSpy = spyOn(TestBed.inject(FhirBedOccupancyService), 'submitNotification');
       component = fixture.point.componentInstance;
       loader = TestbedHarnessEnvironment.loader(fixture);
       fixture.detectChanges();
@@ -183,7 +183,7 @@ describe('BedOccupancyComponent', () => {
       component.submit();
       expect(transformDataSpy).toHaveBeenCalledWith(component.model);
       expect(setLocalStorageBedOccupancyDataSpy).toHaveBeenCalledWith(component.IkNumber, component.model.notifierFacility);
-      expect(openSubmitDialogSpy).toHaveBeenCalledWith(transformedData);
+      expect(submitNotificationSpy).toHaveBeenCalledWith(transformedData);
     });
 
     it('should unsubscribe on destroy', () => {
@@ -216,7 +216,7 @@ describe('BedOccupancyComponent', () => {
       fetchHospitalLocationsSpy = TestBed.inject(BedOccupancyStorageService).fetchHospitalLocations as jasmine.Spy;
       transformDataSpy = spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData');
       setLocalStorageBedOccupancyDataSpy = spyOn(TestBed.inject(BedOccupancyStorageService), 'setLocalStorageBedOccupancyData');
-      openSubmitDialogSpy = spyOn(TestBed.inject(FhirBedOccupancyService), 'openSubmitDialog');
+      submitNotificationSpy = spyOn(TestBed.inject(FhirBedOccupancyService), 'submitNotification');
       component = fixture.point.componentInstance;
       loader = TestbedHarnessEnvironment.loader(fixture);
       fixture.detectChanges();

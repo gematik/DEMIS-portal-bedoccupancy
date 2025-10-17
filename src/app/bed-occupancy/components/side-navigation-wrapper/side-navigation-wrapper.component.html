@@ -1,7 +1,9 @@
-<mat-drawer-container>
-  <mat-drawer class="tabs-navigation" mode="side" opened>
-    <div>
-      <app-side-navigation-stepper [steps]="steps()" [currentStep]="currentStep()"></app-side-navigation-stepper>
+<gem-demis-tiled-content>
+  <ng-container infoTile>
+    <div style="padding: 16px">
+      <app-side-navigation-stepper
+        [steps]="steps()" [currentStep]="currentStep()"
+      ></app-side-navigation-stepper>
       <app-hexhexbutton (paste)="handleHexhexButtonClick()"></app-hexhexbutton>
       @if(FEATURE_FLAG_PORTAL_PASTEBOX) {
       <gem-demis-paste-box (dataPasted)="onClipboardDataPasted($event)"></gem-demis-paste-box>
@@ -10,17 +12,28 @@
         <app-paste-box (paste)="handlePasteBoxClick()"></app-paste-box>
       }
     </div>
-  </mat-drawer>
-  <mat-drawer-content>
-    <mat-toolbar id="bedoccupancy-tab-headline">{{ headline() }}</mat-toolbar>
-    <div id="bedoccupancy-tab-section-header" class="section-header">
-      <h1>{{ currentStepHeadline() }}</h1>
-      <div class="oval-label">
-        Schritt {{ currentStep() + 1 }} von {{ maxNumberOfSteps() }}
+  </ng-container>
+  <ng-container contentTile>
+<!--  <ng-container contentTile>-->
+    @if (FEATURE_FLAG_PORTAL_PAGE_STRUCTURE) {
+      <div id="bedoccupancy-tab-section-header" class="section-header">
+        <gem-demis-section-header
+          id="bed-occupancy-tab-headline"
+          [level]="1"
+          [titleText]="currentStepHeadline()">
+        </gem-demis-section-header>
       </div>
-    </div>
+    } @else {
+      <mat-toolbar id="bedoccupancy-tab-headline">{{ headline() }}</mat-toolbar>
+      <div id="bedoccupancy-tab-section-header_deprecated" class="section-header_deprecated">
+        <h1>{{ currentStepHeadline() }}</h1>
+        <div class="oval-label">
+          Schritt {{ currentStep() + 1 }} von {{ maxNumberOfSteps() }}
+        </div>
+      </div>
+    }
     <div class="section-body">
       <ng-content></ng-content>
     </div>
-  </mat-drawer-content>
-</mat-drawer-container>
+  </ng-container>
+</gem-demis-tiled-content>

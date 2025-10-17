@@ -70,17 +70,21 @@ export class BedOccupancyClipboardDataService extends ClipboardDataService {
   setBedOccupancyQuestionFromClipBoard(paramMap: Map<string, string>): BedOccupancyQuestion {
     return {
       occupiedBeds: {
-        adultsNumberOfBeds: this.setNumberValue(+paramMap.get(BedOccupancyQuestionClipboard.ADULTS_OCCUPIED)),
-        childrenNumberOfBeds: this.setNumberValue(+paramMap.get(BedOccupancyQuestionClipboard.CHILDREN_OCCUPIED)),
+        adultsNumberOfBeds: this.setNumberValue(paramMap.get(BedOccupancyQuestionClipboard.ADULTS_OCCUPIED)),
+        childrenNumberOfBeds: this.setNumberValue(paramMap.get(BedOccupancyQuestionClipboard.CHILDREN_OCCUPIED)),
       },
       operableBeds: {
-        adultsNumberOfBeds: this.setNumberValue(+paramMap.get(BedOccupancyQuestionClipboard.ADULTS_OPERABLE)),
-        childrenNumberOfBeds: this.setNumberValue(+paramMap.get(BedOccupancyQuestionClipboard.CHILDREN_OPERABLE)),
+        adultsNumberOfBeds: this.setNumberValue(paramMap.get(BedOccupancyQuestionClipboard.ADULTS_OPERABLE)),
+        childrenNumberOfBeds: this.setNumberValue(paramMap.get(BedOccupancyQuestionClipboard.CHILDREN_OPERABLE)),
       },
     };
   }
 
-  setNumberValue = (value: number): number => {
-    return value ? value : undefined;
+  setNumberValue = (value: string): number => {
+    if (value === undefined || value === null) {
+      return undefined;
+    }
+    const numValue = +value;
+    return !isNaN(numValue) ? numValue : undefined;
   };
 }

@@ -92,9 +92,7 @@ export class BedOccupancyComponent implements OnInit, OnDestroy {
     });
 
     this.sendFunction = bo => {
-      if (environment.bedOccupancyConfig.featureFlags?.FEATURE_FLAG_PORTAL_SUBMIT) {
-        this.fhirBedOccupancyService.submitNotification(bo);
-      } else this.fhirBedOccupancyService.openSubmitDialog(bo);
+      this.fhirBedOccupancyService.submitNotification(bo);
     };
   }
 
@@ -141,6 +139,7 @@ export class BedOccupancyComponent implements OnInit, OnDestroy {
               {
                 key: 'notifierFacility',
                 props: {
+                  //remove title when FEATURE_FLAG_PORTAL_PAGE_STRUCTURE is removed
                   title: BedOccupancyConstants.FORM_TITLE,
                   label: BedOccupancyConstants.MELDENDE_EINRICHTUNG,
                   anchor: NotificationConstants.BED_OCCUPANCY_NOTIFIER_FACILITY,
@@ -150,6 +149,7 @@ export class BedOccupancyComponent implements OnInit, OnDestroy {
               {
                 key: 'bedOccupancyQuestion',
                 props: {
+                  //remove title when FEATURE_FLAG_PORTAL_PAGE_STRUCTURE is removed
                   title: BedOccupancyConstants.FORM_TITLE,
                   label: BedOccupancyConstants.BETTENBELEGUNG,
                   anchor: NotificationConstants.BED_OCCUPANCY_OCCUPIED_BEDS,

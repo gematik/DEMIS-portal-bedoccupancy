@@ -33,7 +33,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { getHtmlButtonElement } from 'src/test/shared/html-element-utils';
 import { getButton, getInput, getSelect, selectOption } from 'src/test/shared/material-harness-utils';
 import { MatInputHarness } from '@angular/material/input/testing';
-// import {checkDescribingError} from "src/test/shared/assertion-utils";
 import { ChangeDetectorRef } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { FormlyModule } from '@ngx-formly/core';
@@ -150,7 +149,6 @@ describe('Bed Occupancy - Integration Tests', () => {
       fixture = MockRender(BedOccupancyComponent);
       spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData');
       spyOn(TestBed.inject(BedOccupancyStorageService), 'setLocalStorageBedOccupancyData');
-      spyOn(TestBed.inject(FhirBedOccupancyService), 'openSubmitDialog');
       loader = TestbedHarnessEnvironment.loader(fixture);
       fixture.detectChanges();
     });
@@ -299,7 +297,6 @@ describe('Bed Occupancy - Integration Tests', () => {
         fixture = MockRender(BedOccupancyComponent);
         spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData');
         spyOn(TestBed.inject(BedOccupancyStorageService), 'setLocalStorageBedOccupancyData');
-        spyOn(TestBed.inject(FhirBedOccupancyService), 'openSubmitDialog');
         loader = TestbedHarnessEnvironment.loader(fixture);
         fixture.detectChanges();
       });

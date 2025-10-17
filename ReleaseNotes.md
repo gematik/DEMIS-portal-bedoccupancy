@@ -2,6 +2,11 @@
 
 # Release portal-bedoccupancy
 
+# Release 1.5.4
+- Removed FEATURE_FLAG_PORTAL_SUBMIT and FEATURE_FLAG_PORTAL_ERROR_DIALOG_ON_SUBMIT
+- Switch to SectionHeader from Portal-Core (FEATURE_FLAG_PORTAL_PAGE_STRUCTURE)
+- Fixed a bug, where it was not possible to paste 0 via clipboard in number input fields
+
 # Release 1.5.3
 - Removed FEATURE_FLAG_PORTAL_REPEAT
 - add configmap checksum as annotation to force pod restart on configmap change
