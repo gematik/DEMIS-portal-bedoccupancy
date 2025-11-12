@@ -30,7 +30,7 @@ import { EmptyrouteComponent } from './emptyroute/emptyroute.component';
 import { environment } from '../environments/environment';
 import { SharedModule } from './shared/shared.module';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { FormlyModule } from '@ngx-formly/core';
+import { provideFormlyCore } from '@ngx-formly/core';
 import { defaultAppearanceExtension, defaultPlaceholderExtension } from './shared/formly-extensions';
 import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 
@@ -49,19 +49,26 @@ import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
     BedOccupancyModule,
     MatFormFieldModule,
     LoggerModule.forRoot(environment.defaultNgxLoggerConfig),
-    FormlyModule.forRoot({
-      extensions: [
-        {
-          name: 'default-placeholder',
-          extension: defaultPlaceholderExtension,
-        },
-        {
-          name: 'default-appearance',
-          extension: defaultAppearanceExtension,
-        },
-      ],
-    }),
   ],
-  providers: [IconLoaderService, provideHttpClient(withInterceptorsFromDi()), JwtHelperService, { provide: JWT_OPTIONS, useValue: {} }],
+  providers: [
+    IconLoaderService,
+    provideHttpClient(withInterceptorsFromDi()),
+    JwtHelperService,
+    { provide: JWT_OPTIONS, useValue: {} },
+    provideFormlyCore([
+      {
+        extensions: [
+          {
+            name: 'default-placeholder',
+            extension: defaultPlaceholderExtension,
+          },
+          {
+            name: 'default-appearance',
+            extension: defaultAppearanceExtension,
+          },
+        ],
+      },
+    ]),
+  ],
 })
 export class AppModule {}
