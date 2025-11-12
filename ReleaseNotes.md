@@ -6,6 +6,9 @@
 - Removed FEATURE_FLAG_PORTAL_SUBMIT and FEATURE_FLAG_PORTAL_ERROR_DIALOG_ON_SUBMIT
 - Switch to SectionHeader from Portal-Core (FEATURE_FLAG_PORTAL_PAGE_STRUCTURE)
 - Fixed a bug, where it was not possible to paste 0 via clipboard in number input fields
+- Update ngx-formly to 7.0.0
+- Update @gematik/demis-portal-core-library to 2.3.0
+- Update NGINX-Base-Image to 1.29.3
 
 # Release 1.5.3
 - Removed FEATURE_FLAG_PORTAL_REPEAT

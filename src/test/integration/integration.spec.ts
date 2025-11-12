@@ -35,13 +35,14 @@ import { getButton, getInput, getSelect, selectOption } from 'src/test/shared/ma
 import { MatInputHarness } from '@angular/material/input/testing';
 import { ChangeDetectorRef } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
-import { FormlyModule } from '@ngx-formly/core';
+import { provideFormlyCore } from '@ngx-formly/core';
 import { BedOccupancyConstants } from 'src/app/bed-occupancy/common/bed-occupancy-constants';
 import { FormWrapperComponent } from 'src/app/bed-occupancy/components/form-wrapper/form-wrapper.component';
-import { FormlyMaterialModule } from '@ngx-formly/material';
+import { withFormlyMaterial } from '@ngx-formly/material';
 import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
 import { FormlySelectModule } from '@ngx-formly/core/select';
 import { environment } from 'src/environments/environment';
+import { withFormlyFieldSelect } from '@ngx-formly/material/select';
 
 const TEST_DATA = {
   hospitalLocation: {
@@ -91,25 +92,28 @@ describe('Bed Occupancy - Integration Tests', () => {
       BedOccupancyModule,
       ReactiveFormsModule,
       MatFormFieldModule,
-      FormlyModule.forRoot({
-        types: [
-          {
-            name: BedOccupancyConstants.DEMIS_FORM_WRAPPER_TEMPLATE_KEYWORD,
-            component: FormWrapperComponent,
-          },
-        ],
-      }),
-      FormlyMaterialModule,
       FormlyMatDatepickerModule,
-      FormlySelectModule,
     ])
       .provide(MockProvider(BedOccupancyStorageService, overrides.bedOccupancyStorageService))
       .provide(MockProvider(FhirBedOccupancyService))
       .provide(BedOccupancyClipboardDataService)
       .provide(BedOccupancyNotificationFormDefinitionService)
       .provide(MockProvider(ActivatedRoute, overrides.activatedRoute))
-      .provide(MockProvider(NGXLogger));
-
+      .provide(MockProvider(NGXLogger))
+      .provide(
+        provideFormlyCore([
+          {
+            types: [
+              {
+                name: BedOccupancyConstants.DEMIS_FORM_WRAPPER_TEMPLATE_KEYWORD,
+                component: FormWrapperComponent,
+              },
+            ],
+          },
+          ...withFormlyMaterial(),
+          withFormlyFieldSelect(),
+        ])
+      );
   const itShouldSendWhenFormIsFilledCorrectlyByClipboard = () => {
     it('should send, when form is filled correctly with the help from the clipboard', async () => {
       // Form page 1
