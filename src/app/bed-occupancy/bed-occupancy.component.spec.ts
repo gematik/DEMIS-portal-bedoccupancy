@@ -11,7 +11,8 @@
     In case of changes by gematik find details in the "Readme" file.
     See the Licence for the specific language governing permissions and limitations under the Licence.
     *******
-    For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
+    For additional notes and disclaimer from gematik and in case of changes by gematik,
+    find details in the "Readme" file.
  */
 
 import { HarnessLoader } from '@angular/cdk/testing';
@@ -26,8 +27,6 @@ import { MessageDialogService } from '@gematik/demis-portal-core-library';
 import { MockBuilder, MockedComponentFixture, MockProvider, MockRender } from 'ng-mocks';
 import { NGXLogger } from 'ngx-logger';
 import { of, throwError } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { ErrorMessageDialogComponent } from '../shared/dialogs/message-dialog/error-message-dialog.component';
 import { HospitalLocation } from '../shared/models/hospital-location';
 import { BedOccupancyStorageService } from '../shared/services/bed-occupancy-storage.service';
 import { FhirBedOccupancyService } from '../shared/services/fhir-bed-occupancy.service';
@@ -104,11 +103,6 @@ describe('BedOccupancyComponent', () => {
       component = fixture.point.componentInstance;
       loader = TestbedHarnessEnvironment.loader(fixture);
       fixture.detectChanges();
-      environment.bedOccupancyConfig = {
-        featureFlags: {
-          FEATURE_FLAG_PORTAL_ERROR_DIALOG: true,
-        },
-      };
     });
 
     it('should create', () => {
@@ -194,51 +188,6 @@ describe('BedOccupancyComponent', () => {
       expect(component.hospitalLocationsSubscription.unsubscribe).toHaveBeenCalled();
       expect(component['copyPasteBoxData'].unsubscribe).toHaveBeenCalled();
       expect(component['copyHexHexButtonData'].unsubscribe).toHaveBeenCalled();
-    });
-  });
-
-  /**
-   * Can be removed as soon as feature flag "FEATURE_FLAG_PORTAL_ERROR_DIALOG" is active on all stages
-   */
-  describe('Unit Tests, FEATURE_FLAG_PORTAL_ERROR_DIALOG OFF', () => {
-    beforeEach(() =>
-      MockBuilder([BedOccupancyComponent, BedOccupancyModule, NoopAnimationsModule, SharedModule, ReactiveFormsModule, MatFormFieldModule, ChangeDetectorRef])
-        .provide(MockProvider(BedOccupancyStorageService, overrides.bedOccupancyStorageService))
-        .provide(MockProvider(FhirBedOccupancyService))
-        .provide(MockProvider(BedOccupancyClipboardDataService, overrides.bedOccupancyClipboardDataService))
-        .provide(MockProvider(BedOccupancyNotificationFormDefinitionService, overrides.bedOccupancyNotificationFormDefinitionService))
-        .provide(MockProvider(ActivatedRoute, overrides.activatedRoute))
-        .provide(MockProvider(NGXLogger))
-    );
-
-    beforeEach(() => {
-      fixture = MockRender(BedOccupancyComponent);
-      fetchHospitalLocationsSpy = TestBed.inject(BedOccupancyStorageService).fetchHospitalLocations as jasmine.Spy;
-      transformDataSpy = spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData');
-      setLocalStorageBedOccupancyDataSpy = spyOn(TestBed.inject(BedOccupancyStorageService), 'setLocalStorageBedOccupancyData');
-      submitNotificationSpy = spyOn(TestBed.inject(FhirBedOccupancyService), 'submitNotification');
-      component = fixture.point.componentInstance;
-      loader = TestbedHarnessEnvironment.loader(fixture);
-      fixture.detectChanges();
-      environment.bedOccupancyConfig = {
-        featureFlags: {
-          FEATURE_FLAG_PORTAL_ERROR_DIALOG: false,
-        },
-      };
-    });
-
-    it('should handle error when fetching hospital locations', () => {
-      const error = new Error('Failed to fetch locations');
-      fetchHospitalLocationsSpy.and.returnValue(throwError(() => error));
-      const openSpy = spyOn(component.dialog, 'open');
-
-      component.ngOnInit();
-
-      expect(fetchHospitalLocationsSpy).toHaveBeenCalled();
-      expect(openSpy).toHaveBeenCalledWith(
-        ErrorMessageDialogComponent,
-        ErrorMessageDialogComponent.getErrorDialogCommonData(error, BedOccupancyConstants.ERROR_NO_LOCATIONS_DIALOG)
-      );
     });
   });
 });

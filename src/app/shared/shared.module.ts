@@ -11,7 +11,8 @@
     In case of changes by gematik find details in the "Readme" file.
     See the Licence for the specific language governing permissions and limitations under the Licence.
     *******
-    For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
+    For additional notes and disclaimer from gematik and in case of changes by gematik,
+    find details in the "Readme" file.
  */
 
 import { CommonModule } from '@angular/common';
@@ -35,7 +36,6 @@ import { FormlyModule } from '@ngx-formly/core';
 import { FormlySelectModule } from '@ngx-formly/core/select';
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
-import { ErrorMessageDialogComponent } from './dialogs/message-dialog/error-message-dialog.component';
 import { RepeatComponent } from './formly/types/repeat/repeat.component';
 import { ExpansionPanelWrapperComponent } from './formly/wrappers/expansion-panel-wrapper/expansion-panel.wrapper';
 import { ValidationWrapperComponent } from './formly/wrappers/validation-wrapper/validation-wrapper.component';
@@ -49,7 +49,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DemisPortalSharedModule, FormlyRepeaterComponent } from '@gematik/demis-portal-core-library';
 
 @NgModule({
-  declarations: [ErrorMessageDialogComponent, ExpansionPanelWrapperComponent, ValidationWrapperComponent, RepeatComponent, StringFormatPipe],
+  declarations: [ExpansionPanelWrapperComponent, ValidationWrapperComponent, RepeatComponent, StringFormatPipe],
   imports: [
     CommonModule,
     NotificationFormValidationModule,
