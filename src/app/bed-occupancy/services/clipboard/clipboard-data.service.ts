@@ -11,21 +11,17 @@
     In case of changes by gematik find details in the "Readme" file.
     See the Licence for the specific language governing permissions and limitations under the Licence.
     *******
-    For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
+    For additional notes and disclaimer from gematik and in case of changes by gematik,
+    find details in the "Readme" file.
  */
 
-import { Injectable, inject } from '@angular/core';
-
-import { MessageType } from 'src/app/shared/models/ui/message';
+import { inject, Injectable } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
-
-import { ErrorMessageDialogComponent } from 'src/app/shared/dialogs/message-dialog/error-message-dialog.component';
 import { matchesRegExp } from 'src/app/shared/notification-form-validation-module';
 import { ClipboardErrorTexts } from './clipboard-enums';
 import { MatDialog } from '@angular/material/dialog';
 import { catchError, from, Observable, of, take } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
 import { MessageDialogService } from '@gematik/demis-portal-core-library';
 
 export type ClipboardRules = Record<string, (key: string, partialModel: any) => any | Promise<any>>;
@@ -50,7 +46,7 @@ export abstract class ClipboardDataService {
     return from(window.navigator.clipboard.readText()).pipe(
       take(1),
       catchError((reason, caught) => {
-        this.openErrorDialog();
+        this.messageDialogeService.showErrorDialogInsertDataFromClipboard();
         this.logger.error(ClipboardErrorTexts.CLIPBOARD_ERROR + reason);
         return of(null);
       }),
@@ -64,7 +60,7 @@ export abstract class ClipboardDataService {
         } else {
           return new Map<string, string>();
         }
-        this.openErrorDialog();
+        this.messageDialogeService.showErrorDialogInsertDataFromClipboard();
       })
     );
   }
@@ -90,27 +86,6 @@ export abstract class ClipboardDataService {
       });
     }
     return clipBoardMap;
-  }
-
-  /**
-   * @deprecated Not needed anymore, once FEATURE_FLAG_PORTAL_PASTEBOX will be removed
-   *
-   * @returns
-   */
-  openErrorDialog(): void {
-    if (environment.bedOccupancyConfig.featureFlags?.FEATURE_FLAG_PORTAL_ERROR_DIALOG) {
-      this.messageDialogeService.showErrorDialogInsertDataFromClipboard();
-    } else {
-      this.dialog.open(
-        ErrorMessageDialogComponent,
-        ErrorMessageDialogComponent.getErrorDialogClose({
-          title: ClipboardErrorTexts.CLIPBOARD_ERROR_DIALOG_TITLE,
-          message: ClipboardErrorTexts.CLIPBOARD_ERROR_DIALOG_MESSAGE,
-          messageDetails: ClipboardErrorTexts.CLIPBOARD_ERROR_DIALOG_MESSAGE_DETAILS,
-          type: MessageType.WARNING,
-        })
-      );
-    }
   }
 
   /**

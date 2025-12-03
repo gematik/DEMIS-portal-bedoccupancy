@@ -11,10 +11,11 @@
     In case of changes by gematik find details in the "Readme" file.
     See the Licence for the specific language governing permissions and limitations under the Licence.
     *******
-    For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
+    For additional notes and disclaimer from gematik and in case of changes by gematik,
+    find details in the "Readme" file.
  */
 
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BedOccupancy } from 'src/api/notification';
 import { HospitalLocation } from 'src/app/shared/models/hospital-location';
@@ -22,8 +23,6 @@ import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
 import { Subscription } from 'rxjs';
 
 import { BedOccupancyConstants } from './common/bed-occupancy-constants';
-
-import { ErrorMessageDialogComponent } from '../shared/dialogs/message-dialog/error-message-dialog.component';
 import { notifierFacilityBedOccupancyFormConfigFields } from '../shared/formly/configs/bed-occupancy/notifier-facility.config';
 import { questionBedOccupancyHtmlConfigFields } from '../shared/formly/configs/bed-occupancy/question.config';
 import { NotificationConstants } from '../shared/notification-constants';
@@ -33,7 +32,6 @@ import { bedOccupancyDummyData } from './common/dummyData';
 import { BedOccupancyNotificationFormDefinitionService } from './services/bed-occupancy-notification-form-definition.service';
 import { BedOccupancyClipboardDataService } from './services/clipboard/bed-occupancy-clipboard-data.service';
 import { MatDialog } from '@angular/material/dialog';
-import { environment } from '../../environments/environment';
 import { MessageDialogService } from '@gematik/demis-portal-core-library';
 
 @Component({
@@ -176,23 +174,16 @@ export class BedOccupancyComponent implements OnInit, OnDestroy {
         }
       },
       error: error => {
-        if (environment.bedOccupancyConfig.featureFlags?.FEATURE_FLAG_PORTAL_ERROR_DIALOG) {
-          const errorMessage = this.messageDialogeService.extractMessageFromError(error);
-          this.messageDialogeService.showErrorDialog({
-            redirectToHome: true,
-            errorTitle: BedOccupancyConstants.ERROR_NO_LOCATIONS_DIALOG,
-            errors: [
-              {
-                text: errorMessage,
-              },
-            ],
-          });
-        } else {
-          this.dialog.open(
-            ErrorMessageDialogComponent,
-            ErrorMessageDialogComponent.getErrorDialogCommonData(error, BedOccupancyConstants.ERROR_NO_LOCATIONS_DIALOG)
-          );
-        }
+        const errorMessage = this.messageDialogeService.extractMessageFromError(error);
+        this.messageDialogeService.showErrorDialog({
+          redirectToHome: true,
+          errorTitle: BedOccupancyConstants.ERROR_NO_LOCATIONS_DIALOG,
+          errors: [
+            {
+              text: errorMessage,
+            },
+          ],
+        });
       },
     });
   }

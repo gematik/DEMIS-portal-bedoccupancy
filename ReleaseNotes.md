@@ -2,6 +2,9 @@
 
 # Release portal-bedoccupancy
 
+# Release 1.5.6
+- Removed FEATURE_FLAG_PORTAL_ERROR_DIALOG
+
 # Release 1.5.4
 - Removed FEATURE_FLAG_PORTAL_SUBMIT and FEATURE_FLAG_PORTAL_ERROR_DIALOG_ON_SUBMIT
 - Switch to SectionHeader from Portal-Core (FEATURE_FLAG_PORTAL_PAGE_STRUCTURE)

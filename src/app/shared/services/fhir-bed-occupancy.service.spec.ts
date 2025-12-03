@@ -11,7 +11,8 @@
     In case of changes by gematik find details in the "Readme" file.
     See the Licence for the specific language governing permissions and limitations under the Licence.
     *******
-    For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
+    For additional notes and disclaimer from gematik and in case of changes by gematik,
+    find details in the "Readme" file.
  */
 
 import { TestBed } from '@angular/core/testing';
@@ -39,7 +40,6 @@ describe('FhirBedOccupancyService', () => {
       pathToGateway: '/gateway/notification/api/ng/reports/bedOccupancy',
       pathToHospitalLocations: '/services/hospital-locations',
       featureFlags: {
-        FEATURE_FLAG_PORTAL_ERROR_DIALOG: true,
         FEATURE_FLAG_PORTAL_PASTEBOX: true,
       },
     };
