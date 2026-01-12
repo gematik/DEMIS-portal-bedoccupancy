@@ -1,9 +1,28 @@
 .tabs-navigation {
   width: 25vw;
   padding: 20px;
+}
+
+:host ::ng-deep .mat-drawer-inner-container {
   display: flex;
-  flex-direction: row;
-  justify-content: stretch;
+  flex-direction: column;
+}
+
+:host ::ng-deep .info-tile-container {
+  display: flex;
+  flex: 1;
+}
+
+.side-menu-layout {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.side-menu-content {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
 }
 
 .section-body {
@@ -27,6 +46,7 @@
   margin-right: auto;
 }
 
+
 //remove when FEATURE_FLAG_PORTAL_PAGE_STRUCTURE is removed
 .oval-label {
   display: inline-flex;
@@ -40,4 +60,3 @@
   padding: 0.2rem 0.5rem;
   color: #161616;
 }
-

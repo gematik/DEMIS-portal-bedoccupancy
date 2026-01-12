@@ -3,7 +3,7 @@
   "pathToGateway": "/gateway/notification/api/ng/reports/bedOccupancy",
   "pathToHospitalLocations": "/services/hospital-locations",
   "featureFlags": {
-    "FEATURE_FLAG_PORTAL_PASTEBOX": true,
-    "FEATURE_FLAG_PORTAL_PAGE_STRUCTURE": true
+    "FEATURE_FLAG_PORTAL_PAGE_STRUCTURE": true,
+    "FEATURE_FLAG_PORTAL_HEADER_FOOTER": true
   }
 }

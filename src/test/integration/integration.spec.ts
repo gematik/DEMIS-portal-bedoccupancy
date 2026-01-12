@@ -41,8 +41,6 @@ import { BedOccupancyConstants } from 'src/app/bed-occupancy/common/bed-occupanc
 import { FormWrapperComponent } from 'src/app/bed-occupancy/components/form-wrapper/form-wrapper.component';
 import { withFormlyMaterial } from '@ngx-formly/material';
 import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
-import { FormlySelectModule } from '@ngx-formly/core/select';
-import { environment } from 'src/environments/environment';
 import { withFormlyFieldSelect } from '@ngx-formly/material/select';
 
 const TEST_DATA = {
@@ -288,31 +286,6 @@ describe('Bed Occupancy - Integration Tests', () => {
       expect(formlyError.textContent).toContain(expectedResult);
     }
   });
-
-  describe('With feature flags', () => {
-    describe('FEATURE_FLAG_PORTAL_PASTEBOX', () => {
-      beforeEach(testSetup);
-
-      beforeEach(() => {
-        environment.bedOccupancyConfig = {
-          featureFlags: {
-            FEATURE_FLAG_PORTAL_PASTEBOX: true,
-          },
-        };
-        fixture = MockRender(BedOccupancyComponent);
-        spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData');
-        spyOn(TestBed.inject(BedOccupancyStorageService), 'setLocalStorageBedOccupancyData');
-        loader = TestbedHarnessEnvironment.loader(fixture);
-        fixture.detectChanges();
-      });
-
-      itShouldSendWhenFormIsFilledCorrectlyByClipboard();
-    });
-
-    afterAll(() => {
-      delete environment.bedOccupancyConfig.featureFlags;
-    });
-  });
 });
 
 describe('Validation of occupied and available beds', () => {
@@ -340,6 +313,7 @@ describe('Validation of occupied and available beds', () => {
         MockProvider(BedOccupancyClipboardDataService, overrides.bedOccupancyClipboardDataService),
         MockProvider(BedOccupancyNotificationFormDefinitionService, overrides.bedOccupancyNotificationFormDefinitionService),
         MockProvider(ActivatedRoute, overrides.activatedRoute),
+        MockProvider(NGXLogger),
       ],
     }).compileComponents();
   });

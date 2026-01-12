@@ -15,11 +15,10 @@
     find details in the "Readme" file.
  */
 
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BedOccupancyQuestion } from 'src/api/notification';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, take } from 'rxjs';
-import { ClipboardDataService } from './clipboard-data.service';
+import { BehaviorSubject } from 'rxjs';
 import { BedOccupancyQuestionClipboard } from './clipboard-enums';
 import { MatDialog } from '@angular/material/dialog';
 import { MessageDialogService } from '@gematik/demis-portal-core-library';
@@ -27,10 +26,10 @@ import { MessageDialogService } from '@gematik/demis-portal-core-library';
 @Injectable({
   providedIn: 'root',
 })
-export class BedOccupancyClipboardDataService extends ClipboardDataService {
-  override dialog: MatDialog;
-  override logger: NGXLogger;
-  protected override messageDialogeService: MessageDialogService;
+export class BedOccupancyClipboardDataService {
+  dialog: MatDialog;
+  logger: NGXLogger;
+  protected messageDialogeService: MessageDialogService;
 
   private clipboardData = new BehaviorSubject<any>(null);
 
@@ -39,27 +38,12 @@ export class BedOccupancyClipboardDataService extends ClipboardDataService {
     const logger = inject(NGXLogger);
     const messageDialogeService = inject(MessageDialogService);
 
-    super();
-
     this.dialog = dialog;
     this.logger = logger;
     this.messageDialogeService = messageDialogeService;
   }
 
   clipboardData$ = this.clipboardData.asObservable();
-
-  /**
-   * @deprecated Use {@link updateBedOccupancy} instead, once FEATURE_FLAG_PORTAL_PASTEBOX will be removed
-   */
-  fillBedOccupancyWithClipBoardData(): void {
-    this.validateClipBoardData()
-      .pipe(take(1))
-      .subscribe(validatedMap => {
-        if (validatedMap instanceof Map) {
-          this.updateBedOccupancy(validatedMap);
-        }
-      });
-  }
 
   updateBedOccupancy(clipboardMap: Map<string, string>): void {
     const bedquestion = this.setBedOccupancyQuestionFromClipBoard(clipboardMap);

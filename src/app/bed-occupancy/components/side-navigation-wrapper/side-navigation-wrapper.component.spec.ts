@@ -1,0 +1,60 @@
+/*
+    Copyright (c) 2025 gematik GmbH
+    Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+    European Commission – subsequent versions of the EUPL (the "Licence").
+    You may not use this work except in compliance with the Licence.
+    You find a copy of the Licence in the "Licence" file or at
+    https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the Licence is distributed on an "AS IS" basis,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+    In case of changes by gematik find details in the "Readme" file.
+    See the Licence for the specific language governing permissions and limitations under the Licence.
+    *******
+    For additional notes and disclaimer from gematik and in case of changes by gematik,
+    find details in the "Readme" file.
+ */
+
+import { SideNavigationWrapperComponent } from './side-navigation-wrapper.component';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { MockProvider } from 'ng-mocks';
+import { NGXLogger } from 'ngx-logger';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+
+describe('SideNavigationWrapperComponent', () => {
+  let component: SideNavigationWrapperComponent;
+  let fixture: ComponentFixture<SideNavigationWrapperComponent>;
+
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [SideNavigationWrapperComponent],
+      providers: [MockProvider(NGXLogger)],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    }).compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(SideNavigationWrapperComponent);
+    component = fixture.componentInstance;
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  describe('footer rendering', () => {
+    it('should render footer when feature flag is active', () => {
+      spyOnProperty(component, 'FEATURE_FLAG_PORTAL_HEADER_FOOTER', 'get').and.returnValue(true);
+      fixture.detectChanges();
+      const footer = fixture.debugElement.nativeElement.querySelector('gem-demis-forms-footer');
+      expect(footer).toBeTruthy();
+    });
+
+    it('should not render footer when feature flag is not active', () => {
+      spyOnProperty(component, 'FEATURE_FLAG_PORTAL_HEADER_FOOTER', 'get').and.returnValue(false);
+      fixture.detectChanges();
+      const footer = fixture.debugElement.nativeElement.querySelector('gem-demis-forms-footer');
+      expect(footer).toBeFalsy();
+    });
+  });
+});

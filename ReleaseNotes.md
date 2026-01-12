@@ -2,6 +2,16 @@
 
 # Release portal-bedoccupancy
 
+# Release 1.5.7
+- Changed info icon in formly templates
+- Disabled Sandbox for ChromeHeadless browser to run karma tests in CI
+- Updated Base Image to 1.29.4-alpine3.23-slim
+- Removed FEATURE_FLAG_PORTAL_PASTEBOX
+- Fixed Broken Pod Annotations
+- Fixed vulnerabilities in dependencies
+- Updated @gematik/demis-portal-core-library to 2.3.8
+- Integrated form footer from core library
+
 # Release 1.5.6
 - Removed FEATURE_FLAG_PORTAL_ERROR_DIALOG
 

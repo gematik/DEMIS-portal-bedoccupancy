@@ -1,15 +1,19 @@
 <gem-demis-tiled-content>
   <ng-container infoTile>
-    <div style="padding: 16px">
-      <app-side-navigation-stepper
-        [steps]="steps()" [currentStep]="currentStep()"
-      ></app-side-navigation-stepper>
-      <app-hexhexbutton (paste)="handleHexhexButtonClick()"></app-hexhexbutton>
-      @if(FEATURE_FLAG_PORTAL_PASTEBOX) {
-      <gem-demis-paste-box (dataPasted)="onClipboardDataPasted($event)"></gem-demis-paste-box>
-      }
-      @else {
-        <app-paste-box (paste)="handlePasteBoxClick()"></app-paste-box>
+    <div class="side-menu-layout">
+      <div class="side-menu-content">
+        <app-side-navigation-stepper
+          [steps]="steps()" [currentStep]="currentStep()">
+        </app-side-navigation-stepper>
+        <app-hexhexbutton
+          (paste)="handleHexhexButtonClick()">
+        </app-hexhexbutton>
+        <gem-demis-paste-box
+          (dataPasted)="onClipboardDataPasted($event)">
+        </gem-demis-paste-box>
+      </div>
+      @if (FEATURE_FLAG_PORTAL_HEADER_FOOTER) {
+        <gem-demis-forms-footer></gem-demis-forms-footer>
       }
     </div>
   </ng-container>
@@ -32,6 +36,7 @@
         </div>
       </div>
     }
+
     <div class="section-body">
       <ng-content></ng-content>
     </div>
