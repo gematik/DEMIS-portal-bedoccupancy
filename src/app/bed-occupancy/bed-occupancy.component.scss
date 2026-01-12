@@ -5,8 +5,9 @@
     gap: 4px;
     margin-bottom: 8px;
 
+    //needs extra override because attention-icon has margin-top 4px for two-lines text
     span.message {
-      padding-top: 4px;
+      padding-top: 8px;
     }
   }
 

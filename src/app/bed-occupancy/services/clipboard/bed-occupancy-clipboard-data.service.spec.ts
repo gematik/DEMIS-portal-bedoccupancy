@@ -38,46 +38,7 @@ describe('BedOccupancyClipboardDataService', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('convertClipBoardDataToMap and fill out beds', () => {
-    const ADULTS_OPERABLE = '1';
-    const CHILDREN_OPERABLE = '2';
-    const ADULTS_OCCUPIED = '3';
-    const CHILDREN_OCCUPIED = '4';
-    it('should map valid bedoccupancy', () => {
-      const validMap = service.convertClipBoardDataToMap(
-        `URL ${BedOccupancyQuestionClipboard.ADULTS_OPERABLE}=${ADULTS_OPERABLE}&${BedOccupancyQuestionClipboard.CHILDREN_OPERABLE}=${CHILDREN_OPERABLE}&${BedOccupancyQuestionClipboard.ADULTS_OCCUPIED}=${ADULTS_OCCUPIED}&${BedOccupancyQuestionClipboard.CHILDREN_OCCUPIED}=${CHILDREN_OCCUPIED}`
-      );
-      expect(validMap.size).toBe(4);
-      expect(validMap.get(BedOccupancyQuestionClipboard.ADULTS_OPERABLE)).toEqual(ADULTS_OPERABLE);
-      expect(validMap.get(BedOccupancyQuestionClipboard.CHILDREN_OPERABLE)).toEqual(CHILDREN_OPERABLE);
-      expect(validMap.get(BedOccupancyQuestionClipboard.ADULTS_OCCUPIED)).toEqual(ADULTS_OCCUPIED);
-      expect(validMap.get(BedOccupancyQuestionClipboard.CHILDREN_OCCUPIED)).toEqual(CHILDREN_OCCUPIED);
-    });
-
-    it('should map partial bedoccupancy', () => {
-      const validMap = service.convertClipBoardDataToMap(
-        `URL ${BedOccupancyQuestionClipboard.ADULTS_OPERABLE}=${ADULTS_OPERABLE}&${BedOccupancyQuestionClipboard.ADULTS_OCCUPIED}=${ADULTS_OCCUPIED}`
-      );
-      expect(validMap.size).toBe(2);
-      expect(validMap.get(BedOccupancyQuestionClipboard.ADULTS_OPERABLE)).toEqual(ADULTS_OPERABLE);
-      expect(validMap.get(BedOccupancyQuestionClipboard.CHILDREN_OPERABLE)).toBeUndefined();
-      expect(validMap.get(BedOccupancyQuestionClipboard.ADULTS_OCCUPIED)).toEqual(ADULTS_OCCUPIED);
-      expect(validMap.get(BedOccupancyQuestionClipboard.CHILDREN_OCCUPIED)).toBeUndefined();
-    });
-
-    it('should save empty fields as undefined', () => {
-      const validMap = service.convertClipBoardDataToMap(
-        `URL ${BedOccupancyQuestionClipboard.ADULTS_OPERABLE}=&${BedOccupancyQuestionClipboard.CHILDREN_OPERABLE}=${CHILDREN_OPERABLE}&${BedOccupancyQuestionClipboard.ADULTS_OCCUPIED}=&${BedOccupancyQuestionClipboard.CHILDREN_OCCUPIED}=${CHILDREN_OCCUPIED}`
-      );
-      expect(validMap.size).toBe(2);
-      expect(validMap.get(BedOccupancyQuestionClipboard.ADULTS_OPERABLE)).toBeUndefined();
-      expect(validMap.get(BedOccupancyQuestionClipboard.CHILDREN_OPERABLE)).toEqual(CHILDREN_OPERABLE);
-      expect(validMap.get(BedOccupancyQuestionClipboard.ADULTS_OCCUPIED)).toBeUndefined();
-      expect(validMap.get(BedOccupancyQuestionClipboard.CHILDREN_OCCUPIED)).toEqual(CHILDREN_OCCUPIED);
-    });
-  });
-
-  describe('convertClipBoardDataToMap', () => {
+  describe('setBedOccupancyQuestionFromClipBoard', () => {
     it('should use clipboard values when given', () => {
       const testMap = new Map([
         [BedOccupancyQuestionClipboard.CHILDREN_OCCUPIED, '9'],

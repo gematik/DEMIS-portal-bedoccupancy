@@ -38,23 +38,16 @@ export class SideNavigationWrapperComponent {
   readonly bedOccupancyClipboardDataService = inject(BedOccupancyClipboardDataService);
   private readonly bedOccupancyNotificationFormDefinitionService = inject(BedOccupancyNotificationFormDefinitionService);
 
-  get FEATURE_FLAG_PORTAL_PASTEBOX() {
-    return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_PASTEBOX ?? false;
-  }
-
   get FEATURE_FLAG_PORTAL_PAGE_STRUCTURE() {
     return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_PAGE_STRUCTURE ?? false;
   }
 
-  onClipboardDataPasted(clipboardData: Map<string, string>) {
-    this.bedOccupancyClipboardDataService.updateBedOccupancy(clipboardData);
+  get FEATURE_FLAG_PORTAL_HEADER_FOOTER(): boolean {
+    return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_HEADER_FOOTER;
   }
 
-  /**
-   * @deprecated Use {@link onClipboardDataPasted} instead, once FEATURE_FLAG_PORTAL_PASTEBOX will be removed
-   */
-  handlePasteBoxClick() {
-    this.bedOccupancyClipboardDataService.fillBedOccupancyWithClipBoardData();
+  onClipboardDataPasted(clipboardData: Map<string, string>) {
+    this.bedOccupancyClipboardDataService.updateBedOccupancy(clipboardData);
   }
 
   handleHexhexButtonClick() {

@@ -39,9 +39,6 @@ describe('FhirBedOccupancyService', () => {
     environment.bedOccupancyConfig = {
       pathToGateway: '/gateway/notification/api/ng/reports/bedOccupancy',
       pathToHospitalLocations: '/services/hospital-locations',
-      featureFlags: {
-        FEATURE_FLAG_PORTAL_PASTEBOX: true,
-      },
     };
   });
 

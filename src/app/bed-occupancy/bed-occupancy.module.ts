@@ -31,7 +31,6 @@ import { FormlyModule } from '@ngx-formly/core';
 import { FormlySelectModule } from '@ngx-formly/core/select';
 import { AuthInterceptor } from '../shared/auth.interceptor';
 import { HexhexbuttonComponent } from '../shared/components/hexhexbutton/hexhexbutton.component';
-import { BedOccupancyPasteBoxComponent } from '../shared/components/paste-box/paste-box.component';
 import { BedOccupancyComponent } from './bed-occupancy.component';
 import { BedOccupancyConstants } from './common/bed-occupancy-constants';
 import { FormWrapperComponent } from './components/form-wrapper/form-wrapper.component';
@@ -42,18 +41,16 @@ import { BedOccupancyClipboardDataService } from './services/clipboard/bed-occup
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
 import { MatButton } from '@angular/material/button';
-import { MaxHeightContentContainerComponent, PasteBoxComponent, SectionHeaderComponent, TiledContentComponent } from '@gematik/demis-portal-core-library';
+import {
+  FormsFooterComponent,
+  MaxHeightContentContainerComponent,
+  PasteBoxComponent,
+  SectionHeaderComponent,
+  TiledContentComponent,
+} from '@gematik/demis-portal-core-library';
 
 @NgModule({
-  declarations: [
-    FormWrapperComponent,
-    SideNavigationWrapperComponent,
-    SideNavigationStepperComponent,
-    BedOccupancyComponent,
-    HexhexbuttonComponent,
-    // TODO: Remove this component once FEATURE_FLAG_PORTAL_PASTEBOX will be removed
-    BedOccupancyPasteBoxComponent,
-  ],
+  declarations: [FormWrapperComponent, SideNavigationWrapperComponent, SideNavigationStepperComponent, BedOccupancyComponent, HexhexbuttonComponent],
   imports: [
     CommonModule,
     FormlyModule.forRoot({
@@ -81,6 +78,7 @@ import { MaxHeightContentContainerComponent, PasteBoxComponent, SectionHeaderCom
     MaxHeightContentContainerComponent,
     SectionHeaderComponent,
     TiledContentComponent,
+    FormsFooterComponent,
   ],
   providers: [
     BedOccupancyClipboardDataService,
