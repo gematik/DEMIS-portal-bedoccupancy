@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2025 gematik GmbH
+    Copyright (c) 2026 gematik GmbH
     Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
     European Commission – subsequent versions of the EUPL (the "Licence").
     You may not use this work except in compliance with the Licence.
@@ -119,8 +119,8 @@ describe('Bed Occupancy - Integration Tests', () => {
       const institutionNameSelect = await getSelect(loader, '#institutionName');
       const firstnameInput = await getInput(loader, '#firstname');
       const lastnameInput = await getInput(loader, '#lastname');
-      const phoneNoInput = await getInput(loader, '[data-cy=phoneNo]');
-      const emailInput = await getInput(loader, '[data-cy=email]');
+      const phoneNoInput = await getInput(loader, '[id*="phoneNo"]');
+      const emailInput = await getInput(loader, '[id*="email"]');
       const nextButton = await getButton(loader, '#btn-nav-action-next');
 
       await selectOption(institutionNameSelect, TEST_DATA.hospitalLocation.label);
@@ -184,8 +184,8 @@ describe('Bed Occupancy - Integration Tests', () => {
       const institutionNameSelect = await getSelect(loader, '#institutionName');
       const firstnameInput = await getInput(loader, '#firstname');
       const lastnameInput = await getInput(loader, '#lastname');
-      const phoneNoInput = await getInput(loader, '[data-cy=phoneNo]');
-      const emailInput = await getInput(loader, '[data-cy=email]');
+      const phoneNoInput = await getInput(loader, '[id*="phoneNo"]');
+      const emailInput = await getInput(loader, '[id*="email"]');
       const nextButton = getHtmlButtonElement(fixture.nativeElement, '#btn-nav-action-next');
 
       await selectOption(institutionNameSelect, TEST_DATA.hospitalLocation.label);
@@ -244,7 +244,7 @@ describe('Bed Occupancy - Integration Tests', () => {
       parameters.email.forEach(parameter => {
         it(`for the email, the value: '${parameter.value}' should throw the error: '${parameter.expectedResult}'`, async () => {
           await (await getButton(loader, '#emailAddresses-add-button')).click();
-          const emailInput = await getInput(loader, '[data-cy=email]');
+          const emailInput = await getInput(loader, '[id*="email"]');
           await emailInput.setValue(parameter.value);
           await emailInput.blur();
 
@@ -254,7 +254,7 @@ describe('Bed Occupancy - Integration Tests', () => {
       parameters.phoneNumber.forEach(parameter => {
         it(`for the phone number, the value: '${parameter.value}' should throw the error: '${parameter.expectedResult}'`, async () => {
           await (await getButton(loader, '#phoneNumbers-add-button')).click();
-          const phoneNoInput = await getInput(loader, '[data-cy=phoneNo]');
+          const phoneNoInput = await getInput(loader, '[id*="phoneNo"]');
           await phoneNoInput.setValue(parameter.value);
           await phoneNoInput.blur();
 
@@ -353,14 +353,14 @@ describe('Validation of occupied and available beds', () => {
     // Add phone number
     await (await getButton(loader, '#phoneNumbers-add-button')).click();
     await waitForStability();
-    const phoneNoInput = await getInput(loader, '[data-cy=phoneNo]');
+    const phoneNoInput = await getInput(loader, '[id*="phoneNo"]');
     await phoneNoInput.setValue('0800123456');
     await waitForStability();
 
     // Add email
     await (await getButton(loader, '#emailAddresses-add-button')).click();
     await waitForStability();
-    const emailInput = await getInput(loader, '[data-cy=email]');
+    const emailInput = await getInput(loader, '[id*="email"]');
     await emailInput.setValue('homer@simpson.com');
     await waitForStability();
 

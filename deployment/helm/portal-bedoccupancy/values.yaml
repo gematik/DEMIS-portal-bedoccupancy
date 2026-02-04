@@ -21,16 +21,12 @@ required:
 config:
   production: true
   ## these are physical routes, relative to the pod URL of this micro frontend, not angular ones
-  pathToGateway: ../gateway/notification/api/ng/reports/bedOccupancy
-  pathToHospitalLocations: ../services/hospital-locations
+  pathToGateway: ../../gateway/bedoccupancy/reports/bedOccupancy
+  pathToHospitalLocations: ../../directory/hospital/v1/locations
   files: { }
   featureFlags: #Always set this to false here; feature flags will then be activated as needed via the stage configurations.
-    FEATURE_FLAG_NEW_API_ENDPOINTS: false
     FEATURE_FLAG_PORTAL_PAGE_STRUCTURE: false
     FEATURE_FLAG_PORTAL_HEADER_FOOTER: false
-  newApiEndpoints:
-    pathToHospitalLocations: ../../directory/hospital/v1/locations
-    pathToGateway: ../../gateway/bedoccupancy/reports/bedOccupancy
 # Extra Labels to be added
 # E.g.
 # customLabels:
