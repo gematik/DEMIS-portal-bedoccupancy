@@ -2,6 +2,12 @@
 
 # Release portal-bedoccupancy
 
+# Release 1.5.8
+- Removed data-cy attributes from elements
+- Updated @gematik/demis-portal-core-library to 2.3.9
+- Fixed vulnerabilities in dependencies
+- removed feature flag NEW_API_ENDPOINTS
+
 # Release 1.5.7
 - Changed info icon in formly templates
 - Disabled Sandbox for ChromeHeadless browser to run karma tests in CI

@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2025 gematik GmbH
+    Copyright (c) 2026 gematik GmbH
     Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
     European Commission – subsequent versions of the EUPL (the "Licence").
     You may not use this work except in compliance with the Licence.
@@ -98,12 +98,12 @@ function createRepeatableContactField(config: ContactFieldConfig, needsContact: 
           className: 'flex-grow-1',
           type: 'input',
           key: 'value',
+          id: config.idForTest,
           defaultValue: '',
           props: {
             label: config.inputFeldLabel,
             required: true,
             maxLength: config.inputMaxLength,
-            attributes: { 'data-cy': config.idForTest },
           },
           validators: {
             validation: [config.validatorName],
