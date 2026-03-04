@@ -41,34 +41,4 @@ export class LocalStorageService implements Storage {
       localStorage.removeItem(key);
     }
   }
-
-  updateItem<T>(key: string, value: T): void {
-    if (window.localStorage) {
-      localStorage.setItem(key, JSON.stringify(value));
-    }
-  }
-
-  addItemToList<T>(key: string, value: T): void {
-    if (window.localStorage) {
-      const currentItems: string[] = JSON.parse(localStorage.getItem(key));
-      let itemArray = [];
-      if (!currentItems?.includes(value as string)) {
-        itemArray.push(value);
-        if (currentItems) {
-          for (let v of currentItems) {
-            itemArray.push(v);
-          }
-        }
-        localStorage.setItem(key, JSON.stringify(itemArray));
-      }
-    }
-  }
-
-  removeItemFromList<T>(key: string, value: T): void {
-    if (window.localStorage) {
-      let currentItems: string[] = JSON.parse(localStorage.getItem(key));
-      currentItems = currentItems.filter(obj => obj !== value);
-      localStorage.setItem(key, JSON.stringify(currentItems));
-    }
-  }
 }

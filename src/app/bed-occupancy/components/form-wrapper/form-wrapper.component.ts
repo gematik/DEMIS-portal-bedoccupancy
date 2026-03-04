@@ -16,14 +16,31 @@
  */
 
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { FieldType, FormlyFieldConfig } from '@ngx-formly/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { FieldType, FormlyFieldConfig, FormlyModule } from '@ngx-formly/core';
+import { SideNavigationWrapperComponent } from '../side-navigation-wrapper/side-navigation-wrapper.component';
+import { MatTabGroup, MatTab } from '@angular/material/tabs';
+import { MaxHeightContentContainerComponent } from '@gematik/demis-portal-core-library';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-form-wrapper',
   templateUrl: './form-wrapper.component.html',
   styleUrls: ['./form-wrapper.component.scss'],
-  standalone: false,
+  imports: [
+    SideNavigationWrapperComponent,
+    MatTabGroup,
+    MatTab,
+    MaxHeightContentContainerComponent,
+    FormlyModule,
+    MatToolbar,
+    MatToolbarRow,
+    RouterLink,
+    MatButton,
+    MatIcon,
+  ],
 })
 export class FormWrapperComponent extends FieldType implements OnInit {
   private readonly route = inject(ActivatedRoute);

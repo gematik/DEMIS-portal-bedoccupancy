@@ -20,12 +20,24 @@ import { FormlyFieldConfig } from '@ngx-formly/core';
 import { BedOccupancyNotificationFormDefinitionService } from 'src/app/bed-occupancy/services/bed-occupancy-notification-form-definition.service';
 import { BedOccupancyClipboardDataService } from 'src/app/bed-occupancy/services/clipboard/bed-occupancy-clipboard-data.service';
 import { environment } from 'src/environments/environment';
+import { FormsFooterComponent, PasteBoxComponent, SectionHeaderComponent, TiledContentComponent } from '@gematik/demis-portal-core-library';
+import { SideNavigationStepperComponent } from '../side-navigation-stepper/side-navigation-stepper.component';
+import { HexhexbuttonComponent } from '../../../shared/components/hexhexbutton/hexhexbutton.component';
+import { MatToolbar } from '@angular/material/toolbar';
 
 @Component({
   selector: 'app-side-navigation-wrapper',
   templateUrl: './side-navigation-wrapper.component.html',
   styleUrls: ['./side-navigation-wrapper.component.scss'],
-  standalone: false,
+  imports: [
+    TiledContentComponent,
+    SideNavigationStepperComponent,
+    HexhexbuttonComponent,
+    PasteBoxComponent,
+    FormsFooterComponent,
+    SectionHeaderComponent,
+    MatToolbar,
+  ],
 })
 export class SideNavigationWrapperComponent {
   readonly currentStep = input(0);
@@ -44,6 +56,14 @@ export class SideNavigationWrapperComponent {
 
   get FEATURE_FLAG_PORTAL_HEADER_FOOTER(): boolean {
     return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_HEADER_FOOTER;
+  }
+
+  get FEATURE_FLAG_PORTAL_ACCESSIBILITY(): boolean {
+    return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_ACCESSIBILITY;
+  }
+
+  get FEATURE_FLAG_FOOTER_LINKS_CORRECTION(): boolean {
+    return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_FOOTER_LINKS_CORRECTION;
   }
 
   onClipboardDataPasted(clipboardData: Map<string, string>) {

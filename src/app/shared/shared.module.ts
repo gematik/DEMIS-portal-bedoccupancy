@@ -15,81 +15,26 @@
     find details in the "Readme" file.
  */
 
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatOptionModule } from '@angular/material/core';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatTableModule } from '@angular/material/table';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { RouterModule } from '@angular/router';
 import { FormlyModule } from '@ngx-formly/core';
-import { FormlySelectModule } from '@ngx-formly/core/select';
-import { FormlyMaterialModule } from '@ngx-formly/material';
-import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
-import { RepeatComponent } from './formly/types/repeat/repeat.component';
-import { ExpansionPanelWrapperComponent } from './formly/wrappers/expansion-panel-wrapper/expansion-panel.wrapper';
+import { DemisPortalSharedModule, FormlyRepeaterComponent } from '@gematik/demis-portal-core-library';
 import { ValidationWrapperComponent } from './formly/wrappers/validation-wrapper/validation-wrapper.component';
 import { NotificationFormValidationModule } from './notification-form-validation-module';
 import { StringFormatPipe } from './pipes/string-format.pipe';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatCardModule } from '@angular/material/card';
-import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { DemisPortalSharedModule, FormlyRepeaterComponent } from '@gematik/demis-portal-core-library';
 
 @NgModule({
-  declarations: [ExpansionPanelWrapperComponent, ValidationWrapperComponent, RepeatComponent, StringFormatPipe],
   imports: [
-    CommonModule,
     NotificationFormValidationModule,
     FormlyModule.forRoot({
-      types: [
-        { name: 'repeater', component: FormlyRepeaterComponent },
-        { name: 'repeat', component: RepeatComponent },
-      ],
-      wrappers: [
-        { name: 'validation', component: ValidationWrapperComponent },
-        { name: 'expansion-panel', component: ExpansionPanelWrapperComponent },
-      ],
+      types: [{ name: 'repeater', component: FormlyRepeaterComponent }],
+      wrappers: [{ name: 'validation', component: ValidationWrapperComponent }],
       validationMessages: [{ name: 'required', message: 'Diese Angabe wird benötigt' }],
     }),
-    MatDialogModule,
-    MatExpansionModule,
-    MatOptionModule,
-    ReactiveFormsModule,
-    FormlyMaterialModule,
-    FormlyMatDatepickerModule,
-    FormlySelectModule,
-    MatSidenavModule,
-    RouterModule,
-    MatButtonModule,
-    MatProgressSpinnerModule,
-    MatAutocompleteModule,
-    MatTabsModule,
-    MatCardModule,
-    MatTableModule,
-    MatButtonToggleModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatListModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatTooltipModule,
     DemisPortalSharedModule,
+    ValidationWrapperComponent,
+    StringFormatPipe,
   ],
   exports: [],
-  providers: [MatDialogModule],
+  providers: [],
 })
 export class SharedModule {}

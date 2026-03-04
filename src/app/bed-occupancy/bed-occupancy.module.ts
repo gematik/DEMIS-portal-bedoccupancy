@@ -50,7 +50,6 @@ import {
 } from '@gematik/demis-portal-core-library';
 
 @NgModule({
-  declarations: [FormWrapperComponent, SideNavigationWrapperComponent, SideNavigationStepperComponent, BedOccupancyComponent, HexhexbuttonComponent],
   imports: [
     CommonModule,
     FormlyModule.forRoot({
@@ -79,6 +78,11 @@ import {
     SectionHeaderComponent,
     TiledContentComponent,
     FormsFooterComponent,
+    FormWrapperComponent,
+    SideNavigationWrapperComponent,
+    SideNavigationStepperComponent,
+    BedOccupancyComponent,
+    HexhexbuttonComponent,
   ],
   providers: [
     BedOccupancyClipboardDataService,
