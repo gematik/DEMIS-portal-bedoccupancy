@@ -25,7 +25,7 @@ describe('HexhexbuttonComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [HexhexbuttonComponent],
+      imports: [HexhexbuttonComponent],
     });
     fixture = TestBed.createComponent(HexhexbuttonComponent);
     component = fixture.componentInstance;

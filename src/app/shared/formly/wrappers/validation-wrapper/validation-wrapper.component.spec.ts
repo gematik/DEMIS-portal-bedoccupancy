@@ -15,10 +15,11 @@
     find details in the "Readme" file.
  */
 
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ValidationWrapperComponent } from './validation-wrapper.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 describe('ValidationWrapperComponent', () => {
   let component: ValidationWrapperComponent;
@@ -26,7 +27,7 @@ describe('ValidationWrapperComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ValidationWrapperComponent],
+      imports: [ValidationWrapperComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
   }));
@@ -34,10 +35,18 @@ describe('ValidationWrapperComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ValidationWrapperComponent);
     component = fixture.componentInstance;
+
+    // Mock form control
+    component.field = { formControl: new FormControl() };
+
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should return true for showError', () => {
+    expect(component.showError).toBeTrue();
   });
 });

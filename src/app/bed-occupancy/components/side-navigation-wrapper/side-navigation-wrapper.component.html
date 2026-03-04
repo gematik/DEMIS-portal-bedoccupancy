@@ -2,18 +2,12 @@
   <ng-container infoTile>
     <div class="side-menu-layout">
       <div class="side-menu-content">
-        <app-side-navigation-stepper
-          [steps]="steps()" [currentStep]="currentStep()">
-        </app-side-navigation-stepper>
-        <app-hexhexbutton
-          (paste)="handleHexhexButtonClick()">
-        </app-hexhexbutton>
-        <gem-demis-paste-box
-          (dataPasted)="onClipboardDataPasted($event)">
-        </gem-demis-paste-box>
+        <app-side-navigation-stepper [steps]="steps()" [currentStep]="currentStep()" />
+        <app-hexhexbutton (paste)="handleHexhexButtonClick()" />
+        <gem-demis-paste-box (dataPasted)="onClipboardDataPasted($event)" />
       </div>
       @if (FEATURE_FLAG_PORTAL_HEADER_FOOTER) {
-        <gem-demis-forms-footer></gem-demis-forms-footer>
+        <gem-demis-forms-footer [featureFlagPortal]="FEATURE_FLAG_PORTAL_ACCESSIBILITY" [featureFlagFooterLink]="FEATURE_FLAG_FOOTER_LINKS_CORRECTION"/>
       }
     </div>
   </ng-container>
@@ -21,11 +15,9 @@
 <!--  <ng-container contentTile>-->
     @if (FEATURE_FLAG_PORTAL_PAGE_STRUCTURE) {
       <div id="bedoccupancy-tab-section-header" class="section-header">
-        <gem-demis-section-header
-          id="bed-occupancy-tab-headline"
+        <gem-demis-section-header id="bed-occupancy-tab-headline"
           [level]="1"
-          [titleText]="currentStepHeadline()">
-        </gem-demis-section-header>
+          [titleText]="currentStepHeadline()" />
       </div>
     } @else {
       <mat-toolbar id="bedoccupancy-tab-headline">{{ headline() }}</mat-toolbar>
@@ -38,7 +30,7 @@
     }
 
     <div class="section-body">
-      <ng-content></ng-content>
+      <ng-content />
     </div>
   </ng-container>
 </gem-demis-tiled-content>

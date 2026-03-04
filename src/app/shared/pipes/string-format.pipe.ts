@@ -17,10 +17,7 @@
 
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({
-  name: 'stringFormat',
-  standalone: false,
-})
+@Pipe({ name: 'stringFormat' })
 export class StringFormatPipe implements PipeTransform {
   transform(value: any, ...args: any[]): string {
     const formatFn: (obj: any) => string = args[0];

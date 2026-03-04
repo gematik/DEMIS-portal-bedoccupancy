@@ -4,12 +4,17 @@
   (selectionChange)="onStepChange($event)"
   id="stepper-form-test"
 >
-  @for(step of steps(); track step.id) {
+  @for (step of steps(); track step.id) {
     <mat-step
-      label="{{ step.props.label }}"
+      [attr.aria-label]="step.props.label"
       [completed]="isTouchedAndValid(step)"
       [hasError]="!isTouchedAndValid(step)"
     >
+
+      <ng-template matStepLabel>
+        <span [id]="'step-header-' + getStepId(step)">{{ step.props.label }}</span>
+      </ng-template>
+
       <!-- Done (weird but its angular state "edit") -->
       <ng-template matStepperIcon="edit">
         <mat-icon id="step-valid">done</mat-icon>
@@ -22,25 +27,25 @@
 
       <!-- Active State/Default State-->
       <ng-template matStepperIcon="number" let-index="index">
-        <mat-icon
-          id="step-valid-{{ step.fieldGroup[currentStep()].key }}"
-          *ngIf="isTouchedAndValid(steps()[index])"
-          >done</mat-icon
-        >
-        <mat-icon
-          id="step-invalid-{{ step.fieldGroup[currentStep()].key }}"
-          *ngIf="
-            steps()[index].formControl.touched && !isTouchedAndValid(steps()[index])
-          "
-          >close</mat-icon
-        >
+        @if (isTouchedAndValid(steps()[index])) {
+          <mat-icon
+            id="step-valid-{{ step.fieldGroup[currentStep()].key }}"
+          >done
+          </mat-icon
+          >
+        }
+        @if (steps()[index].formControl.touched && !isTouchedAndValid(steps()[index])) {
+          <mat-icon
+            id="step-invalid-{{ step.fieldGroup[currentStep()].key }}"
+          >close
+          </mat-icon
+          >
+        }
 
-        <mat-icon
-          id="step-default-{{ step.fieldGroup[currentStep()].key }}"
-          *ngIf="
-            !steps()[index].formControl.touched && !isTouchedAndValid(steps()[index])
-          "
-        ></mat-icon>
+        @if (!steps()[index].formControl.touched && !isTouchedAndValid(steps()[index])) {
+          <mat-icon id="step-default-{{ step.fieldGroup[currentStep()].key }}"
+           />
+        }
       </ng-template>
     </mat-step>
   }

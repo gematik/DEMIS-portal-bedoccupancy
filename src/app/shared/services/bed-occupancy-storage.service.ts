@@ -29,9 +29,9 @@ import { JwtHelperService } from '@auth0/angular-jwt';
   providedIn: 'root',
 })
 export class BedOccupancyStorageService {
-  private readonly jwtHelper = inject(JwtHelperService);
+  private readonly httpClient = inject(HttpClient);
 
-  constructor(private readonly httpClient: HttpClient) {}
+  private readonly jwtHelper = inject(JwtHelperService);
 
   fetchHospitalLocations(): Observable<HospitalLocation[]> {
     const ik = this.getIkNumber();

@@ -15,18 +15,29 @@
     find details in the "Readme" file.
  */
 
-import { enableProdMode, NgZone } from '@angular/core';
-
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { NavigationStart, Router } from '@angular/router';
+import { enableProdMode, importProvidersFrom, NgZone, provideZoneChangeDetection } from '@angular/core';
+import { NavigationStart, Router, RouterLink, RouterModule } from '@angular/router';
 
 import { getSingleSpaExtraProviders, singleSpaAngular } from 'single-spa-angular';
 
-import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 import { singleSpaPropsSubject } from './single-spa/single-spa-props';
 import { AppProps } from 'single-spa';
 import { setPublicPath } from 'systemjs-webpack-interop';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
+import { provideFormlyCore } from '@ngx-formly/core';
+import { defaultAppearanceExtension, defaultPlaceholderExtension } from './app/shared/formly-extensions';
+import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
+import { AppRoutingModule } from './app/app-routing.module';
+import { ReactiveFormsModule } from '@angular/forms';
+import { BedOccupancyModule } from './app/bed-occupancy/bed-occupancy.module';
+import { SharedModule } from './app/shared/shared.module';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { LoggerModule } from 'ngx-logger';
+import { AppComponent } from './app/app.component';
+import { AuthInterceptor } from './app/shared/auth.interceptor';
 
 const appId = 'notification-portal-mf-bed-occupancy';
 
@@ -37,7 +48,46 @@ if (environment.isProduction) {
 const lifecycles = singleSpaAngular({
   bootstrapFunction: singleSpaProps => {
     singleSpaPropsSubject.next(singleSpaProps);
-    return platformBrowserDynamic(getSingleSpaExtraProviders()).bootstrapModule(AppModule);
+    return bootstrapApplication(AppComponent, {
+      providers: [
+        provideZoneChangeDetection(),
+        importProvidersFrom(
+          RouterModule,
+          RouterLink,
+          BrowserModule,
+          AppRoutingModule,
+          ReactiveFormsModule,
+          BedOccupancyModule,
+          SharedModule,
+          MatFormFieldModule,
+          LoggerModule.forRoot(environment.defaultNgxLoggerConfig)
+        ),
+        {
+          provide: HTTP_INTERCEPTORS,
+          useClass: AuthInterceptor,
+          multi: true,
+        },
+        getSingleSpaExtraProviders(),
+        provideHttpClient(withInterceptorsFromDi()),
+        provideAnimations(),
+        JwtHelperService,
+        { provide: JWT_OPTIONS, useValue: {} },
+        provideFormlyCore([
+          {
+            extensions: [
+              {
+                name: 'default-placeholder',
+                extension: defaultPlaceholderExtension,
+              },
+              {
+                name: 'default-appearance',
+                extension: defaultAppearanceExtension,
+              },
+            ],
+          },
+        ]),
+      ],
+    });
   },
   template: '<bed-occupancy-root />',
   Router,

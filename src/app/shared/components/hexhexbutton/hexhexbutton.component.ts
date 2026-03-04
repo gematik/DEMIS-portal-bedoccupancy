@@ -15,14 +15,13 @@
     find details in the "Readme" file.
  */
 
-import { Component, ElementRef, HostListener, output, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, output } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-hexhexbutton',
   templateUrl: './hexhexbutton.component.html',
   styleUrls: ['./hexhexbutton.component.scss'],
-  standalone: false,
 })
 export class HexhexbuttonComponent {
   private readonly targetElement = inject(ElementRef);

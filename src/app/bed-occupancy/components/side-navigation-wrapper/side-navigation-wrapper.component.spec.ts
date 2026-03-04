@@ -20,6 +20,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MockProvider } from 'ng-mocks';
 import { NGXLogger } from 'ngx-logger';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 describe('SideNavigationWrapperComponent', () => {
   let component: SideNavigationWrapperComponent;
@@ -27,7 +28,7 @@ describe('SideNavigationWrapperComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [SideNavigationWrapperComponent],
+      imports: [SideNavigationWrapperComponent, RouterModule.forRoot([])],
       providers: [MockProvider(NGXLogger)],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();

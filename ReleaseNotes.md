@@ -2,6 +2,19 @@
 
 # Release portal-bedoccupancy
 
+# Release 1.6.0
+- Updated Angular to v21
+- Migrate to standalone components
+- Updated @gematik/demis-portal-core-library to 3.0.3
+- Added ids to SideStepper
+- Removed unused components and code
+- Restructured integration test
+- Add accessibility statement link
+- Update @gematik/demis-portal-core-library to 2.4.4
+- Removed CPU limit in helm chart
+- Removed istio helm chart
+- Change imprint link and add ids in footer (FEATURE_FLAG_FOOTER_LINKS_CORRECTION)
+
 # Release 1.5.8
 - Removed data-cy attributes from elements
 - Updated @gematik/demis-portal-core-library to 2.3.9

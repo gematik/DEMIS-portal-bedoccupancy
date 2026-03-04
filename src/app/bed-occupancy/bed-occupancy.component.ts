@@ -16,10 +16,10 @@
  */
 
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BedOccupancy } from 'src/api/notification';
 import { HospitalLocation } from 'src/app/shared/models/hospital-location';
-import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
+import { FormlyFieldConfig, FormlyFormOptions, FormlyModule } from '@ngx-formly/core';
 import { Subscription } from 'rxjs';
 
 import { BedOccupancyConstants } from './common/bed-occupancy-constants';
@@ -32,13 +32,13 @@ import { bedOccupancyDummyData } from './common/dummyData';
 import { BedOccupancyNotificationFormDefinitionService } from './services/bed-occupancy-notification-form-definition.service';
 import { BedOccupancyClipboardDataService } from './services/clipboard/bed-occupancy-clipboard-data.service';
 import { MatDialog } from '@angular/material/dialog';
-import { MessageDialogService } from '@gematik/demis-portal-core-library';
+import { MessageDialogService, MaxHeightContentContainerComponent } from '@gematik/demis-portal-core-library';
 
 @Component({
   selector: 'app-bed-occupancy',
   templateUrl: './bed-occupancy.component.html',
   styleUrls: ['./bed-occupancy.component.scss'],
-  standalone: false,
+  imports: [MaxHeightContentContainerComponent, ReactiveFormsModule, FormlyModule],
 })
 export class BedOccupancyComponent implements OnInit, OnDestroy {
   private readonly bedOccupancyStorageService = inject(BedOccupancyStorageService);

@@ -15,8 +15,6 @@
     find details in the "Readme" file.
  */
 
-import { FormlyFieldConfig } from '@ngx-formly/core';
-
 import {
   GERMANY_COUNTRY_CODE,
   ZIP_GERMANY_MAX_LENGTH,
@@ -24,11 +22,8 @@ import {
   ZIP_INTERNATIONAL_MAX_LENGTH,
   ZIP_INTERNATIONAL_MIN_LENGTH,
 } from '../../../common-utils';
-import { ValueSets } from 'src/app/shared/models/fhir/value-sets';
-
-import { AddressType } from 'src/api/notification';
 import { FormlyConstants } from '../formly-constants';
-import { formlyInputField, formlyRow } from './commons';
+import { formlyInputField } from './commons';
 
 export const addressFormConfigFields = (required: boolean, idPrefix: string = '', disabled: boolean = false) => [
   formlyInputField({

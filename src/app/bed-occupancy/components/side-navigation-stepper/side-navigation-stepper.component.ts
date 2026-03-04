@@ -16,16 +16,18 @@
  */
 
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
-import { Component, ViewEncapsulation, input, inject } from '@angular/core';
+import { Component, inject, input, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormlyFieldConfig } from '@ngx-formly/core';
+import { MatStep, MatStepLabel, MatStepper, MatStepperIcon } from '@angular/material/stepper';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-side-navigation-stepper',
   templateUrl: './side-navigation-stepper.component.html',
   styleUrls: ['./side-navigation-stepper.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: false,
+  imports: [MatStepper, MatStep, MatStepperIcon, MatIcon, MatStepLabel],
 })
 export class SideNavigationStepperComponent {
   private readonly router = inject(Router);
@@ -46,5 +48,9 @@ export class SideNavigationStepperComponent {
       relativeTo: this.route,
       fragment: this.steps()[event.selectedIndex].props['anchor'],
     });
+  }
+
+  getStepId(step: FormlyFieldConfig): string {
+    return String(step?.key || step?.props?.label);
   }
 }

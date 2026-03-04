@@ -27,6 +27,8 @@ config:
   featureFlags: #Always set this to false here; feature flags will then be activated as needed via the stage configurations.
     FEATURE_FLAG_PORTAL_PAGE_STRUCTURE: false
     FEATURE_FLAG_PORTAL_HEADER_FOOTER: false
+    FEATURE_FLAG_PORTAL_ACCESSIBILITY: false
+    FEATURE_FLAG_FOOTER_LINKS_CORRECTION: false
 # Extra Labels to be added
 # E.g.
 # customLabels:
@@ -111,7 +113,6 @@ service:
 # Default Resources
 resources:
   limits:
-    cpu: "500m"
     memory: "256Mi"
   requests:
     cpu: "100m"
