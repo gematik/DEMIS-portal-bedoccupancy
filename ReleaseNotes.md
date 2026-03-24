@@ -2,6 +2,12 @@
 
 # Release portal-bedoccupancy
 
+# Release 1.6.1
+- Updated @gematik/demis-portal-core-library to 3.0.9
+- Updated @gematik/demis-portal-theme-library to 1.1.2
+- Dependency update because of GHSA-g93w-mfhg-p222
+
+
 # Release 1.6.0
 - Updated Angular to v21
 - Migrate to standalone components
