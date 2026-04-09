@@ -1,0 +1,40 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+gem-demis-max-height-content-container {
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+mat-toolbar {
+  background: var(--color-white);
+  justify-content: space-between;
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+  margin: 0;
+  padding: 8px 0;
+  flex-shrink: 0;
+
+  mat-toolbar-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0;
+
+    > div {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+  }
+}
+
+.section-header-headline {
+  margin-bottom: 20px;
+}

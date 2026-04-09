@@ -1,0 +1,27 @@
+<gem-demis-max-height-content-container [elementSelectorsToSubtract]="['app-navbar', '#bedoccupancy-actions-bar']">
+  <formly-form [form]="notificationService.bedOccupancyQuestionGroup"
+               [model]="notificationService.bedOccupancyQuestionModel()"
+               [fields]="fieldConfig"/>
+</gem-demis-max-height-content-container>
+
+<mat-toolbar id="bedoccupancy-actions-bar">
+  <mat-toolbar-row>
+    <div>
+      <button mat-stroked-button (click)="navigation.previous()" [disabled]="!navigation.canGoToPrevious()"
+              class="btn navigate--color style" id="btn-nav-action-back"
+              mat-button type="button">
+        <mat-icon class="btn__icon margin--right" fontIcon="arrow_back_ios"/>
+        Zurück
+      </button>
+    </div>
+    <div>
+      <button class="btn style dark--color" id="btn-send-notification"
+              mat-button type="submit" (click)="notificationService.sendData()"
+              [disabled]="!notificationService.isFormValid()">
+        Abschicken
+        <mat-icon class="btn__icon margin--left rotate" fontIcon="send" iconPositionEnd/>
+      </button>
+    </div>
+  </mat-toolbar-row>
+</mat-toolbar>
+

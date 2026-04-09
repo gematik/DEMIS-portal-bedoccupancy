@@ -25,6 +25,9 @@ import { SideNavigationStepperComponent } from '../side-navigation-stepper/side-
 import { HexhexbuttonComponent } from '../../../shared/components/hexhexbutton/hexhexbutton.component';
 import { MatToolbar } from '@angular/material/toolbar';
 
+/**
+ * @deprecated: this component can be removed with FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV
+ */
 @Component({
   selector: 'app-side-navigation-wrapper',
   templateUrl: './side-navigation-wrapper.component.html',

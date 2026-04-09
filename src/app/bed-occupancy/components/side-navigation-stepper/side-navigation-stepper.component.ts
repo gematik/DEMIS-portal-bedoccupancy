@@ -21,7 +21,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { MatStep, MatStepLabel, MatStepper, MatStepperIcon } from '@angular/material/stepper';
 import { MatIcon } from '@angular/material/icon';
-
+/**
+ * @deprecated: this component can be removed with FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV
+ */
 @Component({
   selector: 'app-side-navigation-stepper',
   templateUrl: './side-navigation-stepper.component.html',

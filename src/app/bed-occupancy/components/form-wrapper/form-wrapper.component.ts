@@ -24,7 +24,9 @@ import { MaxHeightContentContainerComponent } from '@gematik/demis-portal-core-l
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-
+/**
+ * @deprecated: this component can be removed with FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV
+ */
 @Component({
   selector: 'app-form-wrapper',
   templateUrl: './form-wrapper.component.html',

@@ -34,6 +34,9 @@ import { BedOccupancyClipboardDataService } from './services/clipboard/bed-occup
 import { MatDialog } from '@angular/material/dialog';
 import { MessageDialogService, MaxHeightContentContainerComponent } from '@gematik/demis-portal-core-library';
 
+/**
+ * @deprecated: this component can be removed with FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV
+ */
 @Component({
   selector: 'app-bed-occupancy',
   templateUrl: './bed-occupancy.component.html',

@@ -17,13 +17,13 @@
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { BedOccupancyComponent } from './bed-occupancy/bed-occupancy.component';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { WrapperComponent } from './wrapper/wrapper.component';
 
 const routes: Routes = [
   {
     path: '**',
-    component: BedOccupancyComponent,
+    component: WrapperComponent,
   },
 ];
 

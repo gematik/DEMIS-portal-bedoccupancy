@@ -17,7 +17,9 @@
 
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-
+/**
+ * @deprecated: this component can be removed with FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV
+ */
 @Injectable({
   providedIn: 'root',
 })

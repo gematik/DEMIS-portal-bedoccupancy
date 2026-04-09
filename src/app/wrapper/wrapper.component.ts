@@ -15,17 +15,23 @@
     find details in the "Readme" file.
  */
 
-const singleSpaAngularWebpack = require('@single-spa-community/angular/lib/webpack').default;
+import { Component } from '@angular/core';
+import { environment } from '../../environments/environment';
+import { BedOccupancyNewComponent } from '../bed-occupancy-new/bed-occupancy-new.component';
+import { BedOccupancyComponent } from '../bed-occupancy/bed-occupancy.component';
 
-module.exports = (angularWebpackConfig, options) => {
-  const singleSpaWebpackConfig = singleSpaAngularWebpack(angularWebpackConfig, options);
-
-  // Suppress CommonJS warnings specifically for style-loader runtime modules
-  singleSpaWebpackConfig.ignoreWarnings = [
-    /node_modules\/style-loader\/dist\/runtime.*CommonJS or AMD dependencies/,
-    /styles\.scss.*depends on.*style-loader\/dist\/runtime.*CommonJS or AMD dependencies/,
-  ];
-
-  // Feel free to modify this webpack config however you'd like to
-  return singleSpaWebpackConfig;
-};
+@Component({
+  selector: 'app-wrapper',
+  imports: [BedOccupancyNewComponent, BedOccupancyComponent],
+  template: `@if (isPortalBedOccupancySidenavEnabled) {
+      <app-bed-occupancy-new></app-bed-occupancy-new>
+    } @else {
+      <app-bed-occupancy></app-bed-occupancy>
+    }`,
+  standalone: true,
+})
+export class WrapperComponent {
+  get isPortalBedOccupancySidenavEnabled() {
+    return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV;
+  }
+}

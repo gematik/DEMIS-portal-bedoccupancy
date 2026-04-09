@@ -16,19 +16,8 @@
  */
 
 import { Injectable } from '@angular/core';
-import { ContactPointInfo, FacilityAddressInfo, FacilityInfo, NotifierFacility, PractitionerInfo } from 'src/api/notification';
-import { GERMANY_COUNTRY_CODE } from '../common-utils';
-import {
-  checkAdditionalInfoText,
-  termValidation,
-  validateEmail,
-  validateGermanZip,
-  validateHouseNumber,
-  validateInternationalZip,
-  validateNotBlank,
-  validatePhoneNo,
-  validateStreet,
-} from '../notification-form-validation-module';
+import { ContactPointInfo } from 'src/api/notification';
+import { validateEmail, validatePhoneNo } from '../notification-form-validation-module';
 import ContactTypeEnum = ContactPointInfo.ContactTypeEnum;
 
 /****
@@ -41,82 +30,12 @@ import ContactTypeEnum = ContactPointInfo.ContactTypeEnum;
 
 @Injectable({ providedIn: 'root' })
 export class ValidateNotificationService {
-  validateNotifierFacilityBedOccupancyTemp(notifierFacility: NotifierFacility): boolean {
-    return (
-      !!notifierFacility &&
-      this.validatePractitionerInfo(notifierFacility.contact) &&
-      this.validateContactPointInfoFacility(notifierFacility.contacts) &&
-      this.validateGermanAddressBedOccupancyTemp(notifierFacility.address) &&
-      this.validateFacilityInfoBedOccupancyTemp(notifierFacility.facilityInfo)
-    );
-  }
-
-  validatePractitionerInfo(practitionerInfo: PractitionerInfo): boolean {
-    return !!practitionerInfo && this.validateString(practitionerInfo.firstname, true) && this.validateString(practitionerInfo.lastname, true);
-  }
-
-  validateString(term: string | undefined, required: boolean): boolean {
-    return required ? !!term && !termValidation(term) && !validateNotBlank(term) : !term || !termValidation(term);
-  }
-
-  validateStreet(term: string | undefined, required: boolean): boolean {
-    return required ? !!term && !validateStreet(term) && !validateNotBlank(term) : !term || !validateStreet(term);
-  }
-
-  isAdditionalInfoTextValid(term: string | undefined, required: boolean): boolean {
-    return required ? !!term && !checkAdditionalInfoText(term) : !term || !checkAdditionalInfoText(term);
-  }
-
-  validateZipCode(zip: string, countryCode?: string): boolean {
-    return countryCode === GERMANY_COUNTRY_CODE ? !!zip && !validateGermanZip(zip) : !!zip && !validateInternationalZip(zip);
-  }
-
-  validateHouseNumber(houseNumber: string | undefined, required: boolean): boolean {
-    return required ? !!houseNumber && !validateHouseNumber(houseNumber) : !houseNumber || !validateHouseNumber(houseNumber);
-  }
-
-  validateFacilityInfoBedOccupancyTemp(facilityInfo: FacilityInfo) {
-    return !!facilityInfo && !!facilityInfo.institutionName;
-  }
-
-  validateGermanAddress(address: FacilityAddressInfo): boolean {
-    return (
-      !!address &&
-      this.validateStreet(address.street, true) &&
-      this.validateHouseNumber(address.houseNumber, true) &&
-      this.validateZipCode(address.zip, GERMANY_COUNTRY_CODE) &&
-      this.validateString(address.city, true) &&
-      !!address.country
-    );
-  }
-
-  validateGermanAddressBedOccupancyTemp(address: FacilityAddressInfo): boolean {
-    return !!address && !!address.street && !!address.houseNumber && !!address.zip && !!address.city && !!address.country;
-  }
-
   validatePhoneNumber(phoneNumber: string, required: boolean): boolean {
     return required ? !!phoneNumber && !validatePhoneNo(phoneNumber) : !phoneNumber || !validatePhoneNo(phoneNumber);
   }
 
   validateEmailAddress(email: string, required: boolean): boolean {
     return required ? !!email && !validateEmail(email) : !email || !validateEmail(email);
-  }
-
-  validateContactPointInfoFacility(contactPointInfo: ContactPointInfo[]): boolean {
-    return contactPointInfo.length > 0 && this.validateContacts(contactPointInfo);
-  }
-
-  validateContacts(contactPointInfos: ContactPointInfo[] | undefined): boolean {
-    if (!contactPointInfos) return true;
-    let result: boolean = true;
-    contactPointInfos.forEach((contact: ContactPointInfo) => {
-      if (contact.contactType === ContactTypeEnum.Phone && !this.validatePhoneNumber(contact.value, true)) {
-        return (result = false);
-      } else if (contact.contactType === ContactTypeEnum.Email && !this.validateEmailAddress(contact.value, true)) {
-        return (result = false);
-      }
-    });
-    return result;
   }
 
   async phoneValidator(data: any): Promise<boolean> {
