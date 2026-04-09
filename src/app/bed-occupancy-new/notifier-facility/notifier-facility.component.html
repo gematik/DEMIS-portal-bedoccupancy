@@ -1,0 +1,28 @@
+<gem-demis-max-height-content-container [elementSelectorsToSubtract]="['app-navbar', '#notifier-facility-actions-bar']">
+  <div id="notifier-facility-section-header" class="section-header-headline">
+    <gem-demis-section-header id="notifier-facility-headline"
+                              [level]="1"
+                              [titleText]="BedOccupancyConstants.MELDENDE_EINRICHTUNG"/>
+  </div>
+  <formly-form [form]="notificationService.notifierFacilityGroup" [model]="notificationService.notifierFacilityModel()"
+               [fields]="fieldConfig"/>
+</gem-demis-max-height-content-container>
+
+<mat-toolbar id="notifier-facility-actions-bar">
+  <mat-toolbar-row>
+    <div></div>
+    <div>
+      <button class="btn navigate--color style forward" id="btn-nav-action-next"
+              mat-button type="button" (click)="navigation.next()" [disabled]="!navigation.canGoToNext()">
+        Weiter
+        <mat-icon class="btn__icon margin-left" fontIcon="arrow_forward_ios" iconPositionEnd/>
+      </button>
+      <button class="btn style dark--color" id="btn-send-notification"
+              mat-button type="submit" (click)="notificationService.sendData()"
+              [disabled]="!notificationService.isFormValid()">
+        Abschicken
+        <mat-icon class="btn__icon margin--left rotate" fontIcon="send" iconPositionEnd/>
+      </button>
+    </div>
+  </mat-toolbar-row>
+</mat-toolbar>

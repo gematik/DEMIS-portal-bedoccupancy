@@ -15,17 +15,21 @@
     find details in the "Readme" file.
  */
 
-const singleSpaAngularWebpack = require('@single-spa-community/angular/lib/webpack').default;
+import { ProcessStep } from '@gematik/demis-portal-core-library';
+import { BedOccupancyNotificationService } from './bed-occupancy-notification.service';
+import { BedOccupancyConstants } from '../bed-occupancy/common/bed-occupancy-constants';
 
-module.exports = (angularWebpackConfig, options) => {
-  const singleSpaWebpackConfig = singleSpaAngularWebpack(angularWebpackConfig, options);
-
-  // Suppress CommonJS warnings specifically for style-loader runtime modules
-  singleSpaWebpackConfig.ignoreWarnings = [
-    /node_modules\/style-loader\/dist\/runtime.*CommonJS or AMD dependencies/,
-    /styles\.scss.*depends on.*style-loader\/dist\/runtime.*CommonJS or AMD dependencies/,
+export function getStepData(notificationService: BedOccupancyNotificationService): ProcessStep[] {
+  return [
+    {
+      key: 'notifierFacility',
+      label: BedOccupancyConstants.MELDENDE_EINRICHTUNG,
+      control: notificationService.notifierFacilityGroup,
+    },
+    {
+      key: 'bedOccupancyQuestion',
+      label: BedOccupancyConstants.BETTENBELEGUNG,
+      control: notificationService.bedOccupancyQuestionGroup,
+    },
   ];
-
-  // Feel free to modify this webpack config however you'd like to
-  return singleSpaWebpackConfig;
-};
+}

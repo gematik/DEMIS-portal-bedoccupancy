@@ -18,7 +18,7 @@
 import { enableProdMode, importProvidersFrom, NgZone, provideZoneChangeDetection } from '@angular/core';
 import { NavigationStart, Router, RouterLink, RouterModule } from '@angular/router';
 
-import { getSingleSpaExtraProviders, singleSpaAngular } from 'single-spa-angular';
+import { getSingleSpaExtraProviders, singleSpaAngular } from '@single-spa-community/angular';
 
 import { environment } from './environments/environment';
 import { singleSpaPropsSubject } from './single-spa/single-spa-props';

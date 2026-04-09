@@ -46,13 +46,13 @@ export class BedOccupancyClipboardDataService {
   clipboardData$ = this.clipboardData.asObservable();
 
   updateBedOccupancy(clipboardMap: Map<string, string>): void {
-    const bedquestion = this.setBedOccupancyQuestionFromClipBoard(clipboardMap);
+    const bedquestion = this.getBedOccupancyQuestionFromClipBoard(clipboardMap);
     this.clipboardData.next({
       bedOccupancyQuestion: bedquestion,
     });
   }
 
-  setBedOccupancyQuestionFromClipBoard(paramMap: Map<string, string>): BedOccupancyQuestion {
+  getBedOccupancyQuestionFromClipBoard(paramMap: Map<string, string>): BedOccupancyQuestion {
     return {
       occupiedBeds: {
         adultsNumberOfBeds: this.setNumberValue(paramMap.get(BedOccupancyQuestionClipboard.ADULTS_OCCUPIED)),

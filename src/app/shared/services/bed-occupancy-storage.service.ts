@@ -80,8 +80,4 @@ export class BedOccupancyStorageService {
     // Return the data for the specified IK number, or null if it doesn't exist
     return bedOccupancy[ikNumber] || null;
   }
-
-  saveBedOccupancyClipboardData(data: string): void {
-    localStorage.setItem('clipboardData', data);
-  }
 }

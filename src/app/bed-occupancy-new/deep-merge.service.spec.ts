@@ -15,21 +15,19 @@
     find details in the "Readme" file.
  */
 
-import { Pipe, PipeTransform, inject } from '@angular/core';
-import { ValueSetService } from '../services/value-set.service';
-import { map } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { TestBed } from '@angular/core/testing';
 
-@Pipe({
-  name: 'valueSetLabel',
-})
-export class ValueSetLabelPipe implements PipeTransform {
-  private readonly valueSetService = inject(ValueSetService);
+import { DeepMergeService } from './deep-merge.service';
 
-  transform(value: string, valueSetName: string): Observable<string | undefined> {
-    if (value && valueSetName) {
-      return this.valueSetService.get(valueSetName).pipe(map(f => f.find(e => e.value === value)?.label));
-    }
-    return of(undefined);
-  }
-}
+describe('DeepMergeService', () => {
+  let service: DeepMergeService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(DeepMergeService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
