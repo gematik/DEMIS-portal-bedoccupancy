@@ -167,4 +167,19 @@ describe('FhirBedOccupancyService', () => {
     expect(errorArg.errors.length).toBe(1);
     expect(errorArg.errors[0].text).toBe(errorMessage);
   });
+
+  describe('extractErrorDetails', () => {
+    it('extractErrorDetails should map validation errors', () => {
+      const validationErrors = [
+        { message: 'VE1', severity: 'error' },
+        { message: 'VE2', severity: 'warning' },
+      ];
+      const err = { error: { validationErrors } };
+      const result = (service as any).extractErrorDetails(err);
+      expect(result).toEqual([
+        { text: 'VE1', queryString: 'VE1', severity: 'error' },
+        { text: 'VE2', queryString: 'VE2', severity: 'warning' },
+      ]);
+    });
+  });
 });
