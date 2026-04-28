@@ -2,6 +2,10 @@
 
 # Release portal-bedoccupancy
 
+## Release 1.7.1
+- Added filtering of validation errors in the dialog after submitting a notification (FEATURE_FLAG_PORTAL_ERROR_DIALOG_FILTERING)
+- Updated @gematik/demis-portal-core-library to 3.2.1
+
 ## Release 1.7.0
 - Added new sidenav from core library (FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV)
 - Updated package name to @single-spa-community/angular

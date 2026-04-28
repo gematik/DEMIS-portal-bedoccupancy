@@ -16,11 +16,11 @@
  */
 
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BedOccupancy, ValidationError } from 'src/api/notification';
 import { NGXLogger } from 'ngx-logger';
 import { MatDialog } from '@angular/material/dialog';
-import { MessageDialogService, trimStrings, SubmitDialogProps } from '@gematik/demis-portal-core-library';
+import { ErrorMessage, MessageDialogService, SubmitDialogProps, trimStrings } from '@gematik/demis-portal-core-library';
 import { environment } from '../../../environments/environment';
 import { FileService } from './file.service';
 import { finalize } from 'rxjs/operators';
@@ -89,6 +89,7 @@ export class FhirBedOccupancyService {
           this.messageDialogService.showErrorDialog({
             errorTitle: 'Meldung konnte nicht zugestellt werden!',
             errors,
+            logFilteringEnabled: environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_ERROR_DIALOG_FILTERING,
           });
         },
       });
@@ -106,23 +107,25 @@ export class FhirBedOccupancyService {
     };
   }
 
-  private extractErrorDetails(err: any): { text: string; queryString: string }[] {
+  private extractErrorDetails(err: any): ErrorMessage[] {
     const response = err?.error ?? err;
     const errorMessage = this.messageDialogService.extractMessageFromError(response);
     const validationErrors = response?.validationErrors || [];
+
     if (validationErrors.length > 0) {
       return validationErrors.map((ve: ValidationError) => ({
         text: ve.message,
         queryString: ve.message || '',
+        severity: ve.severity,
       }));
-    } else {
-      return [
-        {
-          text: errorMessage,
-          queryString: errorMessage || '',
-        },
-      ];
     }
+
+    return [
+      {
+        text: errorMessage,
+        queryString: errorMessage || '',
+      },
+    ];
   }
 
   private static getEnvironmentHeaders(): HttpHeaders {
