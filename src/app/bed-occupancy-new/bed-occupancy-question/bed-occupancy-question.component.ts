@@ -16,7 +16,7 @@
  */
 
 import { AfterViewInit, Component, inject } from '@angular/core';
-import { MaxHeightContentContainerComponent, StepContentComponent, StepNavigationService } from '@gematik/demis-portal-core-library';
+import { MaxHeightContentContainerComponent, StepContentComponent, StepNavigation } from '@gematik/demis-portal-core-library';
 import { FormlyForm } from '@ngx-formly/core';
 import { BedOccupancyNotificationService } from '../bed-occupancy-notification.service';
 import { questionBedOccupancyHtmlConfigFields } from '../../shared/formly/configs/bed-occupancy/question.config';
@@ -34,7 +34,7 @@ import { BedOccupancyConstants } from '../../bed-occupancy/common/bed-occupancy-
 export class BedOccupancyQuestionComponent extends StepContentComponent<void> implements AfterViewInit {
   protected readonly notificationService = inject(BedOccupancyNotificationService);
   protected readonly fieldConfig = questionBedOccupancyHtmlConfigFields;
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
   protected readonly BedOccupancyConstants = BedOccupancyConstants;
 
   ngAfterViewInit(): void {

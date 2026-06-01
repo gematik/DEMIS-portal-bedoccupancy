@@ -140,8 +140,6 @@ export class BedOccupancyComponent implements OnInit, OnDestroy {
               {
                 key: 'notifierFacility',
                 props: {
-                  //remove title when FEATURE_FLAG_PORTAL_PAGE_STRUCTURE is removed
-                  title: BedOccupancyConstants.FORM_TITLE,
                   label: BedOccupancyConstants.MELDENDE_EINRICHTUNG,
                   anchor: NotificationConstants.BED_OCCUPANCY_NOTIFIER_FACILITY,
                 },
@@ -150,8 +148,6 @@ export class BedOccupancyComponent implements OnInit, OnDestroy {
               {
                 key: 'bedOccupancyQuestion',
                 props: {
-                  //remove title when FEATURE_FLAG_PORTAL_PAGE_STRUCTURE is removed
-                  title: BedOccupancyConstants.FORM_TITLE,
                   label: BedOccupancyConstants.BETTENBELEGUNG,
                   anchor: NotificationConstants.BED_OCCUPANCY_OCCUPIED_BEDS,
                 },

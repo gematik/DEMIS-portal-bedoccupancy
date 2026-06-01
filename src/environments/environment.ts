@@ -16,8 +16,9 @@
  */
 
 import { HttpHeaders } from '@angular/common/http';
-import { NgxLoggerLevel } from 'ngx-logger';
 import { assetUrl } from '../single-spa/asset-url';
+import { isDevMode } from '@angular/core';
+import { LOGGER_CONFIG_FOR_DEV, LOGGER_CONFIG_FOR_PROD } from '@gematik/demis-portal-core-library';
 
 interface NgxLoggerConfig {
   level: number;
@@ -54,12 +55,24 @@ class Environment {
     return !!this.config?.production;
   }
 
-  public get defaultNgxLoggerConfig(): NgxLoggerConfig {
-    return {
-      level: NgxLoggerLevel.OFF,
-      disableConsoleLogging: true,
-      serverLogLevel: NgxLoggerLevel.OFF,
-    };
+  public get defaultLoggerConfiguration() {
+    return isDevMode() ? LOGGER_CONFIG_FOR_DEV : LOGGER_CONFIG_FOR_PROD;
+  }
+
+  /**
+   * Logger is by default disabled (values.yaml)
+   * Locally it is by default enabled (environment.json)
+   *
+   * If values yaml & environment.json do not provide a logger configuration, the default configuration is used,
+   * which is disabled for production and enabled for development.
+   *
+   * To enable or disable it differently on a specific environment, it must be changed via config maps
+   *
+   * Logger config hierarchy:
+   * values.yaml > environment.json > defaultConfig
+   */
+  public get ngxLoggerConfig(): NgxLoggerConfig {
+    return this.config?.ngxLoggerConfig ? this.config?.ngxLoggerConfig : this.defaultLoggerConfiguration;
   }
 
   public get pathToGateway(): string {

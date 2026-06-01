@@ -17,8 +17,6 @@
 
 export enum BedOccupancyConstants {
   DEMIS_FORM_WRAPPER_TEMPLATE_KEYWORD = 'demis-formly-tab-navigation',
-  //remove FORM_TITLE when FEATURE_FLAG_PORTAL_PAGE_STRUCTURE is removed
-  FORM_TITLE = 'Tägliche Meldung der belegten und betreibbaren Betten',
   MELDENDE_EINRICHTUNG = 'Meldende Einrichtung',
   BETTENBELEGUNG = 'Bettenbelegung',
 

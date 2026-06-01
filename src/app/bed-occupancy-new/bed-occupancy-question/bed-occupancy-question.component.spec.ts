@@ -21,13 +21,13 @@ import { TestBed } from '@angular/core/testing';
 import { MockBuilder, MockedComponentFixture, MockRender, ngMocks } from 'ng-mocks';
 import { BedOccupancyQuestionComponent } from './bed-occupancy-question.component';
 import { BedOccupancyNotificationService } from '../bed-occupancy-notification.service';
-import { StepNavigationService } from '@gematik/demis-portal-core-library';
+import { StepNavigation } from '@gematik/demis-portal-core-library';
 
 describe('BedOccupancyQuestionComponent', () => {
   let component: BedOccupancyQuestionComponent;
   let fixture: MockedComponentFixture<BedOccupancyQuestionComponent, BedOccupancyQuestionComponent>;
   let notificationService: BedOccupancyNotificationService;
-  let navigationService: StepNavigationService;
+  let navigationService: StepNavigation;
 
   beforeEach(() => {
     const notificationServiceMock: Partial<BedOccupancyNotificationService> = {
@@ -39,7 +39,7 @@ describe('BedOccupancyQuestionComponent', () => {
       markBedOccupancyQuestionAsVisited: jasmine.createSpy('markBedOccupancyQuestionAsVisited'),
     };
 
-    const navigationServiceMock: Partial<StepNavigationService> = {
+    const navigationServiceMock: Partial<StepNavigation> = {
       canGoToPrevious: signal(true),
       previous: jasmine.createSpy('previous'),
     };
@@ -50,14 +50,14 @@ describe('BedOccupancyQuestionComponent', () => {
         useValue: notificationServiceMock,
       })
       .provide({
-        provide: StepNavigationService,
+        provide: StepNavigation,
         useValue: navigationServiceMock,
       });
   });
 
   beforeEach(() => {
     notificationService = TestBed.inject(BedOccupancyNotificationService);
-    navigationService = TestBed.inject(StepNavigationService);
+    navigationService = TestBed.inject(StepNavigation);
   });
 
   it('should create', () => {

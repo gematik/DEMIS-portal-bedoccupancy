@@ -1,8 +1,6 @@
 <app-side-navigation-wrapper
   [currentStepHeadline]="field.fieldGroup[selectedIndex].props.label"
   [currentStep]="selectedIndex"
-  [headline]="field.fieldGroup[selectedIndex].props.title"
-  [maxNumberOfSteps]="field.fieldGroup.length"
   [model]="field.model"
   [steps]="field.fieldGroup"
 >
@@ -15,7 +13,7 @@
       <mat-tab
         [label]="tab.props.label"
       >
-        <gem-demis-max-height-content-container [elementSelectorsToSubtract]="['app-navbar', '#bedoccupancy-tab-headline', '#bedoccupancy-tab-section-header_deprecated', '#bedoccupancy-tab-section-header', '#bedoccupancy-actions-bar']">
+        <gem-demis-max-height-content-container [elementSelectorsToSubtract]="['app-navbar', '#bedoccupancy-tab-section-header', '#bedoccupancy-actions-bar']">
           <formly-field [field]="tab" />
         </gem-demis-max-height-content-container>
         <mat-toolbar id="bedoccupancy-actions-bar">

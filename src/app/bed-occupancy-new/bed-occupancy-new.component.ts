@@ -16,7 +16,13 @@
  */
 
 import { Component, computed, inject } from '@angular/core';
-import { createStepContent, MaxHeightContentContainerComponent, PasteBoxComponent, SideNavigationComponent } from '@gematik/demis-portal-core-library';
+import {
+  createStepContent,
+  MaxHeightContentContainerComponent,
+  PasteBoxComponent,
+  provideStepNavigation,
+  SideNavigationComponent,
+} from '@gematik/demis-portal-core-library';
 import { BedOccupancyNotificationService } from './bed-occupancy-notification.service';
 import { NotifierFacilityComponent } from './notifier-facility/notifier-facility.component';
 import { BedOccupancyQuestionComponent } from './bed-occupancy-question/bed-occupancy-question.component';
@@ -29,6 +35,7 @@ import { FormlyModule } from '@ngx-formly/core';
 @Component({
   selector: 'app-bed-occupancy-new',
   imports: [MaxHeightContentContainerComponent, SideNavigationComponent, PasteBoxComponent, HexhexbuttonComponent, FormlyModule],
+  providers: [provideStepNavigation()],
   templateUrl: './bed-occupancy-new.component.html',
   styleUrl: './bed-occupancy-new.component.scss',
 })
