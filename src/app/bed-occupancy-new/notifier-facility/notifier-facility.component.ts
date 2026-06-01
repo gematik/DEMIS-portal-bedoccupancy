@@ -21,7 +21,7 @@ import {
   MessageDialogService,
   SectionHeaderComponent,
   StepContentComponent,
-  StepNavigationService,
+  StepNavigation,
 } from '@gematik/demis-portal-core-library';
 import { Subscription } from 'rxjs';
 import { BedOccupancyNotificationService } from '../bed-occupancy-notification.service';
@@ -43,7 +43,7 @@ import { BedOccupancyConstants } from '../../bed-occupancy/common/bed-occupancy-
 export class NotifierFacilityComponent extends StepContentComponent<void> implements OnInit, OnDestroy {
   hospitalLocationsSubscription: Subscription | undefined;
   IkNumber: string;
-  protected navigation = inject(StepNavigationService);
+  protected navigation = inject(StepNavigation);
   private readonly messageDialogService = inject(MessageDialogService);
 
   private readonly bedOccupancyStorageService = inject(BedOccupancyStorageService);

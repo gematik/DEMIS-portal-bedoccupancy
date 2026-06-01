@@ -24,9 +24,9 @@ import { BedOccupancyComponent } from '../bed-occupancy/bed-occupancy.component'
   selector: 'app-wrapper',
   imports: [BedOccupancyNewComponent, BedOccupancyComponent],
   template: `@if (isPortalBedOccupancySidenavEnabled) {
-      <app-bed-occupancy-new></app-bed-occupancy-new>
+      <app-bed-occupancy-new />
     } @else {
-      <app-bed-occupancy></app-bed-occupancy>
+      <app-bed-occupancy />
     }`,
   standalone: true,
 })

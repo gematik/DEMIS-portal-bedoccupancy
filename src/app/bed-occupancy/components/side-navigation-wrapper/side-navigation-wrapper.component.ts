@@ -23,7 +23,6 @@ import { environment } from 'src/environments/environment';
 import { FormsFooterComponent, PasteBoxComponent, SectionHeaderComponent, TiledContentComponent } from '@gematik/demis-portal-core-library';
 import { SideNavigationStepperComponent } from '../side-navigation-stepper/side-navigation-stepper.component';
 import { HexhexbuttonComponent } from '../../../shared/components/hexhexbutton/hexhexbutton.component';
-import { MatToolbar } from '@angular/material/toolbar';
 
 /**
  * @deprecated: this component can be removed with FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV
@@ -32,30 +31,16 @@ import { MatToolbar } from '@angular/material/toolbar';
   selector: 'app-side-navigation-wrapper',
   templateUrl: './side-navigation-wrapper.component.html',
   styleUrls: ['./side-navigation-wrapper.component.scss'],
-  imports: [
-    TiledContentComponent,
-    SideNavigationStepperComponent,
-    HexhexbuttonComponent,
-    PasteBoxComponent,
-    FormsFooterComponent,
-    SectionHeaderComponent,
-    MatToolbar,
-  ],
+  imports: [TiledContentComponent, SideNavigationStepperComponent, HexhexbuttonComponent, PasteBoxComponent, FormsFooterComponent, SectionHeaderComponent],
 })
 export class SideNavigationWrapperComponent {
   readonly currentStep = input(0);
-  readonly maxNumberOfSteps = input(0);
-  readonly headline = input('');
   readonly currentStepHeadline = input('');
   readonly steps = input<FormlyFieldConfig[]>(undefined);
   readonly model = input<any>(undefined);
 
   readonly bedOccupancyClipboardDataService = inject(BedOccupancyClipboardDataService);
   private readonly bedOccupancyNotificationFormDefinitionService = inject(BedOccupancyNotificationFormDefinitionService);
-
-  get FEATURE_FLAG_PORTAL_PAGE_STRUCTURE() {
-    return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_PAGE_STRUCTURE ?? false;
-  }
 
   get FEATURE_FLAG_PORTAL_HEADER_FOOTER(): boolean {
     return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_HEADER_FOOTER;

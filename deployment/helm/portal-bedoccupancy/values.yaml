@@ -25,11 +25,12 @@ config:
   pathToHospitalLocations: ../../directory/hospital/v1/locations
   files: { }
   featureFlags: #Always set this to false here; feature flags will then be activated as needed via the stage configurations.
-    FEATURE_FLAG_PORTAL_PAGE_STRUCTURE: false
     FEATURE_FLAG_PORTAL_HEADER_FOOTER: false
     FEATURE_FLAG_PORTAL_ACCESSIBILITY: false
     FEATURE_FLAG_FOOTER_LINKS_CORRECTION: false
-    FEATURE_FLAG_PORTAL_ERROR_DIALOG_FILTERING: false
+  ngxLoggerConfig:
+    level: 1
+    disableConsoleLogging: true
 # Extra Labels to be added
 # E.g.
 # customLabels:

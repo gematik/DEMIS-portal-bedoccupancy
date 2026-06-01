@@ -142,9 +142,6 @@ describe('Bed Occupancy Integration Tests', () => {
     const nextButton = getHtmlButtonElement(fixture.nativeElement, '#btn-nav-action-next');
     nextButton.click();
     await waitForStability();
-
-    // Verify navigation
-    expect(fixture.nativeElement.querySelector('.oval-label').textContent).toBe(' Schritt 2 von 2 ');
   }
 
   async function setupPage2() {

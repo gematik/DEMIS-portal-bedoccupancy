@@ -20,7 +20,6 @@ import { FormlyFieldConfig } from '@ngx-formly/core';
 import { BedOccupancyConstants } from 'src/app/bed-occupancy/common/bed-occupancy-constants';
 import { FormlyConstants } from '../formly-constants';
 import { formlyInputField } from '../reusable/commons';
-import { environment } from 'src/environments/environment';
 
 const numberOfBedsFieldGroup = (required: boolean, prefix: string) => [
   numberOfBedsFormConfigFields(false, required, prefix),
@@ -39,25 +38,10 @@ const numberOfBedsFormConfigFields = (child: boolean, required: boolean, prefix:
     validators: ['numberOfBedsValidator'],
   });
 
-/**
- * Used to get the correct template tag depending on the feature flag FEATURE_FLAG_PORTAL_PAGE_STRUCTURE
- * If the flag is active, h2 is used as the template tag, otherwise h1.
- * *BEWARE*: Remove this function when the feature flag is removed.
- *
- * @returns The template tag to be used (h1 or h2)
- */
-const getTemplateTag = () => {
-  return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_PAGE_STRUCTURE ? 'h2' : 'h1';
-};
-
 export const questionBedOccupancyHtmlConfigFields: FormlyFieldConfig[] = [
   {
     className: FormlyConstants.LAYOUT_HEADER,
-    // This trick is used to force the re-evaluation of the feature flag each time the form is rendered.
-    // *BEWARE*: Change this to a regular property when the feature flag is removed.
-    get template() {
-      return `<${getTemplateTag()}>Belegte Betten auf den Normalstationen des meldenden Standortes</${getTemplateTag()}></div>`;
-    },
+    template: `<h2>Belegte Betten auf den Normalstationen des meldenden Standortes</h2></div>`,
   },
   {
     key: BedOccupancyConstants.OCCUPIED_BEDS,
@@ -67,11 +51,7 @@ export const questionBedOccupancyHtmlConfigFields: FormlyFieldConfig[] = [
   },
   {
     className: FormlyConstants.LAYOUT_HEADER,
-    // This trick is used to force the re-evaluation of the feature flag each time the form is rendered.
-    // *BEWARE*: Change this to a regular property when the feature flag is removed.
-    get template() {
-      return `<${getTemplateTag()}>Wenn Information vorhanden: <br> Betreibbare Betten auf den Normalstationen des meldenden Standortes</${getTemplateTag()}></div>`;
-    },
+    template: `<h2>Wenn Information vorhanden: <br> Betreibbare Betten auf den Normalstationen des meldenden Standortes</h2></div>`,
   },
   {
     key: BedOccupancyConstants.OPERABLE_BEDS,

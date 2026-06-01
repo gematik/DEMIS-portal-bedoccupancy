@@ -12,22 +12,11 @@
     </div>
   </ng-container>
   <ng-container contentTile>
-<!--  <ng-container contentTile>-->
-    @if (FEATURE_FLAG_PORTAL_PAGE_STRUCTURE) {
-      <div id="bedoccupancy-tab-section-header" class="section-header">
-        <gem-demis-section-header id="bed-occupancy-tab-headline"
-          [level]="1"
-          [titleText]="currentStepHeadline()" />
-      </div>
-    } @else {
-      <mat-toolbar id="bedoccupancy-tab-headline">{{ headline() }}</mat-toolbar>
-      <div id="bedoccupancy-tab-section-header_deprecated" class="section-header_deprecated">
-        <h1>{{ currentStepHeadline() }}</h1>
-        <div class="oval-label">
-          Schritt {{ currentStep() + 1 }} von {{ maxNumberOfSteps() }}
-        </div>
-      </div>
-    }
+    <div id="bedoccupancy-tab-section-header" class="section-header">
+      <gem-demis-section-header id="bed-occupancy-tab-headline"
+        [level]="1"
+        [titleText]="currentStepHeadline()" />
+    </div>
 
     <div class="section-body">
       <ng-content />

@@ -89,7 +89,6 @@ export class FhirBedOccupancyService {
           this.messageDialogService.showErrorDialog({
             errorTitle: 'Meldung konnte nicht zugestellt werden!',
             errors,
-            logFilteringEnabled: environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_ERROR_DIALOG_FILTERING,
           });
         },
       });

@@ -19,7 +19,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MockBuilder, MockedComponentFixture, MockProvider, MockRender, ngMocks } from 'ng-mocks';
-import { MessageDialogService, StepNavigationService } from '@gematik/demis-portal-core-library';
+import { MessageDialogService, StepNavigation } from '@gematik/demis-portal-core-library';
 
 import { NotifierFacilityComponent } from './notifier-facility.component';
 import { BedOccupancyStorageService } from '../../shared/services/bed-occupancy-storage.service';
@@ -82,7 +82,7 @@ const overrides = {
       canGoToNext: signal(true),
       previous: jasmine.createSpy('previous'),
       next: jasmine.createSpy('next'),
-    } as Partial<StepNavigationService>;
+    } as Partial<StepNavigation>;
   },
 };
 
@@ -100,7 +100,7 @@ describe('NotifierFacilityComponent', () => {
         .provide(MockProvider(BedOccupancyNotificationService, overrides.notificationService))
         .provide(MockProvider(MessageDialogService, overrides.messageDialogService))
         .provide({
-          provide: StepNavigationService,
+          provide: StepNavigation,
           useValue: overrides.stepNavigationService,
         })
     );

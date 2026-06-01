@@ -2,6 +2,14 @@
 
 # Release portal-bedoccupancy
 
+## Release 1.7.2
+- Update NGINX-Base-Image to 1.30.0
+- Removed @angular/platform-browser-dynamic
+- Added correctly configurable logging
+- Updated @gematik/demis-portal-core-library to 4.2.2
+- Removed feature flag FEATURE_FLAG_PORTAL_PAGE_STRUCTURE
+- Removed feature flag FEATURE_FLAG_PORTAL_ERROR_DIALOG_FILTERING
+
 ## Release 1.7.1
 - Added filtering of validation errors in the dialog after submitting a notification (FEATURE_FLAG_PORTAL_ERROR_DIALOG_FILTERING)
 - Updated @gematik/demis-portal-core-library to 3.2.1
@@ -19,22 +27,21 @@
 
 ## Release 1.6.0
 - Updated Angular to v21
-- Migrate to standalone components
+- Migrated to standalone components
 - Updated @gematik/demis-portal-core-library to 3.0.3
 - Added ids to SideStepper
 - Removed unused components and code
 - Restructured integration test
-- Add accessibility statement link
-- Update @gematik/demis-portal-core-library to 2.4.4
+- Added accessibility statement link
 - Removed CPU limit in helm chart
 - Removed istio helm chart
-- Change imprint link and add ids in footer (FEATURE_FLAG_FOOTER_LINKS_CORRECTION)
+- Changed imprint link and add ids in footer (FEATURE_FLAG_FOOTER_LINKS_CORRECTION)
 
 ## Release 1.5.8
 - Removed data-cy attributes from elements
 - Updated @gematik/demis-portal-core-library to 2.3.9
 - Fixed vulnerabilities in dependencies
-- removed feature flag NEW_API_ENDPOINTS
+- Removed feature flag NEW_API_ENDPOINTS
 
 ## Release 1.5.7
 - Changed info icon in formly templates
@@ -51,11 +58,11 @@
 
 ## Release 1.5.4
 - Removed FEATURE_FLAG_PORTAL_SUBMIT and FEATURE_FLAG_PORTAL_ERROR_DIALOG_ON_SUBMIT
-- Switch to SectionHeader from Portal-Core (FEATURE_FLAG_PORTAL_PAGE_STRUCTURE)
+- Switched to SectionHeader from Portal-Core (FEATURE_FLAG_PORTAL_PAGE_STRUCTURE)
 - Fixed a bug, where it was not possible to paste 0 via clipboard in number input fields
-- Update ngx-formly to 7.0.0
-- Update @gematik/demis-portal-core-library to 2.3.0
-- Update NGINX-Base-Image to 1.29.3
+- Updated ngx-formly to 7.0.0
+- Updated @gematik/demis-portal-core-library to 2.3.0
+- Updated NGINX-Base-Image to 1.29.3
 
 ## Release 1.5.3
 - Removed FEATURE_FLAG_PORTAL_REPEAT

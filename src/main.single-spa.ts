@@ -60,7 +60,7 @@ const lifecycles = singleSpaAngular({
           BedOccupancyModule,
           SharedModule,
           MatFormFieldModule,
-          LoggerModule.forRoot(environment.defaultNgxLoggerConfig)
+          LoggerModule.forRoot(environment.ngxLoggerConfig)
         ),
         {
           provide: HTTP_INTERCEPTORS,
