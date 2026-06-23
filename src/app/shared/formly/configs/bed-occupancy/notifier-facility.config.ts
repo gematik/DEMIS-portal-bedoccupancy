@@ -49,7 +49,7 @@ function notifierFacilityBedOccupancyHtmlConfigFields(ikNumber: string, hospital
     <p>Hier werden Angaben des Krankenhausstandortes erwartet, für den die tägliche Meldung der betreibbaren und belegten Betten erfolgen soll.</p>
     <p>Die Statistik der betreibbaren und belegten Betten bezieht sich NICHT nur auf COVID-19, sondern auf alle betreibbaren und belegten Betten im Krankenhaus.</p>
     <p>Die Informationen aus den Eingabefeldern zur meldenden Person werden lokal im aktuellen Browser gespeichert. Bei Folgemeldungen werden diese Eingabefelder automatisch mit den gespeicherten Daten vorbefüllt, damit der Meldevorgang beschleunigt wird.</p>
-    <p><div class="info-notification-text"><span class="material-icons-outlined primary-color-icon">error_outline</span><span class="message">Bitte die Adresse des Krankenhausstandortes auswählen, für den die Meldung erfolgt.</span></div></p>
+    <p><div class="info-notification-text"><span class="material-icons-outlined primary-color-icon">error_outline</span><span class="message">Bitte die Adresse des Krankenhausstandortes auswählen, für den die Meldung erfolgt.</span></div>
     </div>`,
       props: {
         addonLeft: {
