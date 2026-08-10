@@ -22,6 +22,7 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 import { BedOccupancyClipboardDataService } from './bed-occupancy-clipboard-data.service';
 import { BedOccupancyQuestionClipboard } from './clipboard-enums';
 import { MatDialogModule } from '@angular/material/dialog';
+import { describe, beforeEach, it, expect } from 'vitest';
 
 describe('BedOccupancyClipboardDataService', () => {
   let service: BedOccupancyClipboardDataService;

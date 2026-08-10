@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MockBuilder, MockProvider } from 'ng-mocks';
@@ -22,65 +23,112 @@ import { MockBuilder, MockProvider } from 'ng-mocks';
 import { BedOccupancyNotificationService } from './bed-occupancy-notification.service';
 import { FhirBedOccupancyService } from '../shared/services/fhir-bed-occupancy.service';
 import { BedOccupancyStorageService } from '../shared/services/bed-occupancy-storage.service';
+import { FormlyFormBuilder } from '@ngx-formly/core';
 
 describe('BedOccupancyNotificationService', () => {
   let service: BedOccupancyNotificationService;
 
-  let transformDataSpy: jasmine.Spy;
-  let submitNotificationSpy: jasmine.Spy;
+  let transformDataSpy: Mock;
+  let submitNotificationSpy: Mock;
+  let buildFormSpy: Mock;
 
   beforeEach(() =>
-    MockBuilder(BedOccupancyNotificationService).provide(MockProvider(FhirBedOccupancyService)).provide(MockProvider(BedOccupancyStorageService))
+    MockBuilder(BedOccupancyNotificationService)
+      .provide(MockProvider(FhirBedOccupancyService))
+      .provide(MockProvider(BedOccupancyStorageService))
+      .provide(MockProvider(FormlyFormBuilder))
   );
 
   beforeEach(() => {
+    buildFormSpy = vi.spyOn(TestBed.inject(FormlyFormBuilder), 'buildForm').mockImplementation(function (this: FormlyFormBuilder, form: FormGroup) {
+      // Simulate Formly registering controls in each pre-built FormGroup so
+      // tests can rely on hasControls === true for both groups.
+      form.addControl(
+        'occupiedBeds',
+        new FormGroup({
+          adultsNumberOfBeds: new FormControl<number | null>(null),
+          childrenNumberOfBeds: new FormControl<number | null>(null),
+        })
+      );
+      form.addControl(
+        'operableBeds',
+        new FormGroup({
+          adultsNumberOfBeds: new FormControl<number | null>(null),
+          childrenNumberOfBeds: new FormControl<number | null>(null),
+        })
+      );
+    });
     service = TestBed.inject(BedOccupancyNotificationService);
-    transformDataSpy = spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData').and.returnValue({});
-    submitNotificationSpy = spyOn(TestBed.inject(FhirBedOccupancyService), 'submitNotification');
+    transformDataSpy = vi.spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData').mockReturnValue({});
+    submitNotificationSpy = vi.spyOn(TestBed.inject(FhirBedOccupancyService), 'submitNotification');
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('sendData should transform and submit data and store notifierFacility in local storage', () => {
-    const notifierFacility = {
-      facilityInfo: { ikNumber: '123456789' },
-      name: 'Test Hospital',
-    } as any;
-    const bedOccupancyQuestion = {
-      occupiedBeds: { adultsNumberOfBeds: 10 },
-    } as any;
+  it('constructor pre-builds both FormGroups via FormlyFormBuilder', () => {
+    expect(buildFormSpy).toHaveBeenCalledTimes(2);
+    const groupsBuilt = buildFormSpy.mock.calls.map(args => args[0]);
+    expect(groupsBuilt).toContain(service.notifierFacilityGroup);
+    expect(groupsBuilt).toContain(service.bedOccupancyQuestionGroup);
+    // After pre-build both FormGroups already have controls before their step renders.
+    expect(Object.keys(service.bedOccupancyQuestionGroup.controls).length).toBeGreaterThan(0);
+  });
 
-    service.notifierFacilityModel.set(notifierFacility);
-    service.bedOccupancyQuestionModel.set(bedOccupancyQuestion);
-
-    const expectedModel = {
-      notifierFacility,
-      bedOccupancyQuestion,
+  it('sendData should transform and submit data from models', () => {
+    const expectedData = {
+      notifierFacility: {
+        facilityInfo: { ikNumber: '123456789' },
+        name: 'Test Hospital',
+      },
+      bedOccupancyQuestion: {
+        occupiedBeds: { adultsNumberOfBeds: 10 },
+      },
     };
+    service.notifierFacilityModel.set(expectedData.notifierFacility);
+    service.bedOccupancyQuestionModel.set(expectedData.bedOccupancyQuestion);
 
-    transformDataSpy.and.returnValue({ transformed: true });
+    transformDataSpy.mockReturnValue({ transformed: true });
 
     service.sendData();
 
-    expect(transformDataSpy).toHaveBeenCalledWith(expectedModel);
+    expect(transformDataSpy).toHaveBeenCalledWith(expectedData);
+
     expect(submitNotificationSpy).toHaveBeenCalledWith({ transformed: true });
   });
 
-  it('patchFormData should update notifierFacility model and form group with deep merge', () => {
-    // initial state in model and group
-    service.notifierFacilityModel.set({
-      name: 'Initial Hospital',
-      address: {
-        line: 'Main Street',
-        houseNumber: '1',
-        postalCode: '12345',
-        city: 'Initial City',
-        country: 'DE',
+  it('FormGroups are pre-built with controls already registered', () => {
+    expect(Object.keys(service.bedOccupancyQuestionGroup.controls).length).toBeGreaterThan(0);
+  });
+
+  it('patchFormData writes into the pre-built bedOccupancyQuestion FormGroup immediately', () => {
+    let statusChangesFired = false;
+    service.bedOccupancyQuestionGroup.statusChanges.subscribe(() => (statusChangesFired = true));
+
+    service.patchFormData({
+      bedOccupancyQuestion: {
+        occupiedBeds: { adultsNumberOfBeds: 7, childrenNumberOfBeds: 2 },
       },
     });
-    service.notifierFacilityGroup = new FormGroup({});
+    expect((service.bedOccupancyQuestionGroup.value as any).occupiedBeds.adultsNumberOfBeds).toBe(7);
+    expect((service.bedOccupancyQuestionGroup.value as any).occupiedBeds.childrenNumberOfBeds).toBe(2);
+    expect(service.bedOccupancyQuestionGroup.touched).toBe(true);
+    expect(statusChangesFired).toBe(true);
+  });
+  it('patchFormData should update notifierFacility form group with deep merge', () => {
+    // initial state in group (controls are registered)
+    service.notifierFacilityGroup = new FormGroup({
+      name: new FormControl<string | null>(null),
+      address: new FormGroup({
+        line: new FormControl<string | null>(null),
+        houseNumber: new FormControl<string | null>(null),
+        postalCode: new FormControl<string | null>(null),
+        city: new FormControl<string | null>(null),
+        country: new FormControl<string | null>(null),
+      }),
+    }) as any;
+
     service.notifierFacilityGroup.patchValue({
       name: 'Initial Hospital',
       address: {
@@ -101,21 +149,25 @@ describe('BedOccupancyNotificationService', () => {
       },
     };
 
-    const markAllAsTouchedSpy = spyOn(service.notifierFacilityGroup, 'markAllAsTouched').and.callThrough();
-    const updateValueAndValiditySpy = spyOn(service.notifierFacilityGroup, 'updateValueAndValidity').and.callThrough();
+    const markAllAsTouchedSpy = vi.spyOn(service.notifierFacilityGroup, 'markAllAsTouched');
+    const updateValueAndValiditySpy = vi.spyOn(service.notifierFacilityGroup, 'updateValueAndValidity');
 
     service.patchFormData(patchData);
 
-    const modelValue = service.notifierFacilityModel();
-    expect(modelValue.address.city).toBe('Updated City');
-    expect(modelValue.address.line).toBe('Main Street');
+    const groupValue = service.notifierFacilityGroup.value as any;
+    expect(groupValue.address.city).toBe('Updated City');
+    expect(groupValue.address.line).toBe('Main Street');
 
     expect(markAllAsTouchedSpy).toHaveBeenCalled();
     expect(updateValueAndValiditySpy).toHaveBeenCalledWith({ emitEvent: true });
   });
 
-  it('patchFormData should update bedOccupancyQuestion model and form group', () => {
-    service.bedOccupancyQuestionGroup = new FormGroup({});
+  it('patchFormData should update bedOccupancyQuestion form group', () => {
+    service.bedOccupancyQuestionGroup = new FormGroup({
+      occupiedBeds: new FormGroup({
+        adultsNumberOfBeds: new FormControl<number | null>(null),
+      }),
+    }) as any;
 
     const patchData = {
       bedOccupancyQuestion: {
@@ -125,13 +177,12 @@ describe('BedOccupancyNotificationService', () => {
       },
     };
 
-    const markAllAsTouchedSpy = spyOn(service.bedOccupancyQuestionGroup, 'markAllAsTouched').and.callThrough();
-    const updateValueAndValiditySpy = spyOn(service.bedOccupancyQuestionGroup, 'updateValueAndValidity').and.callThrough();
+    const markAllAsTouchedSpy = vi.spyOn(service.bedOccupancyQuestionGroup, 'markAllAsTouched');
+    const updateValueAndValiditySpy = vi.spyOn(service.bedOccupancyQuestionGroup, 'updateValueAndValidity');
 
     service.patchFormData(patchData);
 
-    const modelValue = service.bedOccupancyQuestionModel();
-    expect(modelValue.occupiedBeds.adultsNumberOfBeds).toBe(5);
+    expect((service.bedOccupancyQuestionGroup.value as any).occupiedBeds.adultsNumberOfBeds).toBe(5);
     expect(markAllAsTouchedSpy).toHaveBeenCalled();
     expect(updateValueAndValiditySpy).toHaveBeenCalledWith({ emitEvent: true });
   });
@@ -163,7 +214,7 @@ describe('BedOccupancyNotificationService', () => {
     expect(data.bedOccupancyQuestion).toEqual({ baz: 123 });
   });
 
-  it('isFormValid should return true only if both form groups are valid and contain data', () => {
+  it('isFormValid should return true only if both form groups are valid', () => {
     service.notifierFacilityGroup = new FormGroup({
       name: new FormControl<string>('Test Hospital'),
     }) as any;
@@ -171,13 +222,8 @@ describe('BedOccupancyNotificationService', () => {
       occupiedBeds: new FormControl<number>(10),
     }) as any;
 
-    // Both groups are valid and contain data
-    expect(service.isFormValid()).toBeTrue();
-
-    // Empty FormGroups should return false even if valid
-    service.notifierFacilityGroup = new FormGroup({});
-    service.bedOccupancyQuestionGroup = new FormGroup({});
-    expect(service.isFormValid()).toBeFalse();
+    // Both groups are valid
+    expect(service.isFormValid()).toBe(true);
 
     // One group invalid should return false
     service.notifierFacilityGroup = new FormGroup({
@@ -186,16 +232,17 @@ describe('BedOccupancyNotificationService', () => {
     service.bedOccupancyQuestionGroup = new FormGroup({
       occupiedBeds: new FormControl<number>(10),
     }) as any;
-    spyOnProperty(service.notifierFacilityGroup, 'valid', 'get').and.returnValue(false);
-    expect(service.isFormValid()).toBeFalse();
+    vi.spyOn(service.notifierFacilityGroup, 'valid', 'get').mockReturnValue(false);
+    expect(service.isFormValid()).toBe(false);
 
-    // One group empty should return false
-    service.notifierFacilityGroup = new FormGroup({}) as any;
+    // The other group invalid should also return false.
+    service.notifierFacilityGroup = new FormGroup({
+      name: new FormControl<string>('Test Hospital'),
+    }) as any;
     service.bedOccupancyQuestionGroup = new FormGroup({
       occupiedBeds: new FormControl<number>(10),
     }) as any;
-    spyOnProperty(service.notifierFacilityGroup, 'valid', 'get').and.returnValue(true);
-    spyOnProperty(service.bedOccupancyQuestionGroup, 'valid', 'get').and.returnValue(true);
-    expect(service.isFormValid()).toBeFalse();
+    vi.spyOn(service.bedOccupancyQuestionGroup, 'valid', 'get').mockReturnValue(false);
+    expect(service.isFormValid()).toBe(false);
   });
 });

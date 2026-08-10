@@ -32,6 +32,7 @@ export const practitionerInfoFormConfigFields = formlyRow(
           { value: PractitionerInfo.SalutationEnum.Mrs, label: 'Frau' },
           { value: PractitionerInfo.SalutationEnum.Mr, label: 'Herr' },
         ],
+        attributes: { autocomplete: 'honorific-prefix' },
       },
     },
     formlyInputField({
@@ -39,6 +40,7 @@ export const practitionerInfoFormConfigFields = formlyRow(
       className: FormlyConstants.COLMD5,
       props: {
         label: 'Titel',
+        attributes: { autocomplete: 'honorific-suffix' },
       },
     }),
     formlyInputField({
@@ -47,6 +49,7 @@ export const practitionerInfoFormConfigFields = formlyRow(
       props: {
         label: 'Vorname',
         required: true,
+        attributes: { autocomplete: 'given-name' },
       },
       validators: ['nonBlankValidator', 'textValidator'],
     }),
@@ -56,6 +59,7 @@ export const practitionerInfoFormConfigFields = formlyRow(
       props: {
         label: 'Nachname',
         required: true,
+        attributes: { autocomplete: 'family-name' },
       },
       validators: ['nonBlankValidator', 'textValidator'],
     }),

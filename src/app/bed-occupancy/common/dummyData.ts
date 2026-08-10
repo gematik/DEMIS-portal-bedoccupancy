@@ -48,7 +48,6 @@ export const bedOccupancyDummyData: any = {
       phoneNumbers: [
         {
           contactType: 'phone',
-          usage: 'work',
           value: '0151234567',
         },
       ],

@@ -15,32 +15,31 @@
     find details in the "Readme" file.
  */
 
-import { AfterViewInit, Component, inject } from '@angular/core';
-import { MaxHeightContentContainerComponent, StepContentComponent, StepNavigation } from '@gematik/demis-portal-core-library';
+import { Component, inject } from '@angular/core';
+import { MaxHeightContentContainerComponent, SectionHeaderComponent, StepContentComponent, StepNavigation } from '@gematik/demis-portal-core-library';
 import { FormlyForm } from '@ngx-formly/core';
 import { BedOccupancyNotificationService } from '../bed-occupancy-notification.service';
-import { questionBedOccupancyHtmlConfigFields } from '../../shared/formly/configs/bed-occupancy/question.config';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { BedOccupancyConstants } from '../../bed-occupancy/common/bed-occupancy-constants';
+import { questionBedOccupancyHtmlConfigFieldsNew } from '../../shared/formly/configs/bed-occupancy/question-new.config';
+import { environment } from 'src/environments/environment';
+import { NgTemplateOutlet } from '@angular/common';
 
 @Component({
   selector: 'app-bed-occupancy-question',
-  imports: [FormlyForm, MatButton, MatIcon, MatToolbar, MatToolbarRow, MaxHeightContentContainerComponent],
+  imports: [FormlyForm, MatButton, MatIcon, MatToolbar, MatToolbarRow, SectionHeaderComponent, MaxHeightContentContainerComponent, NgTemplateOutlet],
   templateUrl: './bed-occupancy-question.component.html',
   styleUrl: './bed-occupancy-question.component.scss',
 })
-export class BedOccupancyQuestionComponent extends StepContentComponent<void> implements AfterViewInit {
+export class BedOccupancyQuestionComponent extends StepContentComponent<void> {
   protected readonly notificationService = inject(BedOccupancyNotificationService);
-  protected readonly fieldConfig = questionBedOccupancyHtmlConfigFields;
+  protected readonly fieldConfig = questionBedOccupancyHtmlConfigFieldsNew;
   protected navigation = inject(StepNavigation);
   protected readonly BedOccupancyConstants = BedOccupancyConstants;
 
-  ngAfterViewInit(): void {
-    if (this.notificationService.hasBedOccupancyQuestionBeenVisited()) {
-      this.notificationService.bedOccupancyQuestionGroup.markAllAsTouched();
-    }
-    this.notificationService.markBedOccupancyQuestionAsVisited();
+  get isPortalBedOccupancySidenavEnabled() {
+    return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV;
   }
 }

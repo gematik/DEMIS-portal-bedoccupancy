@@ -15,8 +15,9 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it } from 'vitest';
 import { SideNavigationWrapperComponent } from './side-navigation-wrapper.component';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MockProvider } from 'ng-mocks';
 import { NGXLogger } from 'ngx-logger';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -26,13 +27,13 @@ describe('SideNavigationWrapperComponent', () => {
   let component: SideNavigationWrapperComponent;
   let fixture: ComponentFixture<SideNavigationWrapperComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [SideNavigationWrapperComponent, RouterModule.forRoot([])],
       providers: [MockProvider(NGXLogger)],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SideNavigationWrapperComponent);
@@ -43,19 +44,9 @@ describe('SideNavigationWrapperComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('footer rendering', () => {
-    it('should render footer when feature flag is active', () => {
-      spyOnProperty(component, 'FEATURE_FLAG_PORTAL_HEADER_FOOTER', 'get').and.returnValue(true);
-      fixture.detectChanges();
-      const footer = fixture.debugElement.nativeElement.querySelector('gem-demis-forms-footer');
-      expect(footer).toBeTruthy();
-    });
-
-    it('should not render footer when feature flag is not active', () => {
-      spyOnProperty(component, 'FEATURE_FLAG_PORTAL_HEADER_FOOTER', 'get').and.returnValue(false);
-      fixture.detectChanges();
-      const footer = fixture.debugElement.nativeElement.querySelector('gem-demis-forms-footer');
-      expect(footer).toBeFalsy();
-    });
+  it('should render footer', () => {
+    fixture.detectChanges();
+    const footer = fixture.debugElement.nativeElement.querySelector('gem-demis-forms-footer');
+    expect(footer).toBeTruthy();
   });
 });

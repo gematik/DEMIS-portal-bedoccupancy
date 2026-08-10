@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ChangeDetectorRef } from '@angular/core';
@@ -52,8 +53,14 @@ const TEST_DATA = {
 const overrides = {
   get bedOccupancyStorageService() {
     return {
-      fetchHospitalLocations: jasmine.createSpy('fetchHospitalLocations').and.returnValue(of([TEST_DATA.hospitalLocation])),
-      getLocalStorageBedOccupancyData: jasmine.createSpy('getLocalStorageBedOccupancyData').and.returnValue(of({ address: {} })),
+      fetchHospitalLocations: vi
+        .fn()
+        .mockName('fetchHospitalLocations')
+        .mockReturnValue(of([TEST_DATA.hospitalLocation])),
+      getLocalStorageBedOccupancyData: vi
+        .fn()
+        .mockName('getLocalStorageBedOccupancyData')
+        .mockReturnValue(of({ address: {} })),
     } as Partial<BedOccupancyStorageService>;
   },
   get bedOccupancyClipboardDataService() {
@@ -78,10 +85,10 @@ describe('BedOccupancyComponent', () => {
   let fixture: MockedComponentFixture<BedOccupancyComponent, BedOccupancyComponent>;
   let loader: HarnessLoader;
 
-  let fetchHospitalLocationsSpy: jasmine.Spy;
-  let transformDataSpy: jasmine.Spy;
-  let setLocalStorageBedOccupancyDataSpy: jasmine.Spy;
-  let submitNotificationSpy: jasmine.Spy;
+  let fetchHospitalLocationsSpy: Mock;
+  let transformDataSpy: Mock;
+  let setLocalStorageBedOccupancyDataSpy: Mock;
+  let submitNotificationSpy: Mock;
 
   describe('Unit Tests', () => {
     beforeEach(() =>
@@ -96,10 +103,10 @@ describe('BedOccupancyComponent', () => {
 
     beforeEach(() => {
       fixture = MockRender(BedOccupancyComponent);
-      fetchHospitalLocationsSpy = TestBed.inject(BedOccupancyStorageService).fetchHospitalLocations as jasmine.Spy;
-      transformDataSpy = spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData');
-      setLocalStorageBedOccupancyDataSpy = spyOn(TestBed.inject(BedOccupancyStorageService), 'setLocalStorageBedOccupancyData');
-      submitNotificationSpy = spyOn(TestBed.inject(FhirBedOccupancyService), 'submitNotification');
+      fetchHospitalLocationsSpy = TestBed.inject(BedOccupancyStorageService).fetchHospitalLocations as Mock;
+      transformDataSpy = vi.spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData');
+      setLocalStorageBedOccupancyDataSpy = vi.spyOn(TestBed.inject(BedOccupancyStorageService), 'setLocalStorageBedOccupancyData');
+      submitNotificationSpy = vi.spyOn(TestBed.inject(FhirBedOccupancyService), 'submitNotification');
       component = fixture.point.componentInstance;
       loader = TestbedHarnessEnvironment.loader(fixture);
       fixture.detectChanges();
@@ -130,7 +137,7 @@ describe('BedOccupancyComponent', () => {
           houseNumber: '2',
         },
       ];
-      fetchHospitalLocationsSpy.and.returnValue(of(hospitalLocations));
+      fetchHospitalLocationsSpy.mockReturnValue(of(hospitalLocations));
 
       component.ngOnInit();
 
@@ -141,8 +148,8 @@ describe('BedOccupancyComponent', () => {
 
     it('should handle error when fetching hospital locations', () => {
       const error = new Error('Failed to fetch locations');
-      fetchHospitalLocationsSpy.and.returnValue(throwError(() => error));
-      const showErrorDialogSpy = spyOn(TestBed.inject(MessageDialogService), 'showErrorDialog');
+      fetchHospitalLocationsSpy.mockReturnValue(throwError(() => error));
+      const showErrorDialogSpy = vi.spyOn(TestBed.inject(MessageDialogService), 'showErrorDialog');
       component.ngOnInit();
 
       expect(fetchHospitalLocationsSpy).toHaveBeenCalled();
@@ -164,7 +171,7 @@ describe('BedOccupancyComponent', () => {
         }),
         testControl2: new FormControl('testValue2'),
       });
-      spyOn(formGroup, 'markAsTouched');
+      vi.spyOn(formGroup, 'markAsTouched');
 
       component.markFormGroupTouched(formGroup);
 
@@ -173,7 +180,7 @@ describe('BedOccupancyComponent', () => {
 
     it('should submit form', () => {
       const transformedData = {};
-      transformDataSpy.and.returnValue(transformedData);
+      transformDataSpy.mockReturnValue(transformedData);
       component.submit();
       expect(transformDataSpy).toHaveBeenCalledWith(component.model);
       expect(setLocalStorageBedOccupancyDataSpy).toHaveBeenCalledWith(component.IkNumber, component.model.notifierFacility);
@@ -181,9 +188,9 @@ describe('BedOccupancyComponent', () => {
     });
 
     it('should unsubscribe on destroy', () => {
-      spyOn(component.hospitalLocationsSubscription, 'unsubscribe');
-      spyOn(component['copyPasteBoxData'], 'unsubscribe');
-      spyOn(component['copyHexHexButtonData'], 'unsubscribe');
+      vi.spyOn(component.hospitalLocationsSubscription, 'unsubscribe');
+      vi.spyOn(component['copyPasteBoxData'], 'unsubscribe');
+      vi.spyOn(component['copyHexHexButtonData'], 'unsubscribe');
       component.ngOnDestroy();
       expect(component.hospitalLocationsSubscription.unsubscribe).toHaveBeenCalled();
       expect(component['copyPasteBoxData'].unsubscribe).toHaveBeenCalled();

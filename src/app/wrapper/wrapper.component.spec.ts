@@ -20,6 +20,7 @@ import { WrapperComponent } from './wrapper.component';
 import { BedOccupancyNewComponent } from '../bed-occupancy-new/bed-occupancy-new.component';
 import { BedOccupancyComponent } from '../bed-occupancy/bed-occupancy.component';
 import { environment } from '../../environments/environment';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('WrapperComponent', () => {
   let component: WrapperComponent;

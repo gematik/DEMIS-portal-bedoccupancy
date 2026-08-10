@@ -3,10 +3,9 @@
   "pathToGateway": "/gateway/bedoccupancy/reports/bedOccupancy",
   "pathToHospitalLocations": "/directory/hospital/v1/locations",
   "featureFlags": {
-    "FEATURE_FLAG_PORTAL_HEADER_FOOTER": true,
-    "FEATURE_FLAG_PORTAL_ACCESSIBILITY": true,
     "FEATURE_FLAG_FOOTER_LINKS_CORRECTION": true,
-    "FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV": true
+    "FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV": true,
+    "FEATURE_FLAG_PLACEHOLDER_REMOVAL": true
   },
   "ngxLoggerConfig": {
     "level": 1,

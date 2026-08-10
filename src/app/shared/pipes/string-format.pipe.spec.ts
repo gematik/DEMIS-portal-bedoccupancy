@@ -16,6 +16,7 @@
  */
 
 import { StringFormatPipe } from './string-format.pipe';
+import { describe, expect, it } from 'vitest';
 
 describe('StringFormatPipe', () => {
   it('create an instance', () => {

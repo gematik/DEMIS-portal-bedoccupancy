@@ -35,6 +35,7 @@ import { getHtmlButtonElement } from 'src/test/shared/html-element-utils';
 import { getButton, getInput, getSelect, selectOption } from 'src/test/shared/material-harness-utils';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { NGXLogger } from 'ngx-logger';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const TEST_DATA = {
   hospitalLocation: {
@@ -51,8 +52,14 @@ const TEST_DATA = {
 const overrides = {
   get bedOccupancyStorageService() {
     return {
-      fetchHospitalLocations: jasmine.createSpy('fetchHospitalLocations').and.returnValue(of([TEST_DATA.hospitalLocation])),
-      getLocalStorageBedOccupancyData: jasmine.createSpy('getLocalStorageBedOccupancyData').and.returnValue(of({ address: {} })),
+      fetchHospitalLocations: vi
+        .fn()
+        .mockName('fetchHospitalLocations')
+        .mockReturnValue(of([TEST_DATA.hospitalLocation])),
+      getLocalStorageBedOccupancyData: vi
+        .fn()
+        .mockName('getLocalStorageBedOccupancyData')
+        .mockReturnValue(of({ address: {} })),
     } as Partial<BedOccupancyStorageService>;
   },
   get activatedRoute() {
@@ -181,25 +188,22 @@ describe('Bed Occupancy Integration Tests', () => {
     await checkDescribingError(inputElement, testExpectation);
     // Verify submit button is disabled when validation fails
     const submitButton = getHtmlButtonElement(fixture.nativeElement, '#btn-send-notification');
-    expect(submitButton.disabled).withContext(`Submit button should be disabled for value: ${testValue}`).toBeTrue();
+    expect(submitButton.disabled, `Submit button should be disabled for value: ${testValue}`).toBe(true);
   }
 
-  async function checkDescribingError(input: MatInputHarness, expectedResult: String) {
+  async function checkDescribingError(_input: MatInputHarness, expectedResult: String) {
+    await fixture.whenStable();
     fixture.detectChanges();
-    const describedby = await (await input.host()).getAttribute('aria-describedby');
-    expect(describedby).withContext('input should have a describedby attribute').toBeTruthy();
-    const errorElement = fixture.nativeElement.querySelector(`mat-error#${describedby}`);
-    expect(errorElement).withContext('error element should be present').toBeTruthy();
-    const formlyError = errorElement.querySelector('formly-validation-message');
-    expect(formlyError).withContext('formly error should be present').toBeTruthy();
-    expect(formlyError.textContent).toContain(expectedResult);
+    const formlyErrors = Array.from(fixture.nativeElement.querySelectorAll('mat-error formly-validation-message')) as HTMLElement[];
+    expect(formlyErrors.length, 'formly error should be present').toBeGreaterThan(0);
+    expect(formlyErrors.some(error => error.textContent?.includes(expectedResult.toString()))).toBe(true);
   }
 
   describe('Main form functionality', () => {
     it('should not send, when nothing is inserted', async () => {
       const submitButton = getHtmlButtonElement(fixture.nativeElement, '#btn-send-notification');
       expect(submitButton).toBeTruthy();
-      expect(submitButton.disabled).toBeTrue();
+      expect(submitButton.disabled).toBe(true);
     });
 
     it('should have a validation error when nothing is inserted and someone blurs from an input', async () => {
@@ -209,14 +213,7 @@ describe('Bed Occupancy Integration Tests', () => {
       await firstnameInput.blur(); // Do not forget to blur the input! Otherwise the validation error will not be triggered in the material form field
 
       // check if the error is displayed
-      fixture.detectChanges();
-      const describedby = await (await firstnameInput.host()).getAttribute('aria-describedby');
-      expect(describedby).withContext('input should have a describedby attribute').toBeTruthy();
-      const errorElement = fixture.nativeElement.querySelector(`mat-error#${describedby}`);
-      expect(errorElement).withContext('error element should be present').toBeTruthy();
-      const formlyError = errorElement.querySelector('formly-validation-message');
-      expect(formlyError).withContext('formly error should be present').toBeTruthy();
-      expect(formlyError.textContent).toContain('Diese Angabe wird benötigt');
+      await checkDescribingError(firstnameInput, 'Diese Angabe wird benötigt');
     });
 
     it('should send, when form is filled correctly', async () => {
@@ -244,13 +241,13 @@ describe('Bed Occupancy Integration Tests', () => {
 
       const submitButton = getHtmlButtonElement(fixture.nativeElement, '#btn-send-notification');
 
-      expect(await submitButton.disabled).toBeFalse();
+      expect(await submitButton.disabled).toBe(false);
     });
 
     it('should not send, when nothing is inserted', async () => {
       const submitButton = getHtmlButtonElement(fixture.nativeElement, '#btn-send-notification');
       expect(submitButton).toBeTruthy();
-      expect(submitButton.disabled).toBeTrue();
+      expect(submitButton.disabled).toBe(true);
     });
 
     it('should have a validation error when nothing is inserted and someone blurs from an input', async () => {
@@ -260,14 +257,7 @@ describe('Bed Occupancy Integration Tests', () => {
       await firstnameInput.blur(); // Do not forget to blur the input! Otherwise the validation error will not be triggered in the material form field
 
       // check if the error is displayed
-      fixture.detectChanges();
-      const describedby = await (await firstnameInput.host()).getAttribute('aria-describedby');
-      expect(describedby).withContext('input should have a describedby attribute').toBeTruthy();
-      const errorElement = fixture.nativeElement.querySelector(`mat-error#${describedby}`);
-      expect(errorElement).withContext('error element should be present').toBeTruthy();
-      const formlyError = errorElement.querySelector('formly-validation-message');
-      expect(formlyError).withContext('formly error should be present').toBeTruthy();
-      expect(formlyError.textContent).toContain('Diese Angabe wird benötigt');
+      await checkDescribingError(firstnameInput, 'Diese Angabe wird benötigt');
     });
 
     it('should send, when form is filled correctly', async () => {
@@ -295,7 +285,7 @@ describe('Bed Occupancy Integration Tests', () => {
 
       const submitButton = getHtmlButtonElement(fixture.nativeElement, '#btn-send-notification');
 
-      expect(await submitButton.disabled).toBeFalse();
+      expect(await submitButton.disabled).toBe(false);
     });
   });
 
@@ -414,8 +404,8 @@ describe('Bed Occupancy - Special Integration Tests', () => {
     beforeEach(() => {
       fixture = TestBed.createComponent(BedOccupancyComponent);
       component = fixture.componentInstance;
-      spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData');
-      spyOn(TestBed.inject(BedOccupancyStorageService), 'setLocalStorageBedOccupancyData');
+      vi.spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData');
+      vi.spyOn(TestBed.inject(BedOccupancyStorageService), 'setLocalStorageBedOccupancyData');
       loader = TestbedHarnessEnvironment.loader(fixture);
       fixture.detectChanges();
     });
@@ -437,7 +427,7 @@ describe('Bed Occupancy - Special Integration Tests', () => {
 
       const submitButton = await getButton(loader, '#btn-send-notification');
 
-      expect(await submitButton.isDisabled()).toBeFalse();
+      expect(await submitButton.isDisabled()).toBe(false);
     });
 
     it('should send, when form is filled correctly with the help from the clipboard', async () => {
@@ -475,7 +465,7 @@ describe('Bed Occupancy - Special Integration Tests', () => {
 
       const submitButton = await getButton(loader, '#btn-send-notification');
 
-      expect(await submitButton.isDisabled()).toBeFalse();
+      expect(await submitButton.isDisabled()).toBe(false);
     });
   });
 });

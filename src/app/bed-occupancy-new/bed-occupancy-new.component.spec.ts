@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { MockBuilder, MockedComponentFixture, MockProvider, MockRender } from 'ng-mocks';
 import { BedOccupancyNewComponent } from './bed-occupancy-new.component';
@@ -62,8 +63,8 @@ describe('BedOccupancyNewComponent', () => {
           childrenNumberOfBeds: 10,
         },
       };
-      const getBedOccupancyQuestionSpy = spyOn(clipboardDataService, 'getBedOccupancyQuestionFromClipBoard').and.returnValue(extractedData);
-      const patchFormDataSpy = spyOn(notificationService, 'patchFormData');
+      const getBedOccupancyQuestionSpy = vi.spyOn(clipboardDataService, 'getBedOccupancyQuestionFromClipBoard').mockReturnValue(extractedData);
+      const patchFormDataSpy = vi.spyOn(notificationService, 'patchFormData');
 
       // Act
       component.onClipboardDataPasted(clipboardData);
@@ -85,8 +86,8 @@ describe('BedOccupancyNewComponent', () => {
         },
         operableBeds: {},
       };
-      spyOn(clipboardDataService, 'getBedOccupancyQuestionFromClipBoard').and.returnValue(extractedData);
-      const patchFormDataSpy = spyOn(notificationService, 'patchFormData');
+      vi.spyOn(clipboardDataService, 'getBedOccupancyQuestionFromClipBoard').mockReturnValue(extractedData);
+      const patchFormDataSpy = vi.spyOn(notificationService, 'patchFormData');
 
       // Act
       component.onClipboardDataPasted(clipboardData);
@@ -107,8 +108,8 @@ describe('BedOccupancyNewComponent', () => {
         },
         operableBeds: {},
       };
-      spyOn(clipboardDataService, 'getBedOccupancyQuestionFromClipBoard').and.returnValue(extractedData);
-      const patchFormDataSpy = spyOn(notificationService, 'patchFormData');
+      vi.spyOn(clipboardDataService, 'getBedOccupancyQuestionFromClipBoard').mockReturnValue(extractedData);
+      const patchFormDataSpy = vi.spyOn(notificationService, 'patchFormData');
 
       // Act
       component.onClipboardDataPasted(clipboardData);
@@ -123,7 +124,7 @@ describe('BedOccupancyNewComponent', () => {
   describe('handleHexHexChange', () => {
     it('should patch form data with dummy data', () => {
       // Arrange
-      const patchFormDataSpy = spyOn(notificationService, 'patchFormData');
+      const patchFormDataSpy = vi.spyOn(notificationService, 'patchFormData');
 
       // Act
       component.handleHexHexChange();
@@ -137,7 +138,7 @@ describe('BedOccupancyNewComponent', () => {
 
     it('should call patchFormData exactly once', () => {
       // Arrange
-      const patchFormDataSpy = spyOn(notificationService, 'patchFormData');
+      const patchFormDataSpy = vi.spyOn(notificationService, 'patchFormData');
 
       // Act
       component.handleHexHexChange();

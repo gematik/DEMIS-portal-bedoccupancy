@@ -27,7 +27,7 @@ import { setPublicPath } from 'systemjs-webpack-interop';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
 import { provideFormlyCore } from '@ngx-formly/core';
-import { defaultAppearanceExtension, defaultPlaceholderExtension } from './app/shared/formly-extensions';
+import { defaultAppearanceExtension, defaultPlaceholderExtension, ariaRequiredExtension } from './app/shared/formly-extensions';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app/app-routing.module';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -82,6 +82,10 @@ const lifecycles = singleSpaAngular({
               {
                 name: 'default-appearance',
                 extension: defaultAppearanceExtension,
+              },
+              {
+                name: 'aria-required',
+                extension: ariaRequiredExtension,
               },
             ],
           },

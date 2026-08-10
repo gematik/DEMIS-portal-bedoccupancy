@@ -1,0 +1,6 @@
+// can be removed with FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV
+:host ::ng-deep {
+  .bedoccupancy-section-header {
+    padding: 45px 20px 20px;
+  }
+}
