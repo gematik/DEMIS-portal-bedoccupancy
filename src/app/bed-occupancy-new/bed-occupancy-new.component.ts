@@ -15,7 +15,7 @@
     find details in the "Readme" file.
  */
 
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import {
   createStepContent,
   MaxHeightContentContainerComponent,
@@ -39,7 +39,7 @@ import { FormlyModule } from '@ngx-formly/core';
   templateUrl: './bed-occupancy-new.component.html',
   styleUrl: './bed-occupancy-new.component.scss',
 })
-export class BedOccupancyNewComponent {
+export class BedOccupancyNewComponent implements OnInit {
   readonly bedOccupancyNotificationService = inject(BedOccupancyNotificationService);
   readonly bedOccupancyClipboardDataService = inject(BedOccupancyClipboardDataService);
 
@@ -55,10 +55,14 @@ export class BedOccupancyNewComponent {
     return new Map(getStepData(this.bedOccupancyNotificationService).map((step, index) => [step, this.stepContents()[index]]));
   });
 
+  ngOnInit(): void {
+    // no validation errors should be shown when first visiting the component
+    this.bedOccupancyNotificationService.resetVisitedFlags();
+  }
+
   onClipboardDataPasted(clipboardData: Map<string, string>) {
     const data = this.bedOccupancyClipboardDataService.getBedOccupancyQuestionFromClipBoard(clipboardData);
     this.bedOccupancyNotificationService.patchFormData({ bedOccupancyQuestion: data });
-    this.bedOccupancyNotificationService.markBedOccupancyQuestionAsVisited();
   }
 
   handleHexHexChange() {

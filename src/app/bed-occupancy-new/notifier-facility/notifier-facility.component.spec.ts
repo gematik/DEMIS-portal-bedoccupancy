@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
@@ -27,6 +28,7 @@ import { BedOccupancyNotificationService } from '../bed-occupancy-notification.s
 import { BedOccupancyConstants } from '../../bed-occupancy/common/bed-occupancy-constants';
 import { HospitalLocation } from '../../shared/models/hospital-location';
 import { BedOccupancyNotifierFacility } from '../../../api/notification';
+import { FormGroup } from '@angular/forms';
 
 const TEST_DATA = {
   hospitalLocation: {
@@ -43,8 +45,12 @@ const TEST_DATA = {
 const overrides = {
   get bedOccupancyStorageService() {
     return {
-      fetchHospitalLocations: jasmine.createSpy('fetchHospitalLocations').and.returnValue(of([TEST_DATA.hospitalLocation])),
-      getLocalStorageBedOccupancyData: jasmine.createSpy('getLocalStorageBedOccupancyData').and.returnValue(null),
+      fetchHospitalLocations: vi
+        .fn()
+        .mockName('fetchHospitalLocations')
+        .mockReturnValue(of([TEST_DATA.hospitalLocation])),
+      getLocalStorageBedOccupancyData: vi.fn().mockName('getLocalStorageBedOccupancyData').mockReturnValue(null),
+      setLocalStorageBedOccupancyData: vi.fn().mockName('setLocalStorageBedOccupancyData'),
     } as Partial<BedOccupancyStorageService>;
   },
   get notificationService() {
@@ -63,25 +69,30 @@ const overrides = {
     };
 
     return {
-      patchFormData: jasmine.createSpy('patchFormData'),
-      notifierFacilityModel: jasmine.createSpy('notifierFacilityModel').and.returnValue(dummyModel),
-      getModelData: jasmine.createSpy('getModelData').and.returnValue({ notifierFacility: dummyModel }),
-      sendData: jasmine.createSpy('sendData'),
-      isFormValid: jasmine.createSpy('isFormValid').and.returnValue(true),
+      patchFormData: vi.fn().mockName('patchFormData'),
+      notifierFacilityModel: vi.fn().mockName('notifierFacilityModel').mockReturnValue(dummyModel),
+      notifierFacilityGroup: new FormGroup({}),
+      getFormData: vi.fn().mockName('getFormData').mockReturnValue({ notifierFacility: dummyModel }),
+      getModelData: vi.fn().mockName('getModelData').mockReturnValue({ notifierFacility: dummyModel }),
+      sendData: vi.fn().mockName('sendData'),
+      isFormValid: vi.fn().mockName('isFormValid').mockReturnValue(true),
     } as unknown as Partial<BedOccupancyNotificationService>;
   },
   get messageDialogService() {
     return {
-      extractMessageFromError: jasmine.createSpy('extractMessageFromError').and.callFake((error: unknown) => (error as Error).message),
-      showErrorDialog: jasmine.createSpy('showErrorDialog'),
+      extractMessageFromError: vi
+        .fn()
+        .mockName('extractMessageFromError')
+        .mockImplementation((error: unknown) => (error as Error).message),
+      showErrorDialog: vi.fn().mockName('showErrorDialog'),
     } as Partial<MessageDialogService>;
   },
   get stepNavigationService() {
     return {
       canGoToPrevious: signal(true),
       canGoToNext: signal(true),
-      previous: jasmine.createSpy('previous'),
-      next: jasmine.createSpy('next'),
+      previous: vi.fn().mockName('previous'),
+      next: vi.fn().mockName('next'),
     } as Partial<StepNavigation>;
   },
 };
@@ -90,8 +101,8 @@ describe('NotifierFacilityComponent', () => {
   let component: NotifierFacilityComponent;
   let fixture: MockedComponentFixture<NotifierFacilityComponent, NotifierFacilityComponent>;
 
-  let fetchHospitalLocationsSpy: jasmine.Spy;
-  let getLocalStorageBedOccupancyDataSpy: jasmine.Spy;
+  let fetchHospitalLocationsSpy: Mock;
+  let getLocalStorageBedOccupancyDataSpy: Mock;
 
   describe('Unit Tests', () => {
     beforeEach(() =>
@@ -109,13 +120,18 @@ describe('NotifierFacilityComponent', () => {
       ngMocks.flushTestBed();
       fixture = MockRender(NotifierFacilityComponent);
       component = fixture.point.componentInstance;
-      fetchHospitalLocationsSpy = TestBed.inject(BedOccupancyStorageService).fetchHospitalLocations as jasmine.Spy;
-      getLocalStorageBedOccupancyDataSpy = TestBed.inject(BedOccupancyStorageService).getLocalStorageBedOccupancyData as jasmine.Spy;
+      fetchHospitalLocationsSpy = TestBed.inject(BedOccupancyStorageService).fetchHospitalLocations as Mock;
+      getLocalStorageBedOccupancyDataSpy = TestBed.inject(BedOccupancyStorageService).getLocalStorageBedOccupancyData as Mock;
       fixture.detectChanges();
     });
 
     it('should create', () => {
       expect(component).toBeTruthy();
+    });
+
+    it('should initialize field config before hospital locations are loaded', () => {
+      expect(component['fieldConfig']).toBeDefined();
+      expect(component['fieldConfig'].length).toBeGreaterThan(0);
     });
 
     it('should fetch hospital locations on init', () => {
@@ -139,7 +155,7 @@ describe('NotifierFacilityComponent', () => {
           houseNumber: '2',
         },
       ];
-      fetchHospitalLocationsSpy.and.returnValue(of(hospitalLocations));
+      fetchHospitalLocationsSpy.mockReturnValue(of(hospitalLocations));
 
       component.ngOnInit();
 
@@ -161,31 +177,34 @@ describe('NotifierFacilityComponent', () => {
         },
       };
 
-      fetchHospitalLocationsSpy.and.returnValue(of([TEST_DATA.hospitalLocation]));
-      getLocalStorageBedOccupancyDataSpy.and.returnValue(storedData);
+      fetchHospitalLocationsSpy.mockReturnValue(of([TEST_DATA.hospitalLocation]));
+      getLocalStorageBedOccupancyDataSpy.mockReturnValue(storedData);
 
-      const patchFormDataSpy = TestBed.inject(BedOccupancyNotificationService).patchFormData as jasmine.Spy;
+      const patchFormDataSpy = TestBed.inject(BedOccupancyNotificationService).patchFormData as Mock;
 
       component.ngOnInit();
 
       expect(getLocalStorageBedOccupancyDataSpy).toHaveBeenCalledWith(TEST_DATA.hospitalLocation.ik);
-      expect(patchFormDataSpy).toHaveBeenCalledWith({
-        notifierFacility: {
-          ...storedData,
-          address: {
-            ...storedData.address,
-            country: 'DE',
+      expect(patchFormDataSpy).toHaveBeenCalledWith(
+        {
+          notifierFacility: {
+            ...storedData,
+            address: {
+              ...storedData.address,
+              country: 'DE',
+            },
           },
         },
-      });
+        { markAsTouched: false }
+      );
     });
 
     it('should handle error when fetching hospital locations', () => {
       const error = new Error('Failed to fetch locations');
-      fetchHospitalLocationsSpy.and.returnValue(throwError(() => error));
+      fetchHospitalLocationsSpy.mockReturnValue(throwError(() => error));
 
-      const extractMessageFromErrorSpy = TestBed.inject(MessageDialogService).extractMessageFromError as jasmine.Spy;
-      const showErrorDialogSpy = TestBed.inject(MessageDialogService).showErrorDialog as jasmine.Spy;
+      const extractMessageFromErrorSpy = TestBed.inject(MessageDialogService).extractMessageFromError as Mock;
+      const showErrorDialogSpy = TestBed.inject(MessageDialogService).showErrorDialog as Mock;
 
       component.ngOnInit();
 
@@ -203,7 +222,7 @@ describe('NotifierFacilityComponent', () => {
     });
 
     it('should set IkNumber to "not-provided" when no hospital locations are returned', () => {
-      fetchHospitalLocationsSpy.and.returnValue(of([]));
+      fetchHospitalLocationsSpy.mockReturnValue(of([]));
 
       component.ngOnInit();
 

@@ -17,28 +17,49 @@
 
 import { inject, Injectable, signal } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { FormlyFormBuilder } from '@ngx-formly/core';
 import { FhirBedOccupancyService } from '../shared/services/fhir-bed-occupancy.service';
-import { DeepMergeService } from './deep-merge.service';
+import { DeepMergeService } from '@gematik/demis-portal-core-library';
+import { notifierFacilityBedOccupancyFormConfigFields } from '../shared/formly/configs/bed-occupancy/notifier-facility.config';
+import { questionBedOccupancyHtmlConfigFieldsNew } from '../shared/formly/configs/bed-occupancy/question-new.config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BedOccupancyNotificationService {
+  private readonly fhirBedOccupancyService = inject(FhirBedOccupancyService);
+  private readonly deepMergeService = inject(DeepMergeService);
+  private readonly formlyBuilder = inject(FormlyFormBuilder);
+
   /**
    * FormGroups and models for each step.
    * The models are implemented as Signals for reactive updates.
    * The models are used by Formly to initialize the FormControls.
+   *
+   * Both FormGroups are pre-built via FormlyFormBuilder so that their
+   * FormControls (and the real Formly validators) exist from the start,
+   * even before the step is actually rendered. This makes `patchFormData`
+   * and side-navigation validity indicators work correctly for every step
+   * regardless of whether the user has visited it yet.
+   *
+   * The notifierFacility config is built with an empty hospital-locations
+   * list initially; the concrete options are provided later by
+   * NotifierFacilityComponent once the async HTTP call resolves. Formly's
+   * `addControl` is idempotent, so re-rendering with the final config only
+   * updates dynamic props (e.g. select options) without recreating controls.
    */
-  notifierFacilityGroup = new FormGroup({});
   notifierFacilityModel = signal<any>({});
-
-  bedOccupancyQuestionGroup = new FormGroup({});
   bedOccupancyQuestionModel = signal<any>({});
 
-  private bedOccupancyQuestionVisited = false;
+  notifierFacilityGroup = new FormGroup({});
+  bedOccupancyQuestionGroup = new FormGroup({});
 
-  private readonly fhirBedOccupancyService = inject(FhirBedOccupancyService);
-  private readonly deepMergeService = inject(DeepMergeService);
+  constructor() {
+    // Eagerly build both FormGroups so their controls and Formly validators
+    // are available before the corresponding step is rendered.
+    this.formlyBuilder.buildForm(this.notifierFacilityGroup, notifierFacilityBedOccupancyFormConfigFields('', []), this.notifierFacilityModel(), {});
+    this.formlyBuilder.buildForm(this.bedOccupancyQuestionGroup, questionBedOccupancyHtmlConfigFieldsNew, this.bedOccupancyQuestionModel(), {});
+  }
 
   sendData() {
     const model = this.getModelData();
@@ -47,13 +68,13 @@ export class BedOccupancyNotificationService {
   }
 
   /**
-   * Sets or updates form data for one or more steps.
-   * Uses a hybrid approach:
-   * - Updates model objects (for not yet rendered steps)
-   * - Updates FormGroups via patchValue (for already rendered steps)
+   * Sets or updates form data for one or more steps by deep-merging the
+   * provided partial data into the current model and the corresponding
+   * FormGroup value.
    *
-   * This ensures that data is correctly applied regardless of whether
-   * the step has already been visited/rendered.
+   * Because both FormGroups are pre-built in the constructor, the controls
+   * always exist when this method runs and `patchValue` takes effect
+   * immediately.
    *
    * Example:
    * ```
@@ -63,40 +84,36 @@ export class BedOccupancyNotificationService {
    * });
    * ```
    */
-  patchFormData(data: { notifierFacility?: any; bedOccupancyQuestion?: any }): void {
-    // Mapping between data keys, models and FormGroups
+  patchFormData(data: { notifierFacility?: any; bedOccupancyQuestion?: any }, options: { markAsTouched?: boolean } = {}): void {
+    const { markAsTouched = true } = options;
     const stepMappings = [
       { key: 'notifierFacility' as const, model: this.notifierFacilityModel, group: this.notifierFacilityGroup },
       { key: 'bedOccupancyQuestion' as const, model: this.bedOccupancyQuestionModel, group: this.bedOccupancyQuestionGroup },
     ];
 
-    // Phase 1: Update models and FormGroups with new values
     stepMappings.forEach(({ key, model, group }) => {
-      if (data[key]) {
-        // Get the source for merging: prefer FormGroup value if it has data, otherwise use Model
-        const currentData = Object.keys(group.value).length > 0 ? group.value : model();
+      if (!data[key]) return;
 
-        // Deep merge existing data with new data
-        const mergedData = this.deepMergeService.deepMerge(currentData, data[key]);
+      const currentData = Object.keys(group.value).length > 0 ? group.value : model();
+      const mergedData = this.deepMergeService.deepMerge(currentData, data[key]);
 
-        model.set(mergedData); // Update Signal-Model
-        group.patchValue(mergedData); // Update FormGroup with merged data
-      }
-    });
-
-    // Phase 2: Trigger validation and statusChanges events
-    stepMappings.forEach(({ key, group }) => {
-      if (data[key]) {
-        this.updateStepValidation(group);
-      }
+      model.set(mergedData);
+      group.patchValue(mergedData);
+      this.updateStepValidation(group, markAsTouched);
     });
   }
 
   /**
    * Helper method to trigger validation updates and statusChanges emission.
+   *
+   * When `markAsTouched` is false, neither the FormGroup nor its children
+   * are marked as touched, so no validation errors appear anywhere (fields
+   * or side navigation) until the user actually interacts with the form.
    */
-  private updateStepValidation(group: FormGroup): void {
-    group.markAllAsTouched();
+  private updateStepValidation(group: FormGroup, markAsTouched: boolean): void {
+    if (markAsTouched) {
+      group.markAllAsTouched();
+    }
     group.updateValueAndValidity({ emitEvent: true });
   }
 
@@ -126,23 +143,16 @@ export class BedOccupancyNotificationService {
    * Checks if all FormGroups are valid and contain data.
    */
   isFormValid(): boolean {
-    const hasNotifierFacilityData = Object.keys(this.notifierFacilityGroup.value).length > 0;
-    const hasBedOccupancyQuestionData = Object.keys(this.bedOccupancyQuestionGroup.value).length > 0;
-
-    return this.notifierFacilityGroup.valid && hasNotifierFacilityData && this.bedOccupancyQuestionGroup.valid && hasBedOccupancyQuestionData;
+    return this.notifierFacilityGroup.valid && this.bedOccupancyQuestionGroup.valid;
   }
 
   /**
-   * Checks if the bedOccupancyQuestion step has been visited before.
+   * Clears the touched state of both FormGroups. Should be called when the
+   * entire wizard route is entered so a fresh visit does not carry over
+   * validation state from a previous run within the same session.
    */
-  hasBedOccupancyQuestionBeenVisited(): boolean {
-    return this.bedOccupancyQuestionVisited;
-  }
-
-  /**
-   * Marks the bedOccupancyQuestion step as visited.
-   */
-  markBedOccupancyQuestionAsVisited(): void {
-    this.bedOccupancyQuestionVisited = true;
+  resetVisitedFlags(): void {
+    this.notifierFacilityGroup.markAsUntouched();
+    this.bedOccupancyQuestionGroup.markAsUntouched();
   }
 }

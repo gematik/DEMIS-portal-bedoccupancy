@@ -1,4 +1,6 @@
-<mat-error [id]="null">
-  <formly-validation-message [field]="field" />
-</mat-error>
 <ng-container #fieldComponent />
+<div [id]="field.id + '-error'" role="alert">
+  <mat-error>
+    <formly-validation-message [field]="field" />
+  </mat-error>
+</div>

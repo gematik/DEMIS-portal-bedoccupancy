@@ -25,3 +25,17 @@ button[mat-icon-button] {
   top: 5px;
   padding-right: 5px;
 }
+
+/* Error message when no hospital locations are found */
+.error-text h3 {
+  color: var(--color-error-dark);
+  margin-bottom: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .primary-color-icon {
+    color: var(--color-error-dark);
+    flex-shrink: 0;
+  }
+}

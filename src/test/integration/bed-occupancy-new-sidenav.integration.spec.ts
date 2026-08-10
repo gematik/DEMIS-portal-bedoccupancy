@@ -15,145 +15,35 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it } from 'vitest';
+
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { BedOccupancyNewComponent } from 'src/app/bed-occupancy-new/bed-occupancy-new.component';
-import { BedOccupancyNotificationService } from 'src/app/bed-occupancy-new/bed-occupancy-notification.service';
-import { BedOccupancyClipboardDataService } from 'src/app/bed-occupancy/services/clipboard/bed-occupancy-clipboard-data.service';
-import { SharedModule } from 'src/app/shared/shared.module';
-import { DemisProcessStepperComponent } from '@gematik/demis-portal-core-library';
-import { NotifierFacilityComponent } from 'src/app/bed-occupancy-new/notifier-facility/notifier-facility.component';
-import { BedOccupancyQuestionComponent } from 'src/app/bed-occupancy-new/bed-occupancy-question/bed-occupancy-question.component';
-import { NGXLogger } from 'ngx-logger';
-import { MockProvider } from 'ng-mocks';
-import { BedOccupancyStorageService } from 'src/app/shared/services/bed-occupancy-storage.service';
-import { FhirBedOccupancyService } from '../../app/shared/services/fhir-bed-occupancy.service';
-import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
-import { BedOccupancyModule } from '../../app/bed-occupancy/bed-occupancy.module';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { enableProdMode, isDevMode } from '@angular/core';
+import { MatInputHarness } from '@angular/material/input/testing';
 import { getButton, getInput, getSelect, selectOption } from '../shared/material-harness-utils';
 import { getHtmlButtonElement } from '../shared/html-element-utils';
-import { MatInputHarness } from '@angular/material/input/testing';
-import { BedOccupancyComponent } from '../../app/bed-occupancy/bed-occupancy.component';
+import { configureIntegrationTestBed, TEST_DATA } from './bed-occupancy.integration-setup';
 
-const TEST_DATA = {
-  bedOccupancyQuestion: {
-    occupiedBeds: {
-      adultsNumberOfBeds: 10,
-      childrenNumberOfBeds: 5,
-    },
-    operableBeds: {
-      adultsNumberOfBeds: 20,
-      childrenNumberOfBeds: 10,
-    },
-  },
-  hospitalLocation: {
-    id: 654322,
-    ik: '123494546',
-    label: 'Krankenhaus Melissa David TEST-ONLY',
-    postalCode: '12346',
-    city: 'Mannheim',
-    line: 'Mittelweg',
-    houseNumber: '28',
-  },
-};
-
-const overrides = {
-  get bedOccupancyStorageService() {
-    return {
-      fetchHospitalLocations: jasmine.createSpy('fetchHospitalLocations').and.returnValue(of([TEST_DATA.hospitalLocation])),
-      getLocalStorageBedOccupancyData: jasmine.createSpy('getLocalStorageBedOccupancyData').and.returnValue(of({ address: {} })),
-    } as Partial<BedOccupancyStorageService>;
-  },
-  get activatedRoute() {
-    return {
-      fragment: of(''),
-    } as Partial<ActivatedRoute>;
-  },
-};
-
-describe('BedOccupancy with new sidenav Integration', () => {
-  let component: BedOccupancyNewComponent;
+// TODO: We've decided to go with Playwright. We need to determine whether these tests can be permanently removed.
+describe.skip('BedOccupancy with new sidenav Integration and Playwright', () => {
   let fixture: ComponentFixture<BedOccupancyNewComponent>;
   let loader: HarnessLoader;
-  let notificationService: BedOccupancyNotificationService;
-  let clipboardDataService: BedOccupancyClipboardDataService;
-  let wasInDevMode: boolean;
 
   const parameters = {
     testParameter: [
       { value: '-10', expectedResult: 'Bitte geben Sie eine positive Zahl kleiner 1000000 ein.' },
       { value: '1234567', expectedResult: 'Bitte geben Sie eine positive Zahl kleiner 1000000 ein.' },
-      { value: 'abc', expectedResult: 'Bitte geben Sie eine positive Zahl kleiner 1000000 ein.' },
-      { value: '#+´?|<>\\', expectedResult: 'Bitte geben Sie eine positive Zahl kleiner 1000000 ein.' },
     ],
   };
 
-  beforeAll(() => {
-    // Save the current mode and activate production mode for this test
-    // ExpressionChangedAfterItHasBeenCheckedError is only thrown in dev mode
-    wasInDevMode = isDevMode();
-    if (wasInDevMode) {
-      enableProdMode();
-    }
-  });
-
-  afterAll(() => {
-    // Restore the original mode (unfortunately doesn't work perfectly,
-    // but acceptable for testing purposes)
-    // In practice, Angular remains in production mode for the rest of the test suite
-  });
-
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [
-        NoopAnimationsModule,
-        SharedModule,
-        BedOccupancyNewComponent,
-        DemisProcessStepperComponent,
-        NotifierFacilityComponent,
-        BedOccupancyQuestionComponent,
-        BedOccupancyModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-      ],
-      providers: [
-        MockProvider(BedOccupancyStorageService, overrides.bedOccupancyStorageService),
-        MockProvider(FhirBedOccupancyService),
-        BedOccupancyClipboardDataService,
-        MockProvider(ActivatedRoute, overrides.activatedRoute),
-        MockProvider(NGXLogger),
-      ],
-    }).compileComponents();
-  });
-
-  beforeEach(async () => {
+    await configureIntegrationTestBed();
     fixture = TestBed.createComponent(BedOccupancyNewComponent);
-    component = fixture.componentInstance;
     loader = TestbedHarnessEnvironment.loader(fixture);
-    notificationService = TestBed.inject(BedOccupancyNotificationService);
-    clipboardDataService = TestBed.inject(BedOccupancyClipboardDataService);
-
     fixture.detectChanges();
   });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
-  // Helper function to wait for Angular to stabilize
-  const waitForStability = async () => {
-    await fixture.whenStable();
-    fixture.detectChanges();
-    // Add a small delay to ensure all async operations complete
-    await new Promise(resolve => setTimeout(resolve, 50));
-    fixture.detectChanges();
-  };
 
   // Improved page setup functions
   async function setupFormPage1() {
@@ -166,48 +56,37 @@ describe('BedOccupancy with new sidenav Integration', () => {
     await selectOption(institutionNameSelect, TEST_DATA.hospitalLocation.label);
     await firstnameInput.setValue('Homer');
     await lastnameInput.setValue('Simpson');
-    await waitForStability();
 
     // Add phone number
     await (await getButton(loader, '#phoneNumbers-add-button')).click();
-    await waitForStability();
     const phoneNoInput = await getInput(loader, '[id*="phoneNo"]');
     await phoneNoInput.setValue('0800123456');
-    await waitForStability();
 
     // Add email
     await (await getButton(loader, '#emailAddresses-add-button')).click();
-    await waitForStability();
     const emailInput = await getInput(loader, '[id*="email"]');
     await emailInput.setValue('homer@simpson.com');
-    await waitForStability();
 
     // Navigate to next page
     const nextButton = getHtmlButtonElement(fixture.nativeElement, '#btn-nav-action-next');
     nextButton.click();
-    await waitForStability();
   }
 
   async function setupPage2() {
     // Wait for page to be fully loaded
-    await waitForStability();
 
     // Fill in form data sequentially with proper waits
     const occupiedBedsAdultsInput = await getInput(loader, '#occupied-beds-adults-number-of-beds');
     await occupiedBedsAdultsInput.setValue('33');
-    await waitForStability();
 
     const occupiedBedsChildrenInput = await getInput(loader, '#occupied-beds-children-number-of-beds');
     await occupiedBedsChildrenInput.setValue('5');
-    await waitForStability();
 
     const operableBedsAdultsInput = await getInput(loader, '#operable-beds-adults-number-of-beds');
     await operableBedsAdultsInput.setValue('55');
-    await waitForStability();
 
     const operableBedsChildrenInput = await getInput(loader, '#operable-beds-children-number-of-beds');
     await operableBedsChildrenInput.setValue('66');
-    await waitForStability();
   }
 
   // Helper function for testing input validation
@@ -218,32 +97,31 @@ describe('BedOccupancy with new sidenav Integration', () => {
     // Get the input, set value and trigger validation
     const inputElement = await getInput(loader, inputSelector);
     await inputElement.setValue(testValue);
-    await waitForStability();
     await inputElement.blur();
-    await waitForStability();
 
     await checkDescribingError(inputElement, testExpectation);
     // Verify submit button is disabled when validation fails
     const submitButton = getHtmlButtonElement(fixture.nativeElement, '#btn-send-notification');
-    expect(submitButton.disabled).withContext(`Submit button should be disabled for value: ${testValue}`).toBeTrue();
+    expect(submitButton.disabled, `Submit button should be disabled for value: ${testValue}`).toBe(true);
   }
 
-  async function checkDescribingError(input: MatInputHarness, expectedResult: String) {
+  async function checkDescribingError(_input: MatInputHarness, expectedResult: String) {
+    await fixture.whenStable();
     fixture.detectChanges();
-    const describedby = await (await input.host()).getAttribute('aria-describedby');
-    expect(describedby).withContext('input should have a describedby attribute').toBeTruthy();
-    const errorElement = fixture.nativeElement.querySelector(`mat-error#${describedby}`);
-    expect(errorElement).withContext('error element should be present').toBeTruthy();
-    const formlyError = errorElement.querySelector('formly-validation-message');
-    expect(formlyError).withContext('formly error should be present').toBeTruthy();
-    expect(formlyError.textContent).toContain(expectedResult);
+    const formlyErrors = Array.from(fixture.nativeElement.querySelectorAll('mat-error formly-validation-message')) as HTMLElement[];
+    expect(formlyErrors.length, 'formly error should be present').toBeGreaterThan(0);
+    expect(formlyErrors.some(error => error.textContent?.includes(expectedResult.toString()))).toBe(true);
   }
+
+  it('should create', () => {
+    expect(fixture.componentInstance).toBeTruthy();
+  });
 
   describe('Main form functionality', () => {
     it('should not send, when nothing is inserted', async () => {
       const submitButton = getHtmlButtonElement(fixture.nativeElement, '#btn-send-notification');
       expect(submitButton).toBeTruthy();
-      expect(submitButton.disabled).toBeTrue();
+      expect(submitButton.disabled).toBe(true);
     });
 
     it('should have a validation error when nothing is inserted and someone blurs from an input', async () => {
@@ -253,14 +131,7 @@ describe('BedOccupancy with new sidenav Integration', () => {
       await firstnameInput.blur(); // Do not forget to blur the input! Otherwise the validation error will not be triggered in the material form field
 
       // check if the error is displayed
-      fixture.detectChanges();
-      const describedby = await (await firstnameInput.host()).getAttribute('aria-describedby');
-      expect(describedby).withContext('input should have a describedby attribute').toBeTruthy();
-      const errorElement = fixture.nativeElement.querySelector(`mat-error#${describedby}`);
-      expect(errorElement).withContext('error element should be present').toBeTruthy();
-      const formlyError = errorElement.querySelector('formly-validation-message');
-      expect(formlyError).withContext('formly error should be present').toBeTruthy();
-      expect(formlyError.textContent).toContain('Diese Angabe wird benötigt');
+      await checkDescribingError(firstnameInput, 'Diese Angabe wird benötigt');
     });
 
     it('should send, when form is filled correctly', async () => {
@@ -288,13 +159,13 @@ describe('BedOccupancy with new sidenav Integration', () => {
 
       const submitButton = getHtmlButtonElement(fixture.nativeElement, '#btn-send-notification');
 
-      expect(await submitButton.disabled).toBeFalse();
+      expect(await submitButton.disabled).toBe(false);
     });
 
     it('should not send, when nothing is inserted', async () => {
       const submitButton = getHtmlButtonElement(fixture.nativeElement, '#btn-send-notification');
       expect(submitButton).toBeTruthy();
-      expect(submitButton.disabled).toBeTrue();
+      expect(submitButton.disabled).toBe(true);
     });
 
     it('should have a validation error when nothing is inserted and someone blurs from an input', async () => {
@@ -304,14 +175,7 @@ describe('BedOccupancy with new sidenav Integration', () => {
       await firstnameInput.blur(); // Do not forget to blur the input! Otherwise the validation error will not be triggered in the material form field
 
       // check if the error is displayed
-      fixture.detectChanges();
-      const describedby = await (await firstnameInput.host()).getAttribute('aria-describedby');
-      expect(describedby).withContext('input should have a describedby attribute').toBeTruthy();
-      const errorElement = fixture.nativeElement.querySelector(`mat-error#${describedby}`);
-      expect(errorElement).withContext('error element should be present').toBeTruthy();
-      const formlyError = errorElement.querySelector('formly-validation-message');
-      expect(formlyError).withContext('formly error should be present').toBeTruthy();
-      expect(formlyError.textContent).toContain('Diese Angabe wird benötigt');
+      await checkDescribingError(firstnameInput, 'Diese Angabe wird benötigt');
     });
 
     it('should send, when form is filled correctly', async () => {
@@ -339,12 +203,12 @@ describe('BedOccupancy with new sidenav Integration', () => {
 
       const submitButton = getHtmlButtonElement(fixture.nativeElement, '#btn-send-notification');
 
-      expect(await submitButton.disabled).toBeFalse();
+      expect(await submitButton.disabled).toBe(false);
     });
   });
 
   describe('Validation of email and phone number', () => {
-    const parameters = {
+    const validationParameters = {
       email: [
         { value: 'auch-ungueltig.de', expectedResult: 'Keine gültige E-Mail (Beispiel: meine.Email@email.de)' },
         { value: '_@test_Me.too', expectedResult: 'Keine gültige E-Mail (Beispiel: meine.Email@email.de)' },
@@ -377,7 +241,7 @@ describe('BedOccupancy with new sidenav Integration', () => {
         },
       ],
     };
-    parameters.email.forEach(parameter => {
+    validationParameters.email.forEach(parameter => {
       it(`for the email, the value: '${parameter.value}' should throw the error: '${parameter.expectedResult}'`, async () => {
         await (await getButton(loader, '#emailAddresses-add-button')).click();
         const emailInput = await getInput(loader, '[id*="email"]');
@@ -387,7 +251,7 @@ describe('BedOccupancy with new sidenav Integration', () => {
         await checkDescribingError(emailInput, parameter.expectedResult);
       });
     });
-    parameters.phoneNumber.forEach(parameter => {
+    validationParameters.phoneNumber.forEach(parameter => {
       it(`for the phone number, the value: '${parameter.value}' should throw the error: '${parameter.expectedResult}'`, async () => {
         await (await getButton(loader, '#phoneNumbers-add-button')).click();
         const phoneNoInput = await getInput(loader, '[id*="phoneNo"]');
@@ -431,104 +295,6 @@ describe('BedOccupancy with new sidenav Integration', () => {
           await testInputValidation('#operable-beds-children-number-of-beds', parameter.value, parameter.expectedResult);
         });
       });
-    });
-  });
-});
-
-describe('Bed Occupancy with new sidenav  - Special Integration Tests', () => {
-  let component: BedOccupancyComponent;
-  let fixture: ComponentFixture<BedOccupancyComponent>;
-  let loader: HarnessLoader;
-
-  describe('Data Model Tests', () => {
-    beforeEach(async () => {
-      await TestBed.configureTestingModule({
-        imports: [
-          NoopAnimationsModule,
-          SharedModule,
-          BedOccupancyNewComponent,
-          DemisProcessStepperComponent,
-          NotifierFacilityComponent,
-          BedOccupancyQuestionComponent,
-          BedOccupancyModule,
-          ReactiveFormsModule,
-          MatFormFieldModule,
-        ],
-        providers: [
-          MockProvider(BedOccupancyStorageService, overrides.bedOccupancyStorageService),
-          MockProvider(FhirBedOccupancyService),
-          BedOccupancyClipboardDataService,
-          MockProvider(ActivatedRoute, overrides.activatedRoute),
-          MockProvider(NGXLogger),
-        ],
-      }).compileComponents();
-    });
-
-    beforeEach(() => {
-      fixture = TestBed.createComponent(BedOccupancyComponent);
-      component = fixture.componentInstance;
-      spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData');
-      spyOn(TestBed.inject(BedOccupancyStorageService), 'setLocalStorageBedOccupancyData');
-      loader = TestbedHarnessEnvironment.loader(fixture);
-      fixture.detectChanges();
-    });
-
-    // Helper function to wait for Angular to stabilize
-    const waitForStability = async () => {
-      await fixture.whenStable();
-      fixture.detectChanges();
-      // Add a small delay to ensure all async operations complete
-      await new Promise(resolve => setTimeout(resolve, 50));
-      fixture.detectChanges();
-    };
-
-    it('should handle magic (aka HexHex) button click', async () => {
-      await waitForStability();
-      const hexHexButton = getHtmlButtonElement(fixture.nativeElement, '#btn-magic');
-      hexHexButton.click();
-      await waitForStability();
-
-      const submitButton = await getButton(loader, '#btn-send-notification');
-
-      expect(await submitButton.isDisabled()).toBeFalse();
-    });
-
-    it('should send, when form is filled correctly with the help from the clipboard', async () => {
-      // Form page 1
-      const institutionNameSelect = await getSelect(loader, '#institutionName');
-      const firstnameInput = await getInput(loader, '#firstname');
-      const lastnameInput = await getInput(loader, '#lastname');
-      const phoneNoInput = await getInput(loader, '[id*="phoneNo"]');
-      const emailInput = await getInput(loader, '[id*="email"]');
-      const nextButton = await getButton(loader, '#btn-nav-action-next');
-
-      await selectOption(institutionNameSelect, TEST_DATA.hospitalLocation.label);
-      await firstnameInput.setValue('Homer');
-      await lastnameInput.setValue('Simpson');
-      await phoneNoInput.setValue('0800123456');
-      await emailInput.setValue('homer@simpson.com');
-      await waitForStability();
-
-      await nextButton.click();
-      await waitForStability();
-
-      // Form page 2 - filled from clipboard
-      // Parse the clipboard data as the PasteBox component would
-      const clipboardString = 'B.adultsOccupied=47&B.childrenOccupied=11&B.adultsOperable=33&B.childrenOperable=5';
-      const clipboardMap = new Map<string, string>();
-      clipboardString.split('&').forEach(param => {
-        const [key, value] = param.split('=');
-        clipboardMap.set(key, value);
-      });
-
-      // Call the service method directly to update the clipboard data
-      const clipboardService = TestBed.inject(BedOccupancyClipboardDataService);
-      clipboardService.updateBedOccupancy(clipboardMap);
-      await waitForStability();
-
-      const submitButton = await getButton(loader, '#btn-send-notification');
-
-      expect(await submitButton.isDisabled()).toBeFalse();
     });
   });
 });

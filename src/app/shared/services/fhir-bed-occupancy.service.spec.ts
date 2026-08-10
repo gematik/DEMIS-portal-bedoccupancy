@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, Mocked, vi, afterEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
@@ -30,10 +31,10 @@ describe('FhirBedOccupancyService', () => {
   let service: FhirBedOccupancyService;
   let httpMock: HttpTestingController;
 
-  let messageDialogService: jasmine.SpyObj<MessageDialogService>;
-  let fileService: jasmine.SpyObj<FileService>;
-  let logger: jasmine.SpyObj<NGXLogger>;
-  let matDialog: jasmine.SpyObj<MatDialog>;
+  let messageDialogService: Mocked<MessageDialogService>;
+  let fileService: Mocked<FileService>;
+  let logger: Mocked<NGXLogger>;
+  let matDialog: Mocked<MatDialog>;
 
   beforeEach(() => {
     environment.bedOccupancyConfig = {
@@ -43,16 +44,22 @@ describe('FhirBedOccupancyService', () => {
   });
 
   beforeEach(() => {
-    messageDialogService = jasmine.createSpyObj<MessageDialogService>('MessageDialogService', [
-      'showSpinnerDialog',
-      'closeSpinnerDialog',
-      'showSubmitDialog',
-      'showErrorDialog',
-      'extractMessageFromError',
-    ]);
-    fileService = jasmine.createSpyObj<FileService>('FileService', ['getFileNameByNotificationType']);
-    logger = jasmine.createSpyObj<NGXLogger>('NGXLogger', ['error']);
-    matDialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
+    messageDialogService = {
+      showSpinnerDialog: vi.fn(),
+      closeSpinnerDialog: vi.fn(),
+      showSubmitDialog: vi.fn(),
+      showErrorDialog: vi.fn(),
+      extractMessageFromError: vi.fn(),
+    } as unknown as Mocked<MessageDialogService>;
+    fileService = {
+      getFileNameByNotificationType: vi.fn(),
+    } as unknown as Mocked<FileService>;
+    logger = {
+      error: vi.fn(),
+    } as unknown as Mocked<NGXLogger>;
+    matDialog = {
+      open: vi.fn(),
+    } as unknown as Mocked<MatDialog>;
 
     TestBed.configureTestingModule({
       providers: [
@@ -83,7 +90,7 @@ describe('FhirBedOccupancyService', () => {
       notificationId: 'id-123',
       timestamp: '2025-01-01T00:00:00Z',
     };
-    fileService.getFileNameByNotificationType.and.returnValue(mockFileName);
+    fileService.getFileNameByNotificationType.mockReturnValue(mockFileName);
 
     service.submitNotification(notification);
 
@@ -99,7 +106,7 @@ describe('FhirBedOccupancyService', () => {
     expect(fileService.getFileNameByNotificationType).toHaveBeenCalledWith(notification);
 
     expect(messageDialogService.showSubmitDialog).toHaveBeenCalledTimes(1);
-    const submitArg = messageDialogService.showSubmitDialog.calls.mostRecent().args[0] as SubmitDialogProps;
+    const submitArg = messageDialogService.showSubmitDialog.mock.calls.at(-1)![0] as SubmitDialogProps;
     expect(submitArg.authorEmail).toBe(mockResponseBody.authorEmail);
     expect(submitArg.fileName).toBe(mockFileName);
     expect(submitArg.notificationId).toBe(mockResponseBody.notificationId);
@@ -128,7 +135,7 @@ describe('FhirBedOccupancyService', () => {
     expect(messageDialogService.closeSpinnerDialog).toHaveBeenCalled();
 
     expect(messageDialogService.showErrorDialog).toHaveBeenCalledTimes(1);
-    const errorArg = messageDialogService.showErrorDialog.calls.mostRecent().args[0] as {
+    const errorArg = messageDialogService.showErrorDialog.mock.calls.at(-1)![0] as {
       errorTitle: string;
       errors: { text: string; queryString: string }[];
     };
@@ -141,7 +148,7 @@ describe('FhirBedOccupancyService', () => {
   it('should show error dialog with extracted message when no validation errors', () => {
     const notification = {} as unknown as BedOccupancy;
     const errorMessage = 'Es ist ein Fehler aufgetreten';
-    messageDialogService.extractMessageFromError.and.returnValue(errorMessage);
+    messageDialogService.extractMessageFromError.mockReturnValue(errorMessage);
 
     service.submitNotification(notification);
 
@@ -160,7 +167,7 @@ describe('FhirBedOccupancyService', () => {
     expect(messageDialogService.closeSpinnerDialog).toHaveBeenCalled();
 
     expect(messageDialogService.showErrorDialog).toHaveBeenCalledTimes(1);
-    const errorArg = messageDialogService.showErrorDialog.calls.mostRecent().args[0] as {
+    const errorArg = messageDialogService.showErrorDialog.mock.calls.at(-1)![0] as {
       errorTitle: string;
       errors: { text: string; queryString: string }[];
     };

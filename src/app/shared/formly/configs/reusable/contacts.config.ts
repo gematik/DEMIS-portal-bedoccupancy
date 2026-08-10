@@ -20,7 +20,6 @@ import { FormlyFieldConfig } from '@ngx-formly/core';
 import { EMAIL_MAX_LENGTH, PHONE_MAX_LENGTH } from '../../../common-utils';
 import { FormlyConstants } from '../formly-constants';
 import ContactTypeEnum = ContactPointInfo.ContactTypeEnum;
-import UsageEnum = ContactPointInfo.UsageEnum;
 
 export const contactsFormConfigFields: (needsContact: boolean, hospitalizationPerson?: boolean) => FormlyFieldConfig[] = (
   needsContact,
@@ -53,6 +52,7 @@ function createContactSection(needsContact: boolean): FormlyFieldConfig[] {
         idForTest: 'phoneNo',
         requiredExpression: (field: FormlyFieldConfig) => field.form?.get('emailAddresses')?.value.length === 0,
         defaultContactType: ContactTypeEnum.Phone,
+        autocomplete: 'tel',
       },
       needsContact
     ),
@@ -66,6 +66,7 @@ function createContactSection(needsContact: boolean): FormlyFieldConfig[] {
         idForTest: 'email',
         requiredExpression: (field: FormlyFieldConfig) => field.form?.get('phoneNumbers')?.value.length === 0,
         defaultContactType: ContactTypeEnum.Email,
+        autocomplete: 'email',
       },
       needsContact
     ),
@@ -91,10 +92,6 @@ function createRepeatableContactField(config: ContactFieldConfig, needsContact: 
           defaultValue: config.defaultContactType,
         },
         {
-          key: 'usage',
-          defaultValue: needsContact ? UsageEnum.Work : undefined,
-        },
-        {
           className: 'flex-grow-1',
           type: 'input',
           key: 'value',
@@ -104,6 +101,7 @@ function createRepeatableContactField(config: ContactFieldConfig, needsContact: 
             label: config.inputFeldLabel,
             required: true,
             maxLength: config.inputMaxLength,
+            attributes: { autocomplete: config.autocomplete },
           },
           validators: {
             validation: [config.validatorName],
@@ -129,4 +127,5 @@ interface ContactFieldConfig {
   requiredExpression?: (field: FormlyFieldConfig) => boolean;
   defaultContactType: ContactTypeEnum;
   requiredSiblingKey?: string;
+  autocomplete: string;
 }

@@ -15,19 +15,11 @@
     find details in the "Readme" file.
  */
 
-import { TestBed } from '@angular/core/testing';
+import '@angular/compiler';
+import '@analogjs/vitest-angular/setup-zone';
+import { setupTestBed } from '@analogjs/vitest-angular/setup-testbed';
 
-import { DeepMergeService } from './deep-merge.service';
-
-describe('DeepMergeService', () => {
-  let service: DeepMergeService;
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(DeepMergeService);
-  });
-
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
+setupTestBed({
+  zoneless: false,
+  teardown: { destroyAfterEach: true },
 });

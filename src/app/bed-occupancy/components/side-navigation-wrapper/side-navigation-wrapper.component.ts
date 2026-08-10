@@ -42,14 +42,6 @@ export class SideNavigationWrapperComponent {
   readonly bedOccupancyClipboardDataService = inject(BedOccupancyClipboardDataService);
   private readonly bedOccupancyNotificationFormDefinitionService = inject(BedOccupancyNotificationFormDefinitionService);
 
-  get FEATURE_FLAG_PORTAL_HEADER_FOOTER(): boolean {
-    return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_HEADER_FOOTER;
-  }
-
-  get FEATURE_FLAG_PORTAL_ACCESSIBILITY(): boolean {
-    return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_ACCESSIBILITY;
-  }
-
   get FEATURE_FLAG_FOOTER_LINKS_CORRECTION(): boolean {
     return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_FOOTER_LINKS_CORRECTION;
   }

@@ -29,19 +29,12 @@
                 "glob": "**/*",
                 "input": "src/assets/",
                 "output": "./assets/",
-                "ignore": [
-                  "dev"
-                ]
+                "ignore": ["dev"]
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "scripts": [],
-            "allowedCommonJsDependencies": [
-              "systemjs-webpack-interop",
-              "style-loader"
-            ],
+            "allowedCommonJsDependencies": ["systemjs-webpack-interop", "style-loader"],
             "customWebpackConfig": {
               "path": "extra-webpack.config.js",
               "libraryName": "portal-bedoccupancy",
@@ -76,9 +69,7 @@
                   "glob": "**/*",
                   "input": "src/assets/",
                   "output": "./assets/",
-                  "ignore": [
-                    "dev"
-                  ]
+                  "ignore": ["dev"]
                 },
                 {
                   "glob": "**/*",
@@ -109,19 +100,7 @@
           }
         },
         "test": {
-          "builder": "@angular/build:karma",
-          "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
-            "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
-            "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.scss"],
-            "scripts": [],
-            "karmaConfig": "karma.conf.js",
-            "codeCoverage": true,
-            "codeCoverageExclude": ["src/test/**/*", "src/api/**/*"],
-            "watch": false
-          }
+          "builder": "@angular/build:unit-test"
         }
       }
     }

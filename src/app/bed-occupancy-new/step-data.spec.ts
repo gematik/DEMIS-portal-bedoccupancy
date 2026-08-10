@@ -18,15 +18,16 @@
 import { getStepData } from './step-data';
 import { BedOccupancyNotificationService } from './bed-occupancy-notification.service';
 import { BedOccupancyConstants } from '../bed-occupancy/common/bed-occupancy-constants';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('getStepData', () => {
-  let mockNotificationService: jasmine.SpyObj<BedOccupancyNotificationService>;
+  let mockNotificationService: BedOccupancyNotificationService;
 
   beforeEach(() => {
-    mockNotificationService = jasmine.createSpyObj('BedOccupancyNotificationService', [], {
+    mockNotificationService = {
       notifierFacilityGroup: { id: 'facilityGroup' },
       bedOccupancyQuestionGroup: { id: 'questionGroup' },
-    });
+    } as unknown as BedOccupancyNotificationService;
   });
 
   it('should return correct step data', () => {

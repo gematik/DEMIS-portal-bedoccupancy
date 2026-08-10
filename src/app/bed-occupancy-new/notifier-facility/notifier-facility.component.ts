@@ -23,7 +23,8 @@ import {
   StepContentComponent,
   StepNavigation,
 } from '@gematik/demis-portal-core-library';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { BedOccupancyNotificationService } from '../bed-occupancy-notification.service';
 import { HospitalLocation } from '../../shared/models/hospital-location';
 import { notifierFacilityBedOccupancyFormConfigFields } from '../../shared/formly/configs/bed-occupancy/notifier-facility.config';
@@ -33,10 +34,12 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { BedOccupancyConstants } from '../../bed-occupancy/common/bed-occupancy-constants';
+import { environment } from 'src/environments/environment';
+import { NgTemplateOutlet } from '@angular/common';
 
 @Component({
   selector: 'app-notifier-facility',
-  imports: [FormlyForm, MatButton, MatIcon, MatToolbar, MatToolbarRow, SectionHeaderComponent, MaxHeightContentContainerComponent],
+  imports: [FormlyForm, MatButton, MatIcon, MatToolbar, MatToolbarRow, SectionHeaderComponent, MaxHeightContentContainerComponent, NgTemplateOutlet],
   templateUrl: './notifier-facility.component.html',
   styleUrl: './notifier-facility.component.scss',
 })
@@ -50,43 +53,61 @@ export class NotifierFacilityComponent extends StepContentComponent<void> implem
   hospitalLocations: HospitalLocation[] = [];
 
   readonly notificationService = inject(BedOccupancyNotificationService);
-  protected fieldConfig: FormlyFieldConfig[];
+  protected fieldConfig: FormlyFieldConfig[] = notifierFacilityBedOccupancyFormConfigFields('', []);
+
+  private readonly unsubscriber = new Subject<void>();
+
+  get isPortalBedOccupancySidenavEnabled() {
+    return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV;
+  }
 
   ngOnInit(): void {
-    this.hospitalLocationsSubscription = this.bedOccupancyStorageService.fetchHospitalLocations().subscribe({
-      next: (locations: HospitalLocation[]) => {
-        this.hospitalLocations = locations;
-        //looking for the IK Number
-        this.IkNumber = locations[0]?.ik || 'not-provided';
-        this.fieldConfig = notifierFacilityBedOccupancyFormConfigFields(this.IkNumber, this.hospitalLocations);
-        //retrieve data from storage
-        if (this.bedOccupancyStorageService.getLocalStorageBedOccupancyData(this.IkNumber) !== null || undefined) {
-          const loadedData = this.bedOccupancyStorageService.getLocalStorageBedOccupancyData(this.IkNumber);
-          const notifierFacilityDataFromLocalStorage = {
-            ...loadedData,
-            address: {
-              ...loadedData.address,
-              country: 'DE', //DEMIS-1801: overwrite old countryCode from storage
-            },
-          };
-          this.notificationService.patchFormData({ notifierFacility: notifierFacilityDataFromLocalStorage });
-        }
-      },
-      error: error => {
-        const errorMessage = this.messageDialogService.extractMessageFromError(error);
-        this.messageDialogService.showErrorDialog({
-          redirectToHome: true,
-          errorTitle: BedOccupancyConstants.ERROR_NO_LOCATIONS_DIALOG,
-          errors: [
-            {
-              text: errorMessage,
-            },
-          ],
-        });
-      },
-    });
+    this.hospitalLocationsSubscription = this.bedOccupancyStorageService
+      .fetchHospitalLocations()
+      .pipe(takeUntil(this.unsubscriber))
+      .subscribe({
+        next: (locations: HospitalLocation[]) => {
+          this.hospitalLocations = locations;
+          // looking for the IK Number
+          this.IkNumber = locations[0]?.ik || 'not-provided';
+          this.fieldConfig = notifierFacilityBedOccupancyFormConfigFields(this.IkNumber, this.hospitalLocations);
+          //retrieve data from storage
+          const localStorageData = this.bedOccupancyStorageService.getLocalStorageBedOccupancyData(this.IkNumber);
+          if (localStorageData !== null && localStorageData !== undefined) {
+            const loadedData = localStorageData;
+            const notifierFacilityDataFromLocalStorage = {
+              ...loadedData,
+              address: {
+                ...loadedData.address,
+                country: 'DE', //DEMIS-1801: overwrite old countryCode from storage
+              },
+            };
+            this.notificationService.patchFormData({ notifierFacility: notifierFacilityDataFromLocalStorage }, { markAsTouched: false });
+          } else {
+            // The FormGroup is pre-built in the service with an empty IK,we need to patch the real IK
+            this.notificationService.patchFormData({ notifierFacility: { facilityInfo: { ikNumber: this.IkNumber } } }, { markAsTouched: false });
+          }
+        },
+        error: error => {
+          const errorMessage = this.messageDialogService.extractMessageFromError(error);
+          this.messageDialogService.showErrorDialog({
+            redirectToHome: true,
+            errorTitle: BedOccupancyConstants.ERROR_NO_LOCATIONS_DIALOG,
+            errors: [
+              {
+                text: errorMessage,
+              },
+            ],
+          });
+        },
+      });
   }
+
   ngOnDestroy(): void {
+    this.unsubscriber.next();
+    this.unsubscriber.complete();
+
+    // store notifierFacility in localstorage when leaving step 1
     const model = this.notificationService.getModelData().notifierFacility;
     this.bedOccupancyStorageService.setLocalStorageBedOccupancyData(model.facilityInfo?.ikNumber, {
       ...model,

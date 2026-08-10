@@ -61,7 +61,6 @@ export class BedOccupancyComponent implements OnInit, OnDestroy {
         phoneNumbers: [
           {
             contactType: 'phone',
-            usage: 'work',
             value: '',
           },
         ],

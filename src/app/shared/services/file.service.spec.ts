@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { FileService } from './file.service';
 import { BedOccupancy } from 'src/api/notification';
@@ -28,12 +29,12 @@ describe('FileService', () => {
     service = TestBed.inject(FileService);
 
     mockDate = new Date(2024, 2, 15, 14, 30, 45);
-    jasmine.clock().install();
-    jasmine.clock().mockDate(mockDate);
+    vi.useFakeTimers();
+    vi.setSystemTime(mockDate);
   });
 
   afterEach(() => {
-    jasmine.clock().uninstall();
+    vi.useRealTimers();
   });
 
   it('should create filename with locationID and current timestamp', () => {

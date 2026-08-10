@@ -16,7 +16,7 @@
         <gem-demis-max-height-content-container [elementSelectorsToSubtract]="['app-navbar', '#bedoccupancy-tab-section-header', '#bedoccupancy-actions-bar']">
           <formly-field [field]="tab" />
         </gem-demis-max-height-content-container>
-        <mat-toolbar id="bedoccupancy-actions-bar">
+        <mat-toolbar id="bedoccupancy-actions-bar" aria-label="Formularaktionen">
           <mat-toolbar-row>
             <div>
               @if (!$first) {

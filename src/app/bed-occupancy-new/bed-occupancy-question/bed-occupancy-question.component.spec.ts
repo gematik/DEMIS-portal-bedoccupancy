@@ -15,6 +15,7 @@
     find details in the "Readme" file.
  */
 
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { signal } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TestBed } from '@angular/core/testing';
@@ -33,15 +34,13 @@ describe('BedOccupancyQuestionComponent', () => {
     const notificationServiceMock: Partial<BedOccupancyNotificationService> = {
       bedOccupancyQuestionModel: signal({}),
       bedOccupancyQuestionGroup: new FormGroup({}),
-      sendData: jasmine.createSpy('sendData'),
-      isFormValid: jasmine.createSpy('isFormValid').and.returnValue(true),
-      hasBedOccupancyQuestionBeenVisited: jasmine.createSpy('hasBedOccupancyQuestionBeenVisited').and.returnValue(false),
-      markBedOccupancyQuestionAsVisited: jasmine.createSpy('markBedOccupancyQuestionAsVisited'),
+      sendData: vi.fn().mockName('sendData'),
+      isFormValid: vi.fn().mockName('isFormValid').mockReturnValue(true),
     };
 
     const navigationServiceMock: Partial<StepNavigation> = {
       canGoToPrevious: signal(true),
-      previous: jasmine.createSpy('previous'),
+      previous: vi.fn().mockName('previous'),
     };
 
     return MockBuilder(BedOccupancyQuestionComponent)
@@ -67,37 +66,14 @@ describe('BedOccupancyQuestionComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should mark the component as visited after initialization', () => {
-    ngMocks.flushTestBed();
-    fixture = MockRender(BedOccupancyQuestionComponent);
-    component = fixture.point.componentInstance;
-    fixture.detectChanges();
-    expect(notificationService.markBedOccupancyQuestionAsVisited).toHaveBeenCalled();
-  });
-
-  it('should not mark form as touched on first visit', () => {
-    (notificationService.hasBedOccupancyQuestionBeenVisited as jasmine.Spy).and.returnValue(false);
-    spyOn(notificationService.bedOccupancyQuestionGroup, 'markAllAsTouched');
+  it('should not mark form as touched while the component is mounted', () => {
+    vi.spyOn(notificationService.bedOccupancyQuestionGroup, 'markAllAsTouched');
 
     ngMocks.flushTestBed();
     fixture = MockRender(BedOccupancyQuestionComponent);
     component = fixture.point.componentInstance;
     fixture.detectChanges();
 
-    expect(notificationService.hasBedOccupancyQuestionBeenVisited).toHaveBeenCalled();
     expect(notificationService.bedOccupancyQuestionGroup.markAllAsTouched).not.toHaveBeenCalled();
-  });
-
-  it('should mark form as touched on second visit', () => {
-    (notificationService.hasBedOccupancyQuestionBeenVisited as jasmine.Spy).and.returnValue(true);
-    spyOn(notificationService.bedOccupancyQuestionGroup, 'markAllAsTouched');
-
-    ngMocks.flushTestBed();
-    fixture = MockRender(BedOccupancyQuestionComponent);
-    component = fixture.point.componentInstance;
-    fixture.detectChanges();
-
-    expect(notificationService.hasBedOccupancyQuestionBeenVisited).toHaveBeenCalled();
-    expect(notificationService.bedOccupancyQuestionGroup.markAllAsTouched).toHaveBeenCalled();
   });
 });

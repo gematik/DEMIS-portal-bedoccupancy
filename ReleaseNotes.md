@@ -2,6 +2,18 @@
 
 # Release portal-bedoccupancy
 
+## Release 1.7.4
+- Added accessibility functions for all text-fields
+- Added regions and landmarks for accessibility
+- Removed feature flag FEATURE_FLAG_PORTAL_HEADER_FOOTER: forms footer is now always rendered
+- Fixed third party license collection
+- Removed feature flag FEATURE_FLAG_PORTAL_ACCESSIBILITY
+- Optimized new sidenav and components
+- Updated @gematik/demis-portal-core-library to 4.2.9
+- Removed ContactPointUsage
+- Migrated from Karma/Jasmine to Vitest/Browser/Playwright for unit testing
+- Removed placeholder texts from non-select input fields
+
 ## Release 1.7.3
 - Fixed styling errors for different spacings and diversity problems
 - Updated @gematik/demis-portal-core-library to 4.2.4

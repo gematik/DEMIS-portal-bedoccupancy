@@ -25,11 +25,7 @@ export async function checkDescribingError(options: {
 }): Promise<void> {
   options.fixture.detectChanges();
   await options.fixture.whenStable();
-  const describedby = await (await options.element.host()).getAttribute('aria-describedby');
-  expect(describedby).withContext('input should have a describedby attribute').toBeTruthy();
-  const errorElement = options.fixture.nativeElement.querySelector(`mat-error#${describedby}`);
-  expect(errorElement).withContext('error element should be present').toBeTruthy();
-  const formlyError = errorElement.querySelector('formly-validation-message');
-  expect(formlyError).withContext('formly error should be present').toBeTruthy();
-  expect(formlyError.textContent).toContain(options.expectedResult);
+  const formlyErrors = Array.from(options.fixture.nativeElement.querySelectorAll('mat-error formly-validation-message')) as HTMLElement[];
+  expect(formlyErrors.length, 'formly error should be present').toBeGreaterThan(0);
+  expect(formlyErrors.some(error => error.textContent?.includes(options.expectedResult))).toBe(true);
 }

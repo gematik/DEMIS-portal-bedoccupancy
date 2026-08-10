@@ -38,6 +38,7 @@ const numberOfBedsFormConfigFields = (child: boolean, required: boolean, prefix:
     validators: ['numberOfBedsValidator'],
   });
 
+// remove with FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV
 export const questionBedOccupancyHtmlConfigFields: FormlyFieldConfig[] = [
   {
     className: FormlyConstants.LAYOUT_HEADER,
