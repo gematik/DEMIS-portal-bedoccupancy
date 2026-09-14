@@ -16,8 +16,9 @@
  */
 
 import { GERMANY_COUNTRY_CODE } from '../../shared/common-utils';
+import { BedOccupancyFormModel } from '../../shared/models/bed-occupancy-form-model';
 
-export const bedOccupancyDummyData: any = {
+export const bedOccupancyDummyData: BedOccupancyFormModel = {
   bedOccupancyQuestion: {
     occupiedBeds: {
       adultsNumberOfBeds: 10,

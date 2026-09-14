@@ -33,7 +33,7 @@ export class LocalStorageService implements Storage {
       return null;
     }
     const storageItem = localStorage.getItem(key);
-    return !!storageItem ? (JSON.parse(storageItem) as T) : null;
+    return storageItem ? (JSON.parse(storageItem) as T) : null;
   }
 
   removeItem(key: string): void {

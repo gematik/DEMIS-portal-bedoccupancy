@@ -3,7 +3,7 @@
     <div class="side-menu-layout">
       <nav aria-label="Formularnavigation" class="side-menu-content">
         <app-side-navigation-stepper [steps]="steps()" [currentStep]="currentStep()" />
-        <app-hexhexbutton (paste)="handleHexhexButtonClick()" />
+        <app-hexhexbutton (pasteClicked)="handleHexhexButtonClick()" />
         <gem-demis-paste-box (dataPasted)="onClipboardDataPasted($event)" />
       </nav>
       <gem-demis-forms-footer [featureFlagFooterLink]="FEATURE_FLAG_FOOTER_LINKS_CORRECTION"/>

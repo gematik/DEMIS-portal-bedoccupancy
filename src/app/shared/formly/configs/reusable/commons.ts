@@ -44,3 +44,21 @@ export const formlyRow = (fieldConfig: FormlyFieldConfig[], key?: string, classN
     fieldGroup: fieldConfig,
   } as FormlyFieldConfig;
 };
+
+const REQUIRED_FIELDS_HINT_TEXT = 'Felder mit * sind Pflichtangaben';
+const REQUIRED_FIELDS_HINT_ARIA_LABEL = 'Hinweis: Felder mit Stern sind Pflichtangaben';
+
+export const requiredFieldsHintTemplate = `<p class="demis-form-required-fields-hint" role="note" aria-label="${REQUIRED_FIELDS_HINT_ARIA_LABEL}">${REQUIRED_FIELDS_HINT_TEXT}</p>`;
+
+export const formlyRequiredFieldsHint = (): FormlyFieldConfig => ({
+  className: FormlyConstants.LAYOUT_FULL_LINE,
+  template: `<div class="demis-form-required-fields-hint-row">${requiredFieldsHintTemplate}</div>`,
+});
+
+export const formlyIntro = (introHtml: string, includeRequiredFieldsHint: boolean): FormlyFieldConfig =>
+  formlyRow([
+    {
+      className: FormlyConstants.LAYOUT_FULL_LINE,
+      template: `<div class="demis-form-intro">${introHtml}${includeRequiredFieldsHint ? requiredFieldsHintTemplate : ''}</div>`,
+    },
+  ]);

@@ -16,9 +16,8 @@
  */
 
 import { FocusMonitor } from '@angular/cdk/a11y';
-import { Component, ElementRef, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, inject } from '@angular/core';
 import { FieldWrapper, FormlyModule } from '@ngx-formly/core';
-import { Subject } from 'rxjs';
 import { MatError } from '@angular/material/form-field';
 
 @Component({
@@ -27,34 +26,14 @@ import { MatError } from '@angular/material/form-field';
   styleUrls: ['./validation-wrapper.component.scss'],
   imports: [MatError, FormlyModule],
 })
-export class ValidationWrapperComponent extends FieldWrapper implements OnInit {
+export class ValidationWrapperComponent extends FieldWrapper {
   private readonly focusMonitor = inject(FocusMonitor);
   private readonly elementRef = inject(ElementRef);
-
-  stateChanges = new Subject<void>();
-  _errorState = false;
-
   constructor() {
     super();
   }
 
-  // @ts-ignore
-  get showError(): boolean {
+  override get showError(): boolean {
     return true;
-
-    /*const showError = this.options.showError(this);
-    if (showError !== this._errorState) {
-      this._errorState = showError;
-      this.stateChanges.next();
-    }
-
-    return showError;*/
-  }
-
-  ngOnInit(): void {
-    /*this.focusMonitor.monitor(this.elementRef, true).subscribe(origin => {
-      this.field.focus = !!origin;
-      this.stateChanges.next();
-    });*/
   }
 }

@@ -16,10 +16,13 @@
  */
 
 import { FormlyFieldConfig } from '@ngx-formly/core';
+import { environment } from 'src/environments/environment';
 
 import { BedOccupancyConstants } from 'src/app/bed-occupancy/common/bed-occupancy-constants';
 import { FormlyConstants } from '../formly-constants';
-import { formlyInputField } from '../reusable/commons';
+import { formlyInputField, formlyRequiredFieldsHint } from '../reusable/commons';
+
+const isA11yRequiredFieldsInfoEnabled = (): boolean => environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_BED_A11Y_INFO_REQUIREDFIELDS ?? false;
 
 const numberOfBedsFieldGroup = (required: boolean, prefix: string) => [
   numberOfBedsFormConfigFields(false, required, prefix),
@@ -44,6 +47,7 @@ export const questionBedOccupancyHtmlConfigFields: FormlyFieldConfig[] = [
     className: FormlyConstants.LAYOUT_HEADER,
     template: `<h2>Belegte Betten auf den Normalstationen des meldenden Standortes</h2></div>`,
   },
+  ...(isA11yRequiredFieldsInfoEnabled() ? [formlyRequiredFieldsHint()] : []),
   {
     key: BedOccupancyConstants.OCCUPIED_BEDS,
     id: BedOccupancyConstants.OCCUPIED_BEDS,

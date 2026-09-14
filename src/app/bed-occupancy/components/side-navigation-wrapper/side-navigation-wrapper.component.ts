@@ -23,6 +23,7 @@ import { environment } from 'src/environments/environment';
 import { FormsFooterComponent, PasteBoxComponent, SectionHeaderComponent, TiledContentComponent } from '@gematik/demis-portal-core-library';
 import { SideNavigationStepperComponent } from '../side-navigation-stepper/side-navigation-stepper.component';
 import { HexhexbuttonComponent } from '../../../shared/components/hexhexbutton/hexhexbutton.component';
+import { BedOccupancyFormModel } from '../../../shared/models/bed-occupancy-form-model';
 
 /**
  * @deprecated: this component can be removed with FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV
@@ -37,7 +38,7 @@ export class SideNavigationWrapperComponent {
   readonly currentStep = input(0);
   readonly currentStepHeadline = input('');
   readonly steps = input<FormlyFieldConfig[]>(undefined);
-  readonly model = input<any>(undefined);
+  readonly model = input<BedOccupancyFormModel>(undefined);
 
   readonly bedOccupancyClipboardDataService = inject(BedOccupancyClipboardDataService);
   private readonly bedOccupancyNotificationFormDefinitionService = inject(BedOccupancyNotificationFormDefinitionService);

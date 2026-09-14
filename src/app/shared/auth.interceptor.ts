@@ -18,16 +18,13 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor() {}
-
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const token = window['token'];
 
-    if (this.isTokenNeeded(req) && !!token) {
+    if (token) {
       const cloned = req.clone({
         headers: req.headers.set('Authorization', 'Bearer ' + token),
       });
@@ -36,9 +33,5 @@ export class AuthInterceptor implements HttpInterceptor {
     } else {
       return next.handle(req);
     }
-  }
-
-  private isTokenNeeded(req: HttpRequest<any>) {
-    return true;
   }
 }

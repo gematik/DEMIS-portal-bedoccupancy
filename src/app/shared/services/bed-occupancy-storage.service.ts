@@ -20,9 +20,9 @@ import { Injectable, inject } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
-import { BedOccupancyNotifierFacility } from 'src/api/notification';
 import { environment } from '../../../environments/environment';
 import { HospitalLocation } from '../models/hospital-location';
+import { NotifierFacilityFormModel } from '../models/bed-occupancy-form-model';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable({
@@ -62,7 +62,7 @@ export class BedOccupancyStorageService {
     }
   }
 
-  setLocalStorageBedOccupancyData(ikNumber: string, data: BedOccupancyNotifierFacility): void {
+  setLocalStorageBedOccupancyData(ikNumber: string, data: NotifierFacilityFormModel): void {
     // Retrieve the existing bed occupancy object from local storage, or initialize a new object if none exists
     const bedOccupancy = JSON.parse(localStorage.getItem('bedOccupancy') || '{}');
 
@@ -73,7 +73,7 @@ export class BedOccupancyStorageService {
     localStorage.setItem('bedOccupancy', JSON.stringify(bedOccupancy));
   }
 
-  getLocalStorageBedOccupancyData(ikNumber: string): BedOccupancyNotifierFacility | null {
+  getLocalStorageBedOccupancyData(ikNumber: string): NotifierFacilityFormModel | null {
     // Retrieve the bed occupancy object from local storage
     const bedOccupancy = JSON.parse(localStorage.getItem('bedOccupancy') || '{}');
 

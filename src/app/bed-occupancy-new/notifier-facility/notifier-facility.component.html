@@ -1,11 +1,13 @@
 <ng-template #content>
-  <div id="notifier-facility-section-header" class="section-header-headline">
+  <div id="notifier-facility-section-header">
     <gem-demis-section-header id="notifier-facility-headline"
                               [level]="1"
                               [titleText]="BedOccupancyConstants.MELDENDE_EINRICHTUNG"/>
   </div>
-  <formly-form [form]="notificationService.notifierFacilityGroup" [model]="notificationService.notifierFacilityModel()"
-               [fields]="fieldConfig"/>
+  <form [formGroup]="notificationService.notifierFacilityGroup">
+    <formly-form [form]="notificationService.notifierFacilityGroup" [model]="notificationService.notifierFacilityModel()"
+                [fields]="fieldConfig"/>
+  </form>
 </ng-template>
 
 <ng-template #actionsRight>
@@ -16,7 +18,8 @@
   </button>
   <button class="btn style dark--color" id="btn-send-notification"
           mat-button type="submit" (click)="notificationService.sendData()"
-          [disabled]="!notificationService.isFormValid()">
+          [gemDemisAriaDisabled]="!notificationService.isFormValid()"
+          [disableRipple]="!notificationService.isFormValid()">
     Abschicken
     <mat-icon class="btn__icon margin--left rotate" fontIcon="send" iconPositionEnd aria-hidden="true"/>
   </button>

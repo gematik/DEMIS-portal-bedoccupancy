@@ -22,30 +22,28 @@ import { Storage } from '../models/ui/storage';
   providedIn: 'root',
 })
 export class SessionStorageService implements Storage {
-  constructor() {}
-
   setItem<T>(key: string, value: T): void {
-    if (window.sessionStorage && !!value) {
+    if (globalThis.sessionStorage && !!value) {
       sessionStorage.setItem(key, JSON.stringify(value));
     }
   }
 
   getItem<T>(key: string): T | null {
-    if (!window.sessionStorage || !key) {
+    if (!globalThis.sessionStorage || !key) {
       return null;
     }
     const storageItem = sessionStorage.getItem(key);
-    return !!storageItem ? (JSON.parse(storageItem) as T) : null;
+    return storageItem ? (JSON.parse(storageItem) as T) : null;
   }
 
   removeItem(key: string): void {
-    if (window.sessionStorage && key) {
+    if (globalThis.sessionStorage && key) {
       sessionStorage.removeItem(key);
     }
   }
 
   updateItem<T>(key: string, value: T): void {
-    if (window.sessionStorage) {
+    if (globalThis.sessionStorage) {
       sessionStorage.setItem(key, JSON.stringify(value));
     }
   }

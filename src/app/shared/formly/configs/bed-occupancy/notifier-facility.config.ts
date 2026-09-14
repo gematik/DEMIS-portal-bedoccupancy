@@ -16,17 +16,22 @@
  */
 
 import { FormlyFieldConfig } from '@ngx-formly/core';
+import { environment } from 'src/environments/environment';
 
 import { BedOccupancyConstants } from 'src/app/bed-occupancy/common/bed-occupancy-constants';
 import { EMPTY_DROPDOWN_MENU_MSG, GERMANY_COUNTRY_CODE } from '../../../common-utils';
 import { HospitalLocation } from '../../../models/hospital-location';
 import { FormlyConstants } from '../formly-constants';
 import { addressFormConfigFields } from '../reusable/address.config';
+import { formlyIntro } from '../reusable/commons';
 import { contactsFormConfigFields } from '../reusable/contacts.config';
 import { oneTimeCodeConfigField } from '../reusable/oneTimeCode.config';
 import { practitionerInfoFormConfigFields } from '../reusable/practitioner-info.config';
 
-function setData(field: FormlyFieldConfig, hospitalLocation: any, ikNumber: string) {
+const isPortalBedTextEnabled = (): boolean => environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_BED_TEXT ?? false;
+const isA11yRequiredFieldsInfoEnabled = (): boolean => environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_BED_A11Y_INFO_REQUIREDFIELDS ?? false;
+
+function setData(field: FormlyFieldConfig, hospitalLocation: HospitalLocation, ikNumber: string) {
   field?.parent?.parent?.formControl?.patchValue({
     address: {
       ...field?.parent?.parent?.formControl?.value.address,
@@ -42,21 +47,20 @@ function setData(field: FormlyFieldConfig, hospitalLocation: any, ikNumber: stri
 }
 
 function notifierFacilityBedOccupancyHtmlConfigFields(ikNumber: string, hospitalLocations: HospitalLocation[]): FormlyFieldConfig[] {
-  return [
-    {
-      className: FormlyConstants.LAYOUT_TEXT,
-      template: `<div>
+  const notifierFacilityText = isPortalBedTextEnabled()
+    ? `<div role="note">
+    <div class="info-notification-text"><span class="material-icons-outlined primary-color-icon" aria-hidden="true">error_outline</span><span class="message">Jedes Krankenhaus kann über einen oder mehrere Krankenhausstandorte verfügen. Die Standorte zugelassener deutscher Krankenhäuser sind im <a href="https://krankenhausstandorte.de/login" target="_blank" rel="noopener noreferrer" aria-label="InEK-Standort-Verzeichnis auf krankenhausstandorte.de in neuem Tab öffnen" style="text-decoration: underline">InEK-Standort-Verzeichnis</a> mit eindeutiger Standort-ID gemäß § 8 Abs. 1 der Standortverzeichnisvereinbarung registriert. Die Anzahl der belegten Betten muss für jeden Krankenhausstandort täglich separat gemeldet werden. Die Meldung bezieht sich nur auf Standorte, denen eine Einrichtung mit Einrichtungstyp '00' zugeordnet ist.
+    <br><br>Die Auswahl der Standortnamen wird anhand der bei der Authentifikation verwendeten SMC-B automatisch aus dem InEK-Standort-Verzeichnis vorausgefüllt.</span></div>
+    </div>`
+    : `<div role="note">
     <p>Hier werden Angaben des Krankenhausstandortes erwartet, für den die tägliche Meldung der betreibbaren und belegten Betten erfolgen soll.</p>
     <p>Die Statistik der betreibbaren und belegten Betten bezieht sich NICHT nur auf COVID-19, sondern auf alle betreibbaren und belegten Betten im Krankenhaus.</p>
     <p>Die Informationen aus den Eingabefeldern zur meldenden Person werden lokal im aktuellen Browser gespeichert. Bei Folgemeldungen werden diese Eingabefelder automatisch mit den gespeicherten Daten vorbefüllt, damit der Meldevorgang beschleunigt wird.</p>
-    <p><div class="info-notification-text"><span class="material-icons-outlined primary-color-icon" aria-hidden="true">error_outline</span><span class="message">Bitte die Adresse des Krankenhausstandortes auswählen, für den die Meldung erfolgt.</span></div>
-    </div>`,
-      props: {
-        addonLeft: {
-          icon: 'error_outline',
-        },
-      },
-    },
+    <div class="info-notification-text"><span class="material-icons-outlined primary-color-icon" aria-hidden="true">error_outline</span><span class="message">Bitte die Adresse des Krankenhausstandortes auswählen, für den die Meldung erfolgt.</span></div>
+    </div>`;
+
+  return [
+    formlyIntro(notifierFacilityText, isA11yRequiredFieldsInfoEnabled()),
     {
       className: FormlyConstants.LAYOUT_HEADER,
       template: '<h2>Einrichtung</h2>',
@@ -95,8 +99,7 @@ function notifierFacilityBedOccupancyHtmlConfigFields(ikNumber: string, hospital
             }),
             required: true,
             change: field => {
-              //@ts-ignore
-              const hospitalLocation = hospitalLocations.filter(f => field.formControl.value === f.label)[0];
+              const hospitalLocation = hospitalLocations.find(f => field.formControl.value === f.label);
               setData(field, hospitalLocation, ikNumber);
             },
           },
@@ -113,7 +116,7 @@ function notifierFacilityBedOccupancyHtmlConfigFields(ikNumber: string, hospital
         {
           key: BedOccupancyConstants.LOCATION_ID_KEY,
           id: BedOccupancyConstants.LOCATION_ID_KEY,
-          className: FormlyConstants.COLMD11,
+          className: FormlyConstants.COLMD12,
           type: 'input',
           props: {
             label: BedOccupancyConstants.LOCATION_ID_LABEL,
@@ -129,7 +132,7 @@ function notifierFacilityBedOccupancyHtmlConfigFields(ikNumber: string, hospital
       ],
     },
     {
-      template: '<h2>Ansprechperson (Melder)</h2>',
+      template: '<h2>Ansprechperson (meldende Person)</h2>',
     },
     practitionerInfoFormConfigFields,
     oneTimeCodeConfigField,

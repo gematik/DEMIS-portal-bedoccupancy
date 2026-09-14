@@ -22,6 +22,7 @@ import { BehaviorSubject } from 'rxjs';
 import { BedOccupancyQuestionClipboard } from './clipboard-enums';
 import { MatDialog } from '@angular/material/dialog';
 import { MessageDialogService } from '@gematik/demis-portal-core-library';
+import { BedOccupancyFormModel } from '../../../shared/models/bed-occupancy-form-model';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +32,7 @@ export class BedOccupancyClipboardDataService {
   logger: NGXLogger;
   protected messageDialogeService: MessageDialogService;
 
-  private clipboardData = new BehaviorSubject<any>(null);
+  private readonly clipboardData = new BehaviorSubject<BedOccupancyFormModel | null>(null);
 
   constructor() {
     const dialog = inject(MatDialog);

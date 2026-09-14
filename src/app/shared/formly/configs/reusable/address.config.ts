@@ -25,11 +25,11 @@ import {
 import { FormlyConstants } from '../formly-constants';
 import { formlyInputField } from './commons';
 
-export const addressFormConfigFields = (required: boolean, idPrefix: string = '', disabled: boolean = false) => [
+export const addressFormConfigFields = (required: boolean, idPrefix = '', disabled = false) => [
   formlyInputField({
     id: `${idPrefix}street`,
     key: `street`,
-    className: 'col-md-8',
+    className: FormlyConstants.COLMD8,
     props: {
       label: 'Straße',
       required: required,
@@ -41,7 +41,7 @@ export const addressFormConfigFields = (required: boolean, idPrefix: string = ''
   formlyInputField({
     id: `${idPrefix}houseNumber`,
     key: 'houseNumber',
-    className: FormlyConstants.COLMD3,
+    className: FormlyConstants.COLMD4,
     props: {
       maxLength: 10,
       label: 'Hausnummer',
@@ -54,7 +54,7 @@ export const addressFormConfigFields = (required: boolean, idPrefix: string = ''
   formlyInputField({
     id: `${idPrefix}zip`,
     key: 'zip',
-    className: FormlyConstants.COLMD3,
+    className: FormlyConstants.COLMD4,
     props: {
       maxLength: required ? ZIP_GERMANY_MAX_LENGTH : ZIP_INTERNATIONAL_MAX_LENGTH,
       minLength: required ? ZIP_GERMANY_MIN_LENGTH : ZIP_INTERNATIONAL_MIN_LENGTH,
@@ -68,7 +68,7 @@ export const addressFormConfigFields = (required: boolean, idPrefix: string = ''
   formlyInputField({
     id: `${idPrefix}city`,
     key: 'city',
-    className: 'col-md-8',
+    className: FormlyConstants.COLMD8,
     props: {
       label: 'Stadt',
       required: required,
@@ -79,7 +79,7 @@ export const addressFormConfigFields = (required: boolean, idPrefix: string = ''
   {
     id: `${idPrefix}country`,
     key: 'country',
-    className: 'col-11',
+    className: FormlyConstants.COLMD12,
     type: 'select',
     defaultValue: GERMANY_COUNTRY_CODE,
     props: {

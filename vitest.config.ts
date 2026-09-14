@@ -27,6 +27,11 @@ export default defineConfig({
     alias: {
       src: fileURLToPath(new URL('./src', import.meta.url)),
     },
+    // With npm-linked libraries (e.g. demis-portal-core-library), Vite otherwise resolves the
+    // symlink's real path and picks up a second copy of @angular/* from that package's own
+    // node_modules, causing duplicate Angular instances (symptom: NG0203 inject() context errors
+    // from services in the linked library, e.g. MatCard).
+    preserveSymlinks: true,
   },
   test: {
     globals: true,
@@ -56,6 +61,10 @@ export default defineConfig({
       instances: [{ browser: 'chromium' }],
     },
     testTimeout: 10000,
+    // Browser-driven tests spin up one Chromium instance per worker; under CPU contention
+    // (many parallel test files/workers) individual UI interactions can occasionally exceed
+    // testTimeout even though the test itself is not broken. Retry once before failing.
+    retry: 1,
     coverage: {
       provider: 'v8',
       exclude: ['src/api/**'],

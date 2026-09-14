@@ -38,7 +38,7 @@ export class ValidateNotificationService {
     return required ? !!email && !validateEmail(email) : !email || !validateEmail(email);
   }
 
-  async phoneValidator(data: any): Promise<boolean> {
+  async phoneValidator(data: { contacts: ContactPointInfo[] }): Promise<boolean> {
     const contacts: ContactPointInfo[] = await this.handelAsyncData(data);
 
     for (const contact of contacts) {
@@ -50,7 +50,7 @@ export class ValidateNotificationService {
     return true;
   }
 
-  async emailValidator(data: any): Promise<boolean> {
+  async emailValidator(data: { contacts: ContactPointInfo[] }): Promise<boolean> {
     const contacts: ContactPointInfo[] = await this.handelAsyncData(data);
 
     for (const contact of contacts) {
@@ -62,7 +62,7 @@ export class ValidateNotificationService {
     return true;
   }
 
-  private handelAsyncData(data: any): Promise<any> {
+  private handelAsyncData(data: { contacts: ContactPointInfo[] }): Promise<ContactPointInfo[]> {
     return new Promise(function (resolve) {
       window.setTimeout(function () {
         resolve(data.contacts);

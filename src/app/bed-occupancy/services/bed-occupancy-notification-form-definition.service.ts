@@ -24,9 +24,7 @@ import { Subject } from 'rxjs';
   providedIn: 'root',
 })
 export class BedOccupancyNotificationFormDefinitionService {
-  constructor() {}
-
-  private hexhexButtonClickSubject = new Subject<void>();
+  private readonly hexhexButtonClickSubject = new Subject<void>();
   hexhexButtonClick$ = this.hexhexButtonClickSubject.asObservable();
 
   handleHexHex() {

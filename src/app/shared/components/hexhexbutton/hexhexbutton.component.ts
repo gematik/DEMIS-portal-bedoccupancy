@@ -26,7 +26,7 @@ import { environment } from '../../../../environments/environment';
 export class HexhexbuttonComponent {
   private readonly targetElement = inject(ElementRef);
 
-  readonly paste = output<void>();
+  readonly pasteClicked = output<void>();
 
   constructor() {
     this.targetElement.nativeElement.classList.add('hexhexbutton');
@@ -43,7 +43,7 @@ export class HexhexbuttonComponent {
   }
 
   doPaste() {
-    this.paste.emit(undefined);
+    this.pasteClicked.emit(undefined);
   }
 
   showHexHex(): boolean {
