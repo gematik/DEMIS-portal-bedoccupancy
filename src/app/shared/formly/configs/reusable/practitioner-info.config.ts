@@ -25,7 +25,7 @@ export const practitionerInfoFormConfigFields = formlyRow(
       id: 'salutation',
       type: 'select',
       key: 'salutation',
-      className: FormlyConstants.COLMD5,
+      className: FormlyConstants.COLMD6,
       props: {
         label: 'Anrede',
         options: [
@@ -37,7 +37,7 @@ export const practitionerInfoFormConfigFields = formlyRow(
     },
     formlyInputField({
       key: 'prefix',
-      className: FormlyConstants.COLMD5,
+      className: FormlyConstants.COLMD6,
       props: {
         label: 'Titel',
         attributes: { autocomplete: 'honorific-suffix' },
@@ -45,7 +45,7 @@ export const practitionerInfoFormConfigFields = formlyRow(
     }),
     formlyInputField({
       key: 'firstname',
-      className: FormlyConstants.COLMD5,
+      className: FormlyConstants.COLMD6,
       props: {
         label: 'Vorname',
         required: true,
@@ -55,7 +55,7 @@ export const practitionerInfoFormConfigFields = formlyRow(
     }),
     formlyInputField({
       key: 'lastname',
-      className: FormlyConstants.COLMD5,
+      className: FormlyConstants.COLMD6,
       props: {
         label: 'Nachname',
         required: true,

@@ -31,6 +31,7 @@ import { BedOccupancyClipboardDataService } from '../bed-occupancy/services/clip
 import { HexhexbuttonComponent } from '../shared/components/hexhexbutton/hexhexbutton.component';
 import { bedOccupancyDummyData } from '../bed-occupancy/common/dummyData';
 import { FormlyModule } from '@ngx-formly/core';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-bed-occupancy-new',
@@ -42,6 +43,7 @@ import { FormlyModule } from '@ngx-formly/core';
 export class BedOccupancyNewComponent implements OnInit {
   readonly bedOccupancyNotificationService = inject(BedOccupancyNotificationService);
   readonly bedOccupancyClipboardDataService = inject(BedOccupancyClipboardDataService);
+  readonly isPortalBedTextEnabled = environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_BED_TEXT ?? false;
 
   private readonly stepContents = computed(() => [
     createStepContent({ component: NotifierFacilityComponent }),

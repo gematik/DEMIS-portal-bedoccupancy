@@ -41,8 +41,12 @@ export enum BedOccupancyConstants {
   INSTITUTION_NAME_LABEL = 'Name der Einrichtung',
   INSTITUTION_IDENTIFIER_LABEL = 'Institutionskennzeichen',
   LOCATION_ID_LABEL = 'Standort-ID',
-  QUESTIONS_CHILDREN_LABEL = 'Kinder',
-  QUESTIONS_ADULTS_LABEL = 'Erwachsene',
+  QUESTIONS_CHILDREN_LABEL = 'Kinder', // can be removed when FEATURE_FLAG_PORTAL_BED_TEXT is enabled
+  QUESTIONS_ADULTS_LABEL = 'Erwachsene', // can be removed when FEATURE_FLAG_PORTAL_BED_TEXT is enabled
+  OCCUPIED_BEDS_CHILDREN_LABEL = 'Anzahl belegter Betten für Kinder',
+  OCCUPIED_BEDS_ADULTS_LABEL = 'Anzahl belegter Betten für Erwachsene',
+  OPERABLE_BEDS_CHILDREN_LABEL = 'Anzahl betreibbarer Betten für Kinder',
+  OPERABLE_BEDS_ADULTS_LABEL = 'Anzahl betreibbarer Betten für Erwachsene',
 
   // =================== Messages =================
   ERROR_NO_LOCATIONS_DIALOG = 'Standortliste konnte nicht abgerufen werden',

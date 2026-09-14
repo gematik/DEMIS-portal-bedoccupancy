@@ -93,6 +93,7 @@ const overrides = {
       canGoToNext: signal(true),
       previous: vi.fn().mockName('previous'),
       next: vi.fn().mockName('next'),
+      getFocusableElements: vi.fn().mockName('getFocusableElements').mockReturnValue([]),
     } as Partial<StepNavigation>;
   },
 };
@@ -228,6 +229,28 @@ describe('NotifierFacilityComponent', () => {
 
       expect(component.hospitalLocations).toEqual([]);
       expect(component.IkNumber).toBe('not-provided');
+    });
+
+    it('should not attempt to focus anything when autoFocusRequested is false (e.g. on initial page load)', async () => {
+      fetchHospitalLocationsSpy.mockReturnValue(of([TEST_DATA.hospitalLocation]));
+      ngMocks.flushTestBed();
+      const localFixture = MockRender(NotifierFacilityComponent, { autoFocusRequested: false });
+      const getFocusableElementsSpy = vi.mocked(TestBed.inject(StepNavigation)).getFocusableElements;
+
+      await localFixture.whenStable();
+
+      expect(getFocusableElementsSpy).not.toHaveBeenCalled();
+    });
+
+    it('should re-focus the first focusable element once hospital locations are loaded when autoFocusRequested is true', async () => {
+      fetchHospitalLocationsSpy.mockReturnValue(of([TEST_DATA.hospitalLocation]));
+      ngMocks.flushTestBed();
+      const localFixture = MockRender(NotifierFacilityComponent, { autoFocusRequested: true });
+      const getFocusableElementsSpy = vi.mocked(TestBed.inject(StepNavigation)).getFocusableElements;
+
+      await localFixture.whenStable();
+
+      expect(getFocusableElementsSpy).toHaveBeenCalled();
     });
   });
 });

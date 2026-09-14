@@ -191,7 +191,7 @@ describe('Bed Occupancy Integration Tests', () => {
     expect(submitButton.disabled, `Submit button should be disabled for value: ${testValue}`).toBe(true);
   }
 
-  async function checkDescribingError(_input: MatInputHarness, expectedResult: String) {
+  async function checkDescribingError(_input: MatInputHarness, expectedResult: string) {
     await fixture.whenStable();
     fixture.detectChanges();
     const formlyErrors = Array.from(fixture.nativeElement.querySelectorAll('mat-error formly-validation-message')) as HTMLElement[];

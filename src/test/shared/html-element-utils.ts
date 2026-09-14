@@ -15,6 +15,6 @@
     find details in the "Readme" file.
  */
 
-export function getHtmlButtonElement(nativeElement: any, selector: string) {
+export function getHtmlButtonElement(nativeElement: HTMLElement, selector: string) {
   return nativeElement.querySelector(selector) as HTMLButtonElement;
 }

@@ -93,7 +93,7 @@ const lifecycles = singleSpaAngular({
       ],
     });
   },
-  template: '<bed-occupancy-root />',
+  template: '<app-bed-occupancy-root />',
   Router,
   NgZone,
   NavigationStart,

@@ -26,15 +26,24 @@ interface NgxLoggerConfig {
   serverLogLevel: number;
 }
 
+interface FeatureFlags {
+  FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV?: boolean;
+  FEATURE_FLAG_FOOTER_LINKS_CORRECTION?: boolean;
+  FEATURE_FLAG_PLACEHOLDER_REMOVAL?: boolean;
+  FEATURE_FLAG_PORTAL_BED_TEXT?: boolean;
+  FEATURE_FLAG_BED_A11Y_INFO_REQUIREDFIELDS?: boolean;
+}
+
 interface Configuration {
   production: boolean;
   pathToGateway: string;
   pathToHospitalLocations: string;
   ngxLoggerConfig: NgxLoggerConfig;
+  featureFlags: FeatureFlags;
 }
 
 class Environment {
-  public bedOccupancyConfig: any;
+  public bedOccupancyConfig: Configuration;
   public headers: HttpHeaders;
 
   constructor() {

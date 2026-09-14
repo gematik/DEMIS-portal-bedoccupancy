@@ -2,6 +2,14 @@
 
 # Release portal-bedoccupancy
 
+## Release 1.7.5
+- Added "required field" information (FEATURE_FLAG_BED_A11Y_INFO_REQUIREDFIELDS)
+- Added text changes for accessibility (FEATURE_FLAG_PORTAL_BED_TEXT)
+- Improved input field accessibility
+- Updated @gematik/demis-portal-core-library to 4.4.0
+- Added linter and fixed linting issues
+- Updated form layout classes
+
 ## Release 1.7.4
 - Added accessibility functions for all text-fields
 - Added regions and landmarks for accessibility

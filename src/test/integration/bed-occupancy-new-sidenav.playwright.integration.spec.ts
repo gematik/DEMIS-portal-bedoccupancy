@@ -87,10 +87,10 @@ describe('BedOccupancy with new sidenav Integration and Playwright', () => {
     await userEvent.fill(root.getByLabelText('Nachname'), 'Simpson');
 
     await userEvent.click(root.getByRole('button', { name: 'Telefonnummer hinzufügen' }));
-    await userEvent.fill(root.getByLabelText('Telefonnummer').last(), '0800123456');
+    await userEvent.fill(root.getByRole('textbox', { name: 'Telefonnummer' }).last(), '0800123456');
 
-    await userEvent.click(root.getByRole('button', { name: 'Email-Adresse hinzufügen' }));
-    await userEvent.fill(root.getByLabelText('Email-Adresse').last(), 'homer@simpson.com');
+    await userEvent.click(root.getByRole('button', { name: 'E-Mail-Adresse hinzufügen' }));
+    await userEvent.fill(root.getByRole('textbox', { name: 'E-Mail-Adresse' }).last(), 'homer@simpson.com');
 
     await userEvent.click(root.getByRole('button', { name: 'Weiter' }));
   }
@@ -144,8 +144,8 @@ describe('BedOccupancy with new sidenav Integration and Playwright', () => {
       await selectInstitution(TEST_DATA.hospitalLocation.label);
       await userEvent.fill(root.getByLabelText('Vorname'), 'Homer');
       await userEvent.fill(root.getByLabelText('Nachname'), 'Simpson');
-      await userEvent.fill(root.getByLabelText('Telefonnummer').first(), '0800123456');
-      await userEvent.fill(root.getByLabelText('Email-Adresse').first(), 'homer@simpson.com');
+      await userEvent.fill(root.getByRole('textbox', { name: 'Telefonnummer' }).first(), '0800123456');
+      await userEvent.fill(root.getByRole('textbox', { name: 'E-Mail-Adresse' }).first(), 'homer@simpson.com');
       await userEvent.click(root.getByRole('button', { name: 'Weiter' }));
 
       // Form page 2
@@ -171,8 +171,8 @@ describe('BedOccupancy with new sidenav Integration and Playwright', () => {
       await selectInstitution(TEST_DATA.hospitalLocation.label);
       await userEvent.fill(root.getByLabelText('Vorname'), 'Homer');
       await userEvent.fill(root.getByLabelText('Nachname'), 'Simpson');
-      await userEvent.fill(root.getByLabelText('Telefonnummer').first(), '0800123456');
-      await userEvent.fill(root.getByLabelText('Email-Adresse').first(), 'homer@simpson.com');
+      await userEvent.fill(root.getByRole('textbox', { name: 'Telefonnummer' }).first(), '0800123456');
+      await userEvent.fill(root.getByRole('textbox', { name: 'E-Mail-Adresse' }).first(), 'homer@simpson.com');
       await userEvent.click(root.getByRole('button', { name: 'Weiter' }));
 
       // Form page 2
@@ -219,8 +219,8 @@ describe('BedOccupancy with new sidenav Integration and Playwright', () => {
     };
     validationParameters.email.forEach(parameter => {
       it(`for the email, the value: '${parameter.value}' should throw the error: '${parameter.expectedResult}'`, async () => {
-        await userEvent.click(root.getByRole('button', { name: 'Email-Adresse hinzufügen' }));
-        await userEvent.fill(root.getByLabelText('Email-Adresse').last(), parameter.value);
+        await userEvent.click(root.getByRole('button', { name: 'E-Mail-Adresse hinzufügen' }));
+        await userEvent.fill(root.getByRole('textbox', { name: 'E-Mail-Adresse' }).last(), parameter.value);
         await blurActiveElement();
 
         await checkDescribingError(parameter.expectedResult);
@@ -229,7 +229,7 @@ describe('BedOccupancy with new sidenav Integration and Playwright', () => {
     validationParameters.phoneNumber.forEach(parameter => {
       it(`for the phone number, the value: '${parameter.value}' should throw the error: '${parameter.expectedResult}'`, async () => {
         await userEvent.click(root.getByRole('button', { name: 'Telefonnummer hinzufügen' }));
-        await userEvent.fill(root.getByLabelText('Telefonnummer').last(), parameter.value);
+        await userEvent.fill(root.getByRole('textbox', { name: 'Telefonnummer' }).last(), parameter.value);
         await blurActiveElement();
 
         await checkDescribingError(parameter.expectedResult);

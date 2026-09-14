@@ -24,6 +24,8 @@ import { BedOccupancyNotificationService } from './bed-occupancy-notification.se
 import { FhirBedOccupancyService } from '../shared/services/fhir-bed-occupancy.service';
 import { BedOccupancyStorageService } from '../shared/services/bed-occupancy-storage.service';
 import { FormlyFormBuilder } from '@ngx-formly/core';
+import { BedOccupancy, BedOccupancyQuestion } from 'src/api/notification';
+import { DeepPartial, NotifierFacilityFormModel } from '../shared/models/bed-occupancy-form-model';
 
 describe('BedOccupancyNotificationService', () => {
   let service: BedOccupancyNotificationService;
@@ -59,7 +61,7 @@ describe('BedOccupancyNotificationService', () => {
       );
     });
     service = TestBed.inject(BedOccupancyNotificationService);
-    transformDataSpy = vi.spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData').mockReturnValue({});
+    transformDataSpy = vi.spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData').mockReturnValue({} as BedOccupancy);
     submitNotificationSpy = vi.spyOn(TestBed.inject(FhirBedOccupancyService), 'submitNotification');
   });
 
@@ -205,8 +207,8 @@ describe('BedOccupancyNotificationService', () => {
   });
 
   it('getModelData should return values from models (signals)', () => {
-    service.notifierFacilityModel.set({ foo: 'bar' });
-    service.bedOccupancyQuestionModel.set({ baz: 123 });
+    service.notifierFacilityModel.set({ foo: 'bar' } as NotifierFacilityFormModel);
+    service.bedOccupancyQuestionModel.set({ baz: 123 } as DeepPartial<BedOccupancyQuestion>);
 
     const data = service.getModelData();
 

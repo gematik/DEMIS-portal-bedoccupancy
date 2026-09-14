@@ -15,15 +15,16 @@
     find details in the "Readme" file.
  */
 
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BedOccupancy, ValidationError } from 'src/api/notification';
+import { BedOccupancy, OkResponse, ValidationError } from 'src/api/notification';
 import { NGXLogger } from 'ngx-logger';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorMessage, MessageDialogService, SubmitDialogProps, trimStrings } from '@gematik/demis-portal-core-library';
 import { environment } from '../../../environments/environment';
 import { FileService } from './file.service';
 import { finalize } from 'rxjs/operators';
+import { BedOccupancyFormModel } from '../models/bed-occupancy-form-model';
 
 @Injectable({
   providedIn: 'root',
@@ -43,17 +44,11 @@ export class FhirBedOccupancyService {
     this.logger = logger;
   }
 
-  transformData(originalData: BedOccupancy): any {
+  transformData(originalData: BedOccupancyFormModel): BedOccupancy {
     //contacts (backend) is expecting an array and not like the datamodel is provided an object.
 
-    const transformedContacts = Array.isArray(originalData.notifierFacility.contacts)
-      ? originalData.notifierFacility.contacts
-      : [
-          //@ts-ignore
-          ...(originalData.notifierFacility.contacts?.phoneNumbers || []),
-          //@ts-ignore
-          ...(originalData.notifierFacility.contacts?.emailAddresses || []),
-        ];
+    const contacts = originalData.notifierFacility.contacts;
+    const transformedContacts = Array.isArray(contacts) ? contacts : [...(contacts?.phoneNumbers || []), ...(contacts?.emailAddresses || [])];
 
     return {
       notifierFacility: {
@@ -61,7 +56,7 @@ export class FhirBedOccupancyService {
         contacts: transformedContacts,
       },
       bedOccupancyQuestion: originalData.bedOccupancyQuestion,
-    };
+    } as BedOccupancy;
   }
 
   submitNotification(notification: BedOccupancy) {
@@ -79,7 +74,7 @@ export class FhirBedOccupancyService {
         })
       )
       .subscribe({
-        next: (response: HttpResponse<any>) => {
+        next: (response: HttpResponse<OkResponse>) => {
           const submitDialogData = this.createSubmitDialogData(response, notification);
           this.messageDialogService.showSubmitDialog(submitDialogData);
         },
@@ -94,7 +89,7 @@ export class FhirBedOccupancyService {
       });
   }
 
-  private createSubmitDialogData(response: HttpResponse<any>, notification: BedOccupancy): SubmitDialogProps {
+  private createSubmitDialogData(response: HttpResponse<OkResponse>, notification: BedOccupancy): SubmitDialogProps {
     const content = encodeURIComponent(response.body.content);
     const href = 'data:application/actet-stream;base64,' + content;
     return {
@@ -106,7 +101,7 @@ export class FhirBedOccupancyService {
     };
   }
 
-  private extractErrorDetails(err: any): ErrorMessage[] {
+  private extractErrorDetails(err: HttpErrorResponse): ErrorMessage[] {
     const response = err?.error ?? err;
     const errorMessage = this.messageDialogService.extractMessageFromError(response);
     const validationErrors = response?.validationErrors || [];

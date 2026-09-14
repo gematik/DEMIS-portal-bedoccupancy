@@ -1,10 +1,10 @@
 <gem-demis-max-height-content-container [elementSelectorsToSubtract]="['app-navbar']">
   <gem-demis-side-navigation #sideNav sideNavTitle="Bettenbelegung" [stepsMap]="stepsMap()">
     <ng-template #sideNavSubtitle>
-      <p>Meldung der Krankenhausbettenbelegung gemäß Infektionsschutzgesetz (§ 13 Abs. 7 IfSG)</p>
+      <p>{{ isPortalBedTextEnabled ? 'Meldung der Krankenhausbettenbelegung gemäß § 13 Abs. 7 IfSG' : 'Meldung der Krankenhausbettenbelegung gemäß Infektionsschutzgesetz (§ 13 Abs. 7 IfSG)' }}</p>
     </ng-template>
     <ng-template #additionalSideNavActions>
-      <app-hexhexbutton (paste)="handleHexHexChange()" />
+      <app-hexhexbutton (pasteClicked)="handleHexHexChange()" />
       <gem-demis-paste-box (dataPasted)="onClipboardDataPasted($event)" />
     </ng-template>
   </gem-demis-side-navigation>

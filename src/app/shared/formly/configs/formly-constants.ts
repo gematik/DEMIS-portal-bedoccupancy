@@ -16,13 +16,14 @@
  */
 
 export enum FormlyConstants {
-  LAYOUT_FULL_LINE = 'col-md-11 align-self-start',
-  LAYOUT_HEADER = 'col-sm-11 mt-sm-3',
-  LAYOUT_TEXT = 'col-sm-11 mb-sm-3',
-  QUESTIONS_CLASS = 'col-md-11 formly--inline',
+  LAYOUT_FULL_LINE = 'col-md-12 align-self-start',
+  LAYOUT_HEADER = 'col-sm-12 mt-sm-3',
+  LAYOUT_TEXT = 'col-sm-12 mb-sm-3',
   COLMD3 = 'col-md-3',
+  COLMD4 = 'col-md-4',
   COLMD5 = 'col-md-5',
   COLMD6 = 'col-md-6',
+  COLMD8 = 'col-md-8',
   COLMD9 = 'col-md-9',
   COLMD10 = 'col-md-10',
   COLMD10_INLINE = 'col-md-10 formly--inline',

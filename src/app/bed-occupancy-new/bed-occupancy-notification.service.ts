@@ -22,6 +22,8 @@ import { FhirBedOccupancyService } from '../shared/services/fhir-bed-occupancy.s
 import { DeepMergeService } from '@gematik/demis-portal-core-library';
 import { notifierFacilityBedOccupancyFormConfigFields } from '../shared/formly/configs/bed-occupancy/notifier-facility.config';
 import { questionBedOccupancyHtmlConfigFieldsNew } from '../shared/formly/configs/bed-occupancy/question-new.config';
+import { BedOccupancyFormModel, DeepPartial, NotifierFacilityFormModel } from '../shared/models/bed-occupancy-form-model';
+import { BedOccupancyQuestion } from 'src/api/notification';
 
 @Injectable({
   providedIn: 'root',
@@ -48,8 +50,8 @@ export class BedOccupancyNotificationService {
    * `addControl` is idempotent, so re-rendering with the final config only
    * updates dynamic props (e.g. select options) without recreating controls.
    */
-  notifierFacilityModel = signal<any>({});
-  bedOccupancyQuestionModel = signal<any>({});
+  notifierFacilityModel = signal<NotifierFacilityFormModel>({});
+  bedOccupancyQuestionModel = signal<DeepPartial<BedOccupancyQuestion>>({});
 
   notifierFacilityGroup = new FormGroup({});
   bedOccupancyQuestionGroup = new FormGroup({});
@@ -58,7 +60,7 @@ export class BedOccupancyNotificationService {
     // Eagerly build both FormGroups so their controls and Formly validators
     // are available before the corresponding step is rendered.
     this.formlyBuilder.buildForm(this.notifierFacilityGroup, notifierFacilityBedOccupancyFormConfigFields('', []), this.notifierFacilityModel(), {});
-    this.formlyBuilder.buildForm(this.bedOccupancyQuestionGroup, questionBedOccupancyHtmlConfigFieldsNew, this.bedOccupancyQuestionModel(), {});
+    this.formlyBuilder.buildForm(this.bedOccupancyQuestionGroup, questionBedOccupancyHtmlConfigFieldsNew(), this.bedOccupancyQuestionModel(), {});
   }
 
   sendData() {
@@ -84,7 +86,7 @@ export class BedOccupancyNotificationService {
    * });
    * ```
    */
-  patchFormData(data: { notifierFacility?: any; bedOccupancyQuestion?: any }, options: { markAsTouched?: boolean } = {}): void {
+  patchFormData(data: BedOccupancyFormModel, options: { markAsTouched?: boolean } = {}): void {
     const { markAsTouched = true } = options;
     const stepMappings = [
       { key: 'notifierFacility' as const, model: this.notifierFacilityModel, group: this.notifierFacilityGroup },
@@ -121,7 +123,7 @@ export class BedOccupancyNotificationService {
    * Returns the current form data as a plain JavaScript object.
    * Uses the FormGroup values (as they contain the current values from the forms).
    */
-  getFormData(): any {
+  getFormData(): BedOccupancyFormModel {
     return {
       notifierFacility: this.notifierFacilityGroup.value,
       bedOccupancyQuestion: this.bedOccupancyQuestionGroup.value,
@@ -132,7 +134,7 @@ export class BedOccupancyNotificationService {
    * Returns the current model data as a plain JavaScript object.
    * Uses the Signal values (Models).
    */
-  getModelData(): any {
+  getModelData() {
     return {
       notifierFacility: this.notifierFacilityModel(),
       bedOccupancyQuestion: this.bedOccupancyQuestionModel(),

@@ -33,6 +33,7 @@ import { BedOccupancyNotificationFormDefinitionService } from './services/bed-oc
 import { BedOccupancyClipboardDataService } from './services/clipboard/bed-occupancy-clipboard-data.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MessageDialogService, MaxHeightContentContainerComponent } from '@gematik/demis-portal-core-library';
+import { BedOccupancyFormModel } from '../shared/models/bed-occupancy-form-model';
 
 /**
  * @deprecated: this component can be removed with FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV
@@ -54,7 +55,7 @@ export class BedOccupancyComponent implements OnInit, OnDestroy {
   hospitalLocations: HospitalLocation[] = [];
   hospitalLocationsSubscription: Subscription | undefined;
   form = new FormGroup({});
-  model: any = {
+  model: BedOccupancyFormModel = {
     //this is needed to show the email and phone field on iniital load
     notifierFacility: {
       contacts: {
@@ -96,7 +97,7 @@ export class BedOccupancyComponent implements OnInit, OnDestroy {
     };
   }
 
-  handlePasteBoxOrHexhexChange(data: any) {
+  handlePasteBoxOrHexhexChange(data: BedOccupancyFormModel) {
     if (data === null) {
       return;
     }

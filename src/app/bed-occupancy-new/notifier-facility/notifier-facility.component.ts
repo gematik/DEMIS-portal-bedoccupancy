@@ -15,31 +15,44 @@
     find details in the "Readme" file.
  */
 
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { afterNextRender, Component, ElementRef, inject, Injector, OnDestroy, OnInit } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import {
+  GemDemisAriaDisabledButtonDirective,
   MaxHeightContentContainerComponent,
   MessageDialogService,
   SectionHeaderComponent,
   StepContentComponent,
   StepNavigation,
 } from '@gematik/demis-portal-core-library';
+import { FormlyFieldConfig, FormlyForm } from '@ngx-formly/core';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { BedOccupancyNotificationService } from '../bed-occupancy-notification.service';
-import { HospitalLocation } from '../../shared/models/hospital-location';
-import { notifierFacilityBedOccupancyFormConfigFields } from '../../shared/formly/configs/bed-occupancy/notifier-facility.config';
-import { BedOccupancyStorageService } from '../../shared/services/bed-occupancy-storage.service';
-import { FormlyFieldConfig, FormlyForm } from '@ngx-formly/core';
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { BedOccupancyConstants } from '../../bed-occupancy/common/bed-occupancy-constants';
 import { environment } from 'src/environments/environment';
-import { NgTemplateOutlet } from '@angular/common';
+import { BedOccupancyConstants } from '../../bed-occupancy/common/bed-occupancy-constants';
+import { notifierFacilityBedOccupancyFormConfigFields } from '../../shared/formly/configs/bed-occupancy/notifier-facility.config';
+import { HospitalLocation } from '../../shared/models/hospital-location';
+import { BedOccupancyStorageService } from '../../shared/services/bed-occupancy-storage.service';
+import { BedOccupancyNotificationService } from '../bed-occupancy-notification.service';
 
 @Component({
   selector: 'app-notifier-facility',
-  imports: [FormlyForm, MatButton, MatIcon, MatToolbar, MatToolbarRow, SectionHeaderComponent, MaxHeightContentContainerComponent, NgTemplateOutlet],
+  imports: [
+    FormlyForm,
+    MatButton,
+    MatIcon,
+    MatToolbar,
+    MatToolbarRow,
+    SectionHeaderComponent,
+    MaxHeightContentContainerComponent,
+    NgTemplateOutlet,
+    GemDemisAriaDisabledButtonDirective,
+    ReactiveFormsModule,
+  ],
   templateUrl: './notifier-facility.component.html',
   styleUrl: './notifier-facility.component.scss',
 })
@@ -47,6 +60,8 @@ export class NotifierFacilityComponent extends StepContentComponent<void> implem
   hospitalLocationsSubscription: Subscription | undefined;
   IkNumber: string;
   protected navigation = inject(StepNavigation);
+  private readonly elementRef = inject(ElementRef<HTMLElement>);
+  private readonly injector = inject(Injector);
   private readonly messageDialogService = inject(MessageDialogService);
 
   private readonly bedOccupancyStorageService = inject(BedOccupancyStorageService);
@@ -86,6 +101,14 @@ export class NotifierFacilityComponent extends StepContentComponent<void> implem
           } else {
             // The FormGroup is pre-built in the service with an empty IK,we need to patch the real IK
             this.notificationService.patchFormData({ notifierFacility: { facilityInfo: { ikNumber: this.IkNumber } } }, { markAsTouched: false });
+          }
+          // Rebuilding fieldConfig above replaces the rendered controls, discarding any focus SideNavigationComponent
+          // already set right after this step became visible. Re-focus once Angular has actually rendered the new
+          // controls, but only if this render was supposed to receive focus (e.g. not on the initial page load).
+          if (this.autoFocusRequested()) {
+            afterNextRender(() => this.navigation.getFocusableElements(this.elementRef.nativeElement)[0]?.focus({ preventScroll: true }), {
+              injector: this.injector,
+            });
           }
         },
         error: error => {

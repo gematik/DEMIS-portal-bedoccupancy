@@ -26,6 +26,15 @@ module.exports = (angularWebpackConfig, options) => {
     /styles\.scss.*depends on.*style-loader\/dist\/runtime.*CommonJS or AMD dependencies/,
   ];
 
+  // With npm-linked libraries (e.g. demis-portal-core-library), webpack otherwise
+  // resolves the symlink's real path and picks up a second copy of @angular/*
+  // from that package's own node_modules, causing duplicate Angular instances
+  // (symptom: NG0203 inject() context errors from services in the linked library).
+  singleSpaWebpackConfig.resolve = {
+    ...singleSpaWebpackConfig.resolve,
+    symlinks: false,
+  };
+
   // Feel free to modify this webpack config however you'd like to
   return singleSpaWebpackConfig;
 };

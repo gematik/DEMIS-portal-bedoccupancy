@@ -25,8 +25,9 @@ export const oneTimeCodeConfigField = formlyRow([
     className: 'oneTimeCode',
     props: {
       attributes: {
-        tabindex: 500,
+        tabindex: -1,
         autocomplete: 'off',
+        'aria-label': 'One Time Code',
       },
     },
   },

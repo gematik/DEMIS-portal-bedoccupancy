@@ -32,7 +32,8 @@ export const contactsFormConfigFields: (needsContact: boolean, hospitalizationPe
   },
   {
     className: FormlyConstants.LAYOUT_HEADER,
-    template: `<p>Bitte geben Sie mindestens eine Kontaktmöglichkeit an.</p>`,
+    template: `<p id='kontakt-hinweis'>Bitte geben Sie mindestens eine Kontaktmöglichkeit an.</p>`,
+    props: { safeHtml: true },
     expressions: { hide: () => !needsContact },
   },
   {
@@ -60,7 +61,7 @@ function createContactSection(needsContact: boolean): FormlyFieldConfig[] {
     createRepeatableContactField(
       {
         key: 'emailAddresses',
-        inputFeldLabel: 'Email-Adresse',
+        inputFeldLabel: 'E-Mail-Adresse',
         inputMaxLength: EMAIL_MAX_LENGTH,
         validatorName: 'emailValidator',
         idForTest: 'email',
@@ -84,7 +85,7 @@ function createRepeatableContactField(config: ContactFieldConfig, needsContact: 
     expressions: { 'props.required': needsContact ? config.requiredExpression : () => false },
     defaultValue: needsContact ? [{}] : undefined,
     fieldArray: {
-      className: FormlyConstants.COLMD11,
+      className: FormlyConstants.COLMD12,
       fieldGroupClassName: undefined,
       fieldGroup: [
         {
@@ -110,7 +111,7 @@ function createRepeatableContactField(config: ContactFieldConfig, needsContact: 
             show: true,
           },
           expressions: {
-            'validation.show': (model: any) => !!model?.value,
+            'validation.show': (field: FormlyFieldConfig) => !!(field?.model as ContactPointInfo)?.value,
           },
         },
       ],

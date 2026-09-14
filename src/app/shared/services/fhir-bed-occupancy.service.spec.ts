@@ -38,8 +38,11 @@ describe('FhirBedOccupancyService', () => {
 
   beforeEach(() => {
     environment.bedOccupancyConfig = {
+      production: false,
       pathToGateway: '/gateway/notification/api/ng/reports/bedOccupancy',
       pathToHospitalLocations: '/services/hospital-locations',
+      ngxLoggerConfig: { level: 1, disableConsoleLogging: false, serverLogLevel: 0 },
+      featureFlags: {},
     };
   });
 

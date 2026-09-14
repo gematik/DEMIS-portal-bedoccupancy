@@ -24,8 +24,6 @@ import { BedOccupancy } from 'src/api/notification';
 export class FileService {
   abbreviation = '.pdf';
 
-  constructor() {}
-
   /**
    * @returns current time as YYMMDDhhmmss
    */
