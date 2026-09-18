@@ -17,25 +17,34 @@
 
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { environment } from 'src/environments/environment';
-
 import { BedOccupancyConstants } from 'src/app/bed-occupancy/common/bed-occupancy-constants';
-import { NUMBER_OF_BEDS_ERROR_MSG } from '../../../common-utils';
+import {
+  NUMBER_OF_BEDS_ERROR_MSG,
+  NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT,
+  NUMBER_OF_BEDS_REQUIRED_ERROR_MSG,
+  NUMBER_OF_BEDS_SUPPORT_TEXT,
+} from '../../../common-utils';
 import { FormlyConstants } from '../formly-constants';
 import { formlyIntro, formlyRequiredFieldsHint } from '../reusable/commons';
 
 const isPortalBedTextEnabled = (): boolean => environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_BED_TEXT ?? false;
 const isA11yRequiredFieldsInfoEnabled = (): boolean => environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_BED_A11Y_INFO_REQUIREDFIELDS ?? false;
-
-const bedNumberValidation = {
+const getBedNumberValidation = (): FormlyFieldConfig['validation'] => ({
   messages: {
-    min: () => NUMBER_OF_BEDS_ERROR_MSG,
-    max: () => NUMBER_OF_BEDS_ERROR_MSG,
+    ...(isPortalBedTextEnabled() ? { required: () => NUMBER_OF_BEDS_REQUIRED_ERROR_MSG } : {}),
+    min: () => (isPortalBedTextEnabled() ? NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT : NUMBER_OF_BEDS_ERROR_MSG),
+    max: () => (isPortalBedTextEnabled() ? NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT : NUMBER_OF_BEDS_ERROR_MSG),
   },
-};
+});
 
 const createHeader = (text: string): FormlyFieldConfig => ({
   className: FormlyConstants.LAYOUT_HEADER,
-  template: `<h2>${text}</h2></div>`,
+  template: `<h2>${text}</h2>`,
+});
+
+const createHeaderWithSpacing = (text: string): FormlyFieldConfig => ({
+  className: FormlyConstants.LAYOUT_HEADER,
+  template: `<div class="bed-occupancy-section-heading--spaced"><h2>${text}</h2></div>`,
 });
 
 const getBedLabel = (sectionKey: BedOccupancyConstants.OCCUPIED_BEDS | BedOccupancyConstants.OPERABLE_BEDS, child: boolean): string => {
@@ -63,10 +72,11 @@ const createBedNumberField = (
     label: getBedLabel(sectionKey, child),
     max: 999999,
     min: 0,
+    ...(isPortalBedTextEnabled() ? { description: NUMBER_OF_BEDS_SUPPORT_TEXT } : {}),
     ...(required ? { required: true } : {}),
   },
   type: 'number',
-  validation: bedNumberValidation,
+  validation: getBedNumberValidation(),
 });
 
 const createBedSection = (
@@ -95,7 +105,7 @@ export const questionBedOccupancyHtmlConfigFieldsNew = (): FormlyFieldConfig[] =
     ...(!questionText && isA11yRequiredFieldsInfoEnabled() ? [formlyRequiredFieldsHint()] : []),
     createHeader('Belegte Betten auf Normalstationen des meldenden Standortes'),
     createBedSection(BedOccupancyConstants.OCCUPIED_BEDS, 'occupied-beds', true),
-    createHeader('Betreibbare Betten auf Normalstationen des meldenden Standortes (falls bekannt)'),
+    createHeaderWithSpacing('Betreibbare Betten auf Normalstationen des meldenden Standortes (falls bekannt)'),
     createBedSection(BedOccupancyConstants.OPERABLE_BEDS, 'operable-beds', false),
   ];
 };

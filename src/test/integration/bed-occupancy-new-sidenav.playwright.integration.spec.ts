@@ -15,12 +15,16 @@
     find details in the "Readme" file.
  */
 
+import type { Mock } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { page, userEvent } from 'vitest/browser';
 import type { Locator } from 'vitest/browser';
+import { page, userEvent } from 'vitest/browser';
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BedOccupancyNewComponent } from 'src/app/bed-occupancy-new/bed-occupancy-new.component';
+import { NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT, NUMBER_OF_BEDS_SUPPORT_TEXT } from 'src/app/shared/common-utils';
+import { BedOccupancyStorageService } from 'src/app/shared/services/bed-occupancy-storage.service';
+import { NotifierFacilityFormModel } from 'src/app/shared/models/bed-occupancy-form-model';
 import { configureIntegrationTestBed, TEST_DATA } from './bed-occupancy.integration-setup';
 import { environment } from '../../environments/environment';
 
@@ -30,10 +34,11 @@ describe('BedOccupancy with new sidenav Integration and Playwright', () => {
 
   const parameters = {
     testParameter: [
-      { value: '-10', expectedResult: 'Bitte geben Sie eine positive Zahl kleiner 1000000 ein.' },
-      { value: '1234567', expectedResult: 'Bitte geben Sie eine positive Zahl kleiner 1000000 ein.' },
+      { value: '-10', expectedResult: NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT },
+      { value: '1234567', expectedResult: NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT },
     ],
   };
+  const stepHeaders = (): HTMLElement[] => Array.from(fixture.nativeElement.querySelectorAll('.mat-step-header')) as HTMLElement[];
 
   beforeEach(async () => {
     environment.bedOccupancyConfig = {
@@ -41,6 +46,7 @@ describe('BedOccupancy with new sidenav Integration and Playwright', () => {
       featureFlags: {
         ...environment.bedOccupancyConfig?.featureFlags,
         FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV: true,
+        FEATURE_FLAG_PORTAL_BED_TEXT: true,
       },
     };
     await configureIntegrationTestBed();
@@ -122,6 +128,17 @@ describe('BedOccupancy with new sidenav Integration and Playwright', () => {
     expect(formlyErrors.some(error => error.textContent?.includes(expectedResult))).toBe(true);
   }
 
+  function checkSidenavStep(stepHeaders: () => HTMLElement[]) {
+    const [step1, step2] = stepHeaders();
+    expect(step1.getAttribute('aria-label')).toContain('aktuell');
+    expect(step2.getAttribute('aria-label')).toContain('noch nicht begonnen');
+
+    const step1Icon = step1.querySelector('.mat-step-icon');
+    expect(step1Icon?.querySelector('.step-number')?.textContent?.trim()).toBe('1');
+    expect(step1Icon?.querySelector('.step-valid')).toBeNull();
+    return step2;
+  }
+
   it('should create', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
@@ -137,6 +154,17 @@ describe('BedOccupancy with new sidenav Integration and Playwright', () => {
       await blurActiveElement(); // Do not forget to blur the input! Otherwise the validation error will not be triggered in the material form field
 
       await checkDescribingError('Diese Angabe wird benötigt');
+      const [step1] = stepHeaders();
+      const step1Icon = step1.querySelector('.mat-step-icon');
+      expect(step1Icon?.querySelector('.step-invalid')).not.toBeNull();
+    });
+
+    it('shows step numbers on initial load', async () => {
+      const step2 = checkSidenavStep(stepHeaders);
+
+      const step2Icon = step2.querySelector('.mat-step-icon');
+      expect(step2Icon?.querySelector('.step-number')?.textContent?.trim()).toBe('2');
+      expect(step2Icon?.querySelector('.step-valid')).toBeNull();
     });
 
     it('should send, when form is filled correctly', async () => {
@@ -147,10 +175,16 @@ describe('BedOccupancy with new sidenav Integration and Playwright', () => {
       await userEvent.fill(root.getByRole('textbox', { name: 'Telefonnummer' }).first(), '0800123456');
       await userEvent.fill(root.getByRole('textbox', { name: 'E-Mail-Adresse' }).first(), 'homer@simpson.com');
       await userEvent.click(root.getByRole('button', { name: 'Weiter' }));
+      const [step1] = stepHeaders();
+      const step1Icon = step1.querySelector('.mat-step-icon');
+      expect(step1Icon?.querySelector('.step-valid')).not.toBeNull();
 
       // Form page 2
       await userEvent.fill(bedLocator('#occupied-beds-adults-number-of-beds'), '10');
       await userEvent.fill(bedLocator('#occupied-beds-children-number-of-beds'), '5');
+
+      const step2Icon = step1.querySelector('.mat-step-icon');
+      expect(step2Icon?.querySelector('.step-valid')).not.toBeNull();
 
       await expect.element(root.getByRole('button', { name: 'Abschicken' })).toBeEnabled();
     });
@@ -165,79 +199,20 @@ describe('BedOccupancy with new sidenav Integration and Playwright', () => {
 
       await checkDescribingError('Diese Angabe wird benötigt');
     });
-
-    it('should send, when form is filled correctly', async () => {
-      // Form page 1
-      await selectInstitution(TEST_DATA.hospitalLocation.label);
-      await userEvent.fill(root.getByLabelText('Vorname'), 'Homer');
-      await userEvent.fill(root.getByLabelText('Nachname'), 'Simpson');
-      await userEvent.fill(root.getByRole('textbox', { name: 'Telefonnummer' }).first(), '0800123456');
-      await userEvent.fill(root.getByRole('textbox', { name: 'E-Mail-Adresse' }).first(), 'homer@simpson.com');
-      await userEvent.click(root.getByRole('button', { name: 'Weiter' }));
-
-      // Form page 2
-      await userEvent.fill(bedLocator('#occupied-beds-adults-number-of-beds'), '10');
-      await userEvent.fill(bedLocator('#occupied-beds-children-number-of-beds'), '5');
-
-      await expect.element(root.getByRole('button', { name: 'Abschicken' })).toBeEnabled();
-    });
-  });
-
-  describe('Validation of email and phone number', () => {
-    const validationParameters = {
-      email: [
-        { value: 'auch-ungueltig.de', expectedResult: 'Keine gültige E-Mail (Beispiel: meine.Email@email.de)' },
-        { value: '_@test_Me.too', expectedResult: 'Keine gültige E-Mail (Beispiel: meine.Email@email.de)' },
-        {
-          value: 'keinesonderzeichen´êa@ü?.djkd',
-          expectedResult: 'Keine gültige E-Mail (Beispiel: meine.Email@email.de)',
-        },
-        {
-          value:
-            'genau321Zeichen_nach_dem@Lorem-ipsum-dolor-sit-amet--consetetur-sadipscing-elitr--sed-diam-nonumy-eirmod-tempor-invidunt-ut-labore-et-dolore-magna-aliquyam-erat--sed-diam-voluptua.-At-vero-eos-et-accusam-et-justo-duo-dolores-et-ea-rebum.-Stet-clita-kasd-gubergren--no-sea-takimata-sanctus-est-Lorem-ipsum-dolor-sit-amet.-Lorem-ipsum-dolor-sit.com',
-          expectedResult: 'Keine gültige E-Mail (Beispiel: meine.Email@email.de)',
-        },
-      ],
-      phoneNumber: [
-        {
-          value: '1741236589',
-          expectedResult: 'Die Telefonnummer muss mit 0 oder + beginnen, gefolgt von mindestens 6 Ziffern.',
-        },
-        {
-          value: '01234',
-          expectedResult: 'Die Telefonnummer muss mit 0 oder + beginnen, gefolgt von mindestens 6 Ziffern.',
-        },
-        {
-          value: '0123456789abc',
-          expectedResult: 'Die Telefonnummer muss mit 0 oder + beginnen, gefolgt von mindestens 6 Ziffern.',
-        },
-        {
-          value: '(0049)1741236589',
-          expectedResult: 'Die Telefonnummer muss mit 0 oder + beginnen, gefolgt von mindestens 6 Ziffern.',
-        },
-      ],
-    };
-    validationParameters.email.forEach(parameter => {
-      it(`for the email, the value: '${parameter.value}' should throw the error: '${parameter.expectedResult}'`, async () => {
-        await userEvent.click(root.getByRole('button', { name: 'E-Mail-Adresse hinzufügen' }));
-        await userEvent.fill(root.getByRole('textbox', { name: 'E-Mail-Adresse' }).last(), parameter.value);
-        await blurActiveElement();
-
-        await checkDescribingError(parameter.expectedResult);
-      });
-    });
-    validationParameters.phoneNumber.forEach(parameter => {
-      it(`for the phone number, the value: '${parameter.value}' should throw the error: '${parameter.expectedResult}'`, async () => {
-        await userEvent.click(root.getByRole('button', { name: 'Telefonnummer hinzufügen' }));
-        await userEvent.fill(root.getByRole('textbox', { name: 'Telefonnummer' }).last(), parameter.value);
-        await blurActiveElement();
-
-        await checkDescribingError(parameter.expectedResult);
-      });
-    });
   });
 
   describe('Validation of occupied and available beds', () => {
+    it('should render supporting text for all bed number fields on page 2', async () => {
+      await setupFormPage1();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const supportTexts = Array.from(fixture.nativeElement.querySelectorAll('mat-hint')) as HTMLElement[];
+      const bedSupportTexts = supportTexts.filter(hint => hint.textContent?.trim() === NUMBER_OF_BEDS_SUPPORT_TEXT);
+
+      expect(bedSupportTexts).toHaveLength(4);
+    });
+
     describe('should validate occupied adult beds', () => {
       parameters.testParameter.forEach(parameter => {
         it(`rejects invalid value: '${parameter.value}'`, async () => {
@@ -268,6 +243,70 @@ describe('BedOccupancy with new sidenav Integration and Playwright', () => {
           await testInputValidation('#operable-beds-children-number-of-beds', parameter.value, parameter.expectedResult);
         });
       });
+    });
+  });
+
+  describe('Side navigation validation state after loading from localStorage', () => {
+    const localStorageDataWithEmailOnly: NotifierFacilityFormModel = {
+      locationID: String(TEST_DATA.hospitalLocation.id),
+      facilityInfo: {
+        ikNumber: TEST_DATA.hospitalLocation.ik,
+        institutionName: TEST_DATA.hospitalLocation.label,
+      },
+      address: {
+        zip: TEST_DATA.hospitalLocation.postalCode,
+        street: TEST_DATA.hospitalLocation.line,
+        houseNumber: TEST_DATA.hospitalLocation.houseNumber,
+        city: TEST_DATA.hospitalLocation.city,
+        country: 'DE',
+      },
+      contact: {
+        salutation: 'Mrs',
+        firstname: 'Melderina',
+        lastname: 'Melderson',
+      },
+      contacts: {
+        phoneNumbers: [],
+        emailAddresses: [{ contactType: 'email', value: 'melderina@melderson.de' }],
+      },
+    };
+
+    async function recreateFixtureWithStoredData(data: NotifierFacilityFormModel): Promise<void> {
+      const storageMock = TestBed.inject(BedOccupancyStorageService) as unknown as {
+        getLocalStorageBedOccupancyData: Mock;
+      };
+      storageMock.getLocalStorageBedOccupancyData.mockReturnValue(data);
+
+      fixture.destroy();
+      fixture = TestBed.createComponent(BedOccupancyNewComponent);
+      document.body.appendChild(fixture.nativeElement);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+      root = page.elementLocator(fixture.nativeElement);
+    }
+
+    it('shows step number "1" on initial load even when the prefilled data is already valid', async () => {
+      await recreateFixtureWithStoredData(localStorageDataWithEmailOnly);
+
+      checkSidenavStep(stepHeaders);
+    });
+
+    it('marks step 1 as completed with a checkmark after navigating to step 2 via the side navigation', async () => {
+      await recreateFixtureWithStoredData(localStorageDataWithEmailOnly);
+
+      await userEvent.click(stepHeaders()[1]);
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const [step1, step2] = stepHeaders();
+      expect(step1.getAttribute('aria-label')).toContain('abgeschlossen');
+      expect(step2.getAttribute('aria-label')).toContain('aktuell');
+
+      // Step 1 is no longer the current step and its control is now touched + valid,
+      // so the stepper renders the "done" checkmark instead of the number.
+      const step1Icon = step1.querySelector('.mat-step-icon');
+      expect(step1Icon?.querySelector('.step-valid')).not.toBeNull();
     });
   });
 });

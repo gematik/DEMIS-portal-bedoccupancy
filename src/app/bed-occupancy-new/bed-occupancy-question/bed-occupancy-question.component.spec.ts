@@ -19,14 +19,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { signal } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TestBed } from '@angular/core/testing';
-import { MockBuilder, MockedComponentFixture, MockRender, ngMocks } from 'ng-mocks';
+import { MockBuilder, MockedComponentFixture, MockRender, MockRenderComponentBindings, ngMocks } from 'ng-mocks';
 import { BedOccupancyQuestionComponent } from './bed-occupancy-question.component';
 import { BedOccupancyNotificationService } from '../bed-occupancy-notification.service';
 import { StepNavigation } from '@gematik/demis-portal-core-library';
 
 describe('BedOccupancyQuestionComponent', () => {
   let component: BedOccupancyQuestionComponent;
-  let fixture: MockedComponentFixture<BedOccupancyQuestionComponent, BedOccupancyQuestionComponent>;
+  let fixture: MockedComponentFixture<BedOccupancyQuestionComponent, MockRenderComponentBindings<BedOccupancyQuestionComponent>>;
   let notificationService: BedOccupancyNotificationService;
   let navigationService: StepNavigation;
 

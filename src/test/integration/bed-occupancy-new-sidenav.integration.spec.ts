@@ -21,10 +21,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BedOccupancyNewComponent } from 'src/app/bed-occupancy-new/bed-occupancy-new.component';
+import { NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT } from 'src/app/shared/common-utils';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { getButton, getInput, getSelect, selectOption } from '../shared/material-harness-utils';
 import { getHtmlButtonElement } from '../shared/html-element-utils';
 import { configureIntegrationTestBed, TEST_DATA } from './bed-occupancy.integration-setup';
+import { environment } from '../../environments/environment';
 
 // TODO: We've decided to go with Playwright. We need to determine whether these tests can be permanently removed.
 describe.skip('BedOccupancy with new sidenav Integration and Playwright', () => {
@@ -33,12 +35,20 @@ describe.skip('BedOccupancy with new sidenav Integration and Playwright', () => 
 
   const parameters = {
     testParameter: [
-      { value: '-10', expectedResult: 'Bitte geben Sie eine positive Zahl kleiner 1000000 ein.' },
-      { value: '1234567', expectedResult: 'Bitte geben Sie eine positive Zahl kleiner 1000000 ein.' },
+      { value: '-10', expectedResult: NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT },
+      { value: '1234567', expectedResult: NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT },
     ],
   };
 
   beforeEach(async () => {
+    environment.bedOccupancyConfig = {
+      ...environment.bedOccupancyConfig,
+      featureFlags: {
+        ...environment.bedOccupancyConfig?.featureFlags,
+        FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV: true,
+        FEATURE_FLAG_PORTAL_BED_TEXT: true,
+      },
+    };
     await configureIntegrationTestBed();
     fixture = TestBed.createComponent(BedOccupancyNewComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);

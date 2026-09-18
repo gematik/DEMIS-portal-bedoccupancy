@@ -68,10 +68,11 @@ export const PHONE_ERROR_MSG = 'Die Telefonnummer muss mit 0 oder + beginnen, ge
 export const TEXT_ERROR_MSG = 'Ihre Eingabe enthält unzulässige Sonderzeichen';
 export const ZIP_GERMANY_ERROR_MSG = 'Die Postleitzahl muss aus 5 Ziffern bestehen';
 export const ZIP_INTERNATIONAL_ERROR_MSG = 'Die Postleitzahl muss aus mindestens 3 Zeichen und einer Ziffer bestehen';
+export const NUMBER_OF_BEDS_SUPPORT_TEXT = 'Erlaubt sind positive ganze Zahlen';
+export const NUMBER_OF_BEDS_REQUIRED_ERROR_MSG = 'Dies ist eine Pflichtangabe. Bitte geben Sie eine positive ganze Zahl ein.';
 export const NUMBER_OF_BEDS_ERROR_MSG = 'Bitte geben Sie eine positive Zahl kleiner 1000000 ein.';
+export const NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT = 'Ungültige Angabe: Bitte geben Sie positive ganze Zahlen von 0 bis n ein.';
 export const EMPTY_DROPDOWN_MENU_MSG = 'Es konnten keine Standorte zu Ihrem Institutionskennzeichen gefunden werden!';
-// FLAG_CLEANUP(FEATURE_FLAG_PLACEHOLDER_REMOVAL): Remove when non-select fields no longer need the legacy default placeholder.
-export const VALUE_DEFAULT_PLACEHOLDER = 'Bitte eingeben';
 export const VALUE_DEFUALT_SELECT_PLACEHOLDER = 'Bitte auswählen';
 
 // FUNCTIONS:...............................

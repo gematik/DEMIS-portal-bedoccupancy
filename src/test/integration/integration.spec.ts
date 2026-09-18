@@ -31,6 +31,7 @@ import { BedOccupancyClipboardDataService } from 'src/app/bed-occupancy/services
 import { BedOccupancyStorageService } from 'src/app/shared/services/bed-occupancy-storage.service';
 import { FhirBedOccupancyService } from 'src/app/shared/services/fhir-bed-occupancy.service';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { NUMBER_OF_BEDS_ERROR_MSG } from 'src/app/shared/common-utils';
 import { getHtmlButtonElement } from 'src/test/shared/html-element-utils';
 import { getButton, getInput, getSelect, selectOption } from 'src/test/shared/material-harness-utils';
 import { MatInputHarness } from '@angular/material/input/testing';
@@ -75,10 +76,10 @@ const overrides = {
 describe('Bed Occupancy Integration Tests', () => {
   const parameters = {
     testParameter: [
-      { value: '-10', expectedResult: 'Bitte geben Sie eine positive Zahl kleiner 1000000 ein.' },
-      { value: '1234567', expectedResult: 'Bitte geben Sie eine positive Zahl kleiner 1000000 ein.' },
-      { value: 'abc', expectedResult: 'Bitte geben Sie eine positive Zahl kleiner 1000000 ein.' },
-      { value: '#+´?|<>\\', expectedResult: 'Bitte geben Sie eine positive Zahl kleiner 1000000 ein.' },
+      { value: '-10', expectedResult: NUMBER_OF_BEDS_ERROR_MSG },
+      { value: '1234567', expectedResult: NUMBER_OF_BEDS_ERROR_MSG },
+      { value: 'abc', expectedResult: NUMBER_OF_BEDS_ERROR_MSG },
+      { value: '#+´?|<>\\', expectedResult: NUMBER_OF_BEDS_ERROR_MSG },
     ],
   };
 
