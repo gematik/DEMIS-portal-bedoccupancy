@@ -16,7 +16,7 @@
  */
 
 import { inject, Injectable, signal } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { FormlyFormBuilder } from '@ngx-formly/core';
 import { FhirBedOccupancyService } from '../shared/services/fhir-bed-occupancy.service';
 import { DeepMergeService } from '@gematik/demis-portal-core-library';
@@ -101,20 +101,50 @@ export class BedOccupancyNotificationService {
 
       model.set(mergedData);
       group.patchValue(mergedData);
+      this.syncFormArrayLengths(group, mergedData);
       this.updateStepValidation(group, markAsTouched);
     });
   }
 
   /**
+   * `FormGroup.patchValue` never adds or removes entries from a `FormArray`.
+   * When merged data contains a shorter array than the current control
+   * (typically because Formly seeded it with a `defaultValue: [{}]` empty
+   * placeholder), the excess controls stay behind with their required inner
+   * validators and keep the FormGroup invalid. This walks the control tree
+   * and truncates each FormArray to match the merged data length.
+   */
+  private syncFormArrayLengths(control: AbstractControl, data: unknown): void {
+    if (control instanceof FormArray) {
+      const dataArray = Array.isArray(data) ? data : [];
+      while (control.length > dataArray.length) {
+        control.removeAt(control.length - 1);
+      }
+      control.controls.forEach((child, index) => this.syncFormArrayLengths(child, dataArray[index]));
+      return;
+    }
+    if (control instanceof FormGroup) {
+      const dataObject = data && typeof data === 'object' ? (data as Record<string, unknown>) : {};
+      Object.keys(control.controls).forEach(key => this.syncFormArrayLengths(control.controls[key], dataObject[key]));
+    }
+  }
+
+  /**
    * Helper method to trigger validation updates and statusChanges emission.
    *
-   * When `markAsTouched` is false, neither the FormGroup nor its children
-   * are marked as touched, so no validation errors appear anywhere (fields
-   * or side navigation) until the user actually interacts with the form.
+   * When `markAsTouched` is false the FormGroup is explicitly reset to
+   * `untouched`. `patchValue`, `FormArray.removeAt` and the FormlyForm's
+   * initial rendering can otherwise leave residual touched state behind
+   * (e.g. from a previous visit whose leaving triggered `markAllAsTouched`
+   * in the process stepper). Untouching here guarantees that after a
+   * programmatic prefill the side navigation shows the step number and
+   * not a completed/error indicator until the user actually interacts.
    */
   private updateStepValidation(group: FormGroup, markAsTouched: boolean): void {
     if (markAsTouched) {
       group.markAllAsTouched();
+    } else {
+      group.markAsUntouched();
     }
     group.updateValueAndValidity({ emitEvent: true });
   }

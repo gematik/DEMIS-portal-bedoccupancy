@@ -16,11 +16,15 @@
  */
 
 import { beforeEach, describe, expect, it } from 'vitest';
-
 import { BedOccupancyConstants } from 'src/app/bed-occupancy/common/bed-occupancy-constants';
-import { NUMBER_OF_BEDS_ERROR_MSG } from '../../../common-utils';
-import { questionBedOccupancyHtmlConfigFieldsNew } from './question-new.config';
 import { environment } from 'src/environments/environment';
+import {
+  NUMBER_OF_BEDS_ERROR_MSG,
+  NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT,
+  NUMBER_OF_BEDS_REQUIRED_ERROR_MSG,
+  NUMBER_OF_BEDS_SUPPORT_TEXT,
+} from '../../../common-utils';
+import { questionBedOccupancyHtmlConfigFieldsNew } from './question-new.config';
 
 const createTestConfig = (isPortalBedTextEnabled: boolean) => ({
   production: false,
@@ -48,7 +52,7 @@ describe('question-new.config', () => {
 
     expect(fields.length).toBe(5);
     expect(getTemplate(fields[0])).toContain('Die Anzahl der belegten Betten');
-
+    expect(fields.some(field => getTemplate(field).includes('bed-occupancy-section-heading--spaced'))).toBe(true);
     const occupiedSection = fields.find(field => field.key === BedOccupancyConstants.OCCUPIED_BEDS);
     const occupiedAdultsField = occupiedSection?.fieldGroup?.[0];
     const occupiedChildrenField = occupiedSection?.fieldGroup?.[1];
@@ -57,10 +61,15 @@ describe('question-new.config', () => {
     expect(occupiedChildrenField?.props?.label).toBe(BedOccupancyConstants.OCCUPIED_BEDS_CHILDREN_LABEL);
     expect(occupiedAdultsField?.props?.required).toBe(true);
     expect(occupiedAdultsField?.type).toBe('number');
+    expect(occupiedAdultsField?.props?.description).toBe(NUMBER_OF_BEDS_SUPPORT_TEXT);
+    expect(occupiedChildrenField?.props?.description).toBe(NUMBER_OF_BEDS_SUPPORT_TEXT);
 
-    const validation = occupiedAdultsField?.validation as { messages: { min: () => string; max: () => string } };
-    expect(validation.messages.min()).toBe(NUMBER_OF_BEDS_ERROR_MSG);
-    expect(validation.messages.max()).toBe(NUMBER_OF_BEDS_ERROR_MSG);
+    const validation = occupiedAdultsField?.validation as {
+      messages: { required: () => string; min: () => string; max: () => string };
+    };
+    expect(validation.messages.required()).toBe(NUMBER_OF_BEDS_REQUIRED_ERROR_MSG);
+    expect(validation.messages.min()).toBe(NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT);
+    expect(validation.messages.max()).toBe(NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT);
   });
 
   it('returns legacy labels and no intro text when FEATURE_FLAG_PORTAL_BED_TEXT is false', () => {
@@ -69,6 +78,7 @@ describe('question-new.config', () => {
     const fields = questionBedOccupancyHtmlConfigFieldsNew();
 
     expect(fields.length).toBe(4);
+    expect(fields.some(field => getTemplate(field).includes('bed-occupancy-section-heading--spaced'))).toBe(true);
 
     const occupiedSection = fields.find(field => field.key === BedOccupancyConstants.OCCUPIED_BEDS);
     const operableSection = fields.find(field => field.key === BedOccupancyConstants.OPERABLE_BEDS);
@@ -78,5 +88,12 @@ describe('question-new.config', () => {
     expect(operableSection?.fieldGroup?.[0]?.props?.label).toBe('Erwachsene');
     expect(operableSection?.fieldGroup?.[1]?.props?.label).toBe('Kinder');
     expect(operableSection?.fieldGroup?.[0]?.props?.required).toBeUndefined();
+    expect(occupiedSection?.fieldGroup?.[0]?.props?.description).toBeUndefined();
+    const validation = occupiedSection?.fieldGroup?.[0]?.validation as {
+      messages: { required?: () => string; min: () => string; max: () => string };
+    };
+    expect(validation.messages.required).toBeUndefined();
+    expect(validation.messages.min()).toBe(NUMBER_OF_BEDS_ERROR_MSG);
+    expect(validation.messages.max()).toBe(NUMBER_OF_BEDS_ERROR_MSG);
   });
 });

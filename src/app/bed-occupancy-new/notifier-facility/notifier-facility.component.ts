@@ -35,6 +35,8 @@ import { takeUntil } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { BedOccupancyConstants } from '../../bed-occupancy/common/bed-occupancy-constants';
 import { notifierFacilityBedOccupancyFormConfigFields } from '../../shared/formly/configs/bed-occupancy/notifier-facility.config';
+import { ContactPointInfo } from 'src/api/notification';
+import { NotifierFacilityFormModel } from '../../shared/models/bed-occupancy-form-model';
 import { HospitalLocation } from '../../shared/models/hospital-location';
 import { BedOccupancyStorageService } from '../../shared/services/bed-occupancy-storage.service';
 import { BedOccupancyNotificationService } from '../bed-occupancy-notification.service';
@@ -90,12 +92,13 @@ export class NotifierFacilityComponent extends StepContentComponent<void> implem
           const localStorageData = this.bedOccupancyStorageService.getLocalStorageBedOccupancyData(this.IkNumber);
           if (localStorageData !== null && localStorageData !== undefined) {
             const loadedData = localStorageData;
-            const notifierFacilityDataFromLocalStorage = {
+            const notifierFacilityDataFromLocalStorage: NotifierFacilityFormModel = {
               ...loadedData,
               address: {
                 ...loadedData.address,
                 country: 'DE', //DEMIS-1801: overwrite old countryCode from storage
               },
+              contacts: this.stripEmptyContactEntries(loadedData.contacts),
             };
             this.notificationService.patchFormData({ notifierFacility: notifierFacilityDataFromLocalStorage }, { markAsTouched: false });
           } else {
@@ -134,7 +137,30 @@ export class NotifierFacilityComponent extends StepContentComponent<void> implem
     const model = this.notificationService.getModelData().notifierFacility;
     this.bedOccupancyStorageService.setLocalStorageBedOccupancyData(model.facilityInfo?.ikNumber, {
       ...model,
+      contacts: this.stripEmptyContactEntries(model.contacts),
     });
+  }
+
+  /**
+   * Removes contact entries whose `value` is empty so that Formly's repeater
+   * doesn't reinstantiate an empty (but required) row from persisted data.
+   * Preserves the legacy `ContactPointInfo[]` shape as well as the new
+   * `{ phoneNumbers, emailAddresses }` shape.
+   */
+  private stripEmptyContactEntries(contacts: NotifierFacilityFormModel['contacts']): NotifierFacilityFormModel['contacts'] {
+    if (!contacts) return contacts;
+
+    const hasValue = (c: Partial<ContactPointInfo> | undefined): c is ContactPointInfo => !!c?.value;
+
+    if (Array.isArray(contacts)) {
+      return contacts.filter(hasValue);
+    }
+
+    const { phoneNumbers, emailAddresses } = contacts;
+    return {
+      phoneNumbers: (phoneNumbers ?? []).filter(hasValue),
+      emailAddresses: (emailAddresses ?? []).filter(hasValue),
+    };
   }
 
   protected readonly BedOccupancyConstants = BedOccupancyConstants;

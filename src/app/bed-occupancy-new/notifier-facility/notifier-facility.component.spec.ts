@@ -19,7 +19,7 @@ import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
-import { MockBuilder, MockedComponentFixture, MockProvider, MockRender, ngMocks } from 'ng-mocks';
+import { MockBuilder, MockedComponentFixture, MockProvider, MockRender, MockRenderComponentBindings, ngMocks } from 'ng-mocks';
 import { MessageDialogService, StepNavigation } from '@gematik/demis-portal-core-library';
 
 import { NotifierFacilityComponent } from './notifier-facility.component';
@@ -100,7 +100,7 @@ const overrides = {
 
 describe('NotifierFacilityComponent', () => {
   let component: NotifierFacilityComponent;
-  let fixture: MockedComponentFixture<NotifierFacilityComponent, NotifierFacilityComponent>;
+  let fixture: MockedComponentFixture<NotifierFacilityComponent, MockRenderComponentBindings<NotifierFacilityComponent>>;
 
   let fetchHospitalLocationsSpy: Mock;
   let getLocalStorageBedOccupancyDataSpy: Mock;

@@ -2,7 +2,14 @@
 
 # Release portal-bedoccupancy
 
+## Release 1.7.6
+- Removed FEATURE_FLAG_PLACEHOLDER_REMOVAL
+- Updated @gematik/demis-portal-core-library to 4.4.2 incl. a11y improvements of pastebox
+- Added supporting text for occupancy fields and change validation error messages (FEATURE_FLAG_PORTAL_BED_TEXT)
+- Fixed bug in side navigation due to contacts array and localstorage behavior 
+
 ## Release 1.7.5
+- Added supporting text for occupancy fields and change validation error messages (FEATURE_FLAG_PORTAL_BED_TEXT)
 - Added "required field" information (FEATURE_FLAG_BED_A11Y_INFO_REQUIREDFIELDS)
 - Added text changes for accessibility (FEATURE_FLAG_PORTAL_BED_TEXT)
 - Improved input field accessibility

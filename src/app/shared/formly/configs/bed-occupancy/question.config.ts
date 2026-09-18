@@ -19,27 +19,40 @@ import { FormlyFieldConfig } from '@ngx-formly/core';
 import { environment } from 'src/environments/environment';
 
 import { BedOccupancyConstants } from 'src/app/bed-occupancy/common/bed-occupancy-constants';
+import { NUMBER_OF_BEDS_REQUIRED_ERROR_MSG, NUMBER_OF_BEDS_SUPPORT_TEXT } from '../../../common-utils';
 import { FormlyConstants } from '../formly-constants';
 import { formlyInputField, formlyRequiredFieldsHint } from '../reusable/commons';
 
 const isA11yRequiredFieldsInfoEnabled = (): boolean => environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_BED_A11Y_INFO_REQUIREDFIELDS ?? false;
+const isPortalBedTextEnabled = (): boolean => environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_BED_TEXT ?? false;
 
 const numberOfBedsFieldGroup = (required: boolean, prefix: string) => [
   numberOfBedsFormConfigFields(false, required, prefix),
   numberOfBedsFormConfigFields(true, required, prefix),
 ];
 
-const numberOfBedsFormConfigFields = (child: boolean, required: boolean, prefix: string) =>
-  formlyInputField({
+const numberOfBedsFormConfigFields = (child: boolean, required: boolean, prefix: string): FormlyFieldConfig => ({
+  ...formlyInputField({
     key: child ? BedOccupancyConstants.NO_OF_BEDS_CHILDREN : BedOccupancyConstants.NO_OF_BEDS_ADULTS,
     id: child ? `${prefix}${BedOccupancyConstants.NO_OF_BEDS_CHILDREN_ID}` : `${prefix}${BedOccupancyConstants.NO_OF_BEDS_ADULTS_ID}`,
     className: FormlyConstants.LAYOUT_FULL_LINE,
     props: {
       label: child ? BedOccupancyConstants.QUESTIONS_CHILDREN_LABEL : BedOccupancyConstants.QUESTIONS_ADULTS_LABEL,
       required: required,
+      ...(isPortalBedTextEnabled() ? { description: NUMBER_OF_BEDS_SUPPORT_TEXT } : {}),
     },
     validators: ['numberOfBedsValidator'],
-  });
+  }),
+  ...(isPortalBedTextEnabled()
+    ? {
+        validation: {
+          messages: {
+            required: () => NUMBER_OF_BEDS_REQUIRED_ERROR_MSG,
+          },
+        },
+      }
+    : {}),
+});
 
 // remove with FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV
 export const questionBedOccupancyHtmlConfigFields: FormlyFieldConfig[] = [

@@ -17,7 +17,7 @@
 
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MockBuilder, MockProvider } from 'ng-mocks';
 
 import { BedOccupancyNotificationService } from './bed-occupancy-notification.service';
@@ -246,5 +246,71 @@ describe('BedOccupancyNotificationService', () => {
     }) as any;
     vi.spyOn(service.bedOccupancyQuestionGroup, 'valid', 'get').mockReturnValue(false);
     expect(service.isFormValid()).toBe(false);
+  });
+
+  describe('syncFormArrayLengths (via patchFormData)', () => {
+    /**
+     * Builds a notifierFacilityGroup that mirrors what FormlyFormBuilder pre-builds
+     * for the contacts repeaters: each contacts.* FormArray starts with one empty
+     * entry whose inner `value` control is `required`. Without syncFormArrayLengths
+     * these placeholder entries would keep the group invalid even after patching
+     * empty arrays from localStorage.
+     */
+    function buildNotifierGroupWithSeededContacts(): FormGroup {
+      const makeContactRow = () =>
+        new FormGroup({
+          contactType: new FormControl<string | null>('phone'),
+          value: new FormControl<string | null>('', { validators: [Validators.required] }),
+        });
+
+      return new FormGroup({
+        contacts: new FormGroup({
+          phoneNumbers: new FormArray([makeContactRow()]),
+          emailAddresses: new FormArray([makeContactRow()]),
+        }),
+      });
+    }
+
+    it('truncates FormArrays when patched data provides shorter arrays', () => {
+      service.notifierFacilityGroup = buildNotifierGroupWithSeededContacts();
+      const phoneNumbers = service.notifierFacilityGroup.get('contacts.phoneNumbers') as unknown as FormArray;
+      const emailAddresses = service.notifierFacilityGroup.get('contacts.emailAddresses') as unknown as FormArray;
+      expect(phoneNumbers.length).toBe(1);
+      expect(emailAddresses.length).toBe(1);
+
+      service.patchFormData({
+        notifierFacility: {
+          contacts: { phoneNumbers: [], emailAddresses: [{ contactType: 'email', value: 'a@b.de' }] },
+        },
+      });
+
+      expect(phoneNumbers.length).toBe(0);
+      expect(emailAddresses.length).toBe(1);
+      expect(emailAddresses.at(0).value).toEqual({ contactType: 'email', value: 'a@b.de' });
+    });
+
+    it('drops the seeded empty phoneNumbers entry so the group becomes valid with only an email', () => {
+      service.notifierFacilityGroup = buildNotifierGroupWithSeededContacts();
+      expect(service.notifierFacilityGroup.valid).toBe(false);
+
+      service.patchFormData({
+        notifierFacility: {
+          contacts: { phoneNumbers: [], emailAddresses: [{ contactType: 'email', value: 'a@b.de' }] },
+        },
+      });
+
+      expect(service.notifierFacilityGroup.valid).toBe(true);
+    });
+
+    it('leaves FormArrays untouched when patched data does not target them', () => {
+      service.notifierFacilityGroup = buildNotifierGroupWithSeededContacts();
+      const phoneNumbers = service.notifierFacilityGroup.get('contacts.phoneNumbers') as unknown as FormArray;
+      const emailAddresses = service.notifierFacilityGroup.get('contacts.emailAddresses') as unknown as FormArray;
+
+      service.patchFormData({ notifierFacility: { name: 'Hospital XYZ' } as any });
+
+      expect(phoneNumbers.length).toBe(1);
+      expect(emailAddresses.length).toBe(1);
+    });
   });
 });
