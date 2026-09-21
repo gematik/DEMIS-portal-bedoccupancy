@@ -2,6 +2,9 @@
 
 # Release portal-bedoccupancy
 
+## Release 1.7.7
+- Updated @gematik/demis-portal-core-library to 4.4.3 incl. a11y improvements of repeater
+
 ## Release 1.7.6
 - Removed FEATURE_FLAG_PLACEHOLDER_REMOVAL
 - Updated @gematik/demis-portal-core-library to 4.4.2 incl. a11y improvements of pastebox
