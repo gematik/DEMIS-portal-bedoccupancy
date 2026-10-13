@@ -73,7 +73,7 @@ export const NUMBER_OF_BEDS_REQUIRED_ERROR_MSG = 'Dies ist eine Pflichtangabe. B
 export const NUMBER_OF_BEDS_ERROR_MSG = 'Bitte geben Sie eine positive Zahl kleiner 1000000 ein.';
 export const NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT = 'Ungültige Angabe: Bitte geben Sie positive ganze Zahlen von 0 bis n ein.';
 export const EMPTY_DROPDOWN_MENU_MSG = 'Es konnten keine Standorte zu Ihrem Institutionskennzeichen gefunden werden!';
-export const VALUE_DEFUALT_SELECT_PLACEHOLDER = 'Bitte auswählen';
+export const VALUE_DEFAULT_SELECT_PLACEHOLDER = 'Bitte auswählen';
 
 // FUNCTIONS:...............................
 

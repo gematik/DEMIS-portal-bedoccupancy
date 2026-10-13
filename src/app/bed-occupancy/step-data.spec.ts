@@ -15,21 +15,33 @@
     find details in the "Readme" file.
  */
 
-import { ProcessStep } from '@gematik/demis-portal-core-library';
-import { BedOccupancyNotificationService } from './bed-occupancy-notification.service';
-import { BedOccupancyConstants } from '../bed-occupancy/common/bed-occupancy-constants';
+import { getStepData } from './step-data';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { BedOccupancyNotificationService } from './services/bed-occupancy-notification.service';
+import { BedOccupancyConstants } from './common/bed-occupancy-constants';
 
-export function getStepData(notificationService: BedOccupancyNotificationService): ProcessStep[] {
-  return [
-    {
+describe('getStepData', () => {
+  let mockNotificationService: BedOccupancyNotificationService;
+
+  beforeEach(() => {
+    mockNotificationService = {
+      notifierFacilityGroup: { id: 'facilityGroup' },
+      bedOccupancyQuestionGroup: { id: 'questionGroup' },
+    } as unknown as BedOccupancyNotificationService;
+  });
+
+  it('should return correct step data', () => {
+    const steps = getStepData(mockNotificationService);
+    expect(steps.length).toBe(2);
+    expect(steps[0]).toEqual({
       key: 'notifierFacility',
       label: BedOccupancyConstants.MELDENDE_EINRICHTUNG,
-      control: notificationService.notifierFacilityGroup,
-    },
-    {
+      control: mockNotificationService.notifierFacilityGroup,
+    });
+    expect(steps[1]).toEqual({
       key: 'bedOccupancyQuestion',
       label: BedOccupancyConstants.BETTENBELEGUNG,
-      control: notificationService.bedOccupancyQuestionGroup,
-    },
-  ];
-}
+      control: mockNotificationService.bedOccupancyQuestionGroup,
+    });
+  });
+});

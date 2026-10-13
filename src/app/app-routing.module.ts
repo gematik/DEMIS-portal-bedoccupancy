@@ -18,12 +18,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
-import { WrapperComponent } from './wrapper/wrapper.component';
+import { BedOccupancyComponent } from './bed-occupancy/bed-occupancy.component';
 
 const routes: Routes = [
   {
     path: '**',
-    component: WrapperComponent,
+    component: BedOccupancyComponent,
   },
 ];
 

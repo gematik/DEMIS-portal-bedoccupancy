@@ -1,0 +1,31 @@
+<div id="bed-occupancy-question-section-header">
+  <gem-demis-section-header id="bed-occupancy-question-headline"
+                            [level]="1"
+                            [titleText]="BedOccupancyConstants.BETTENBELEGUNG"/>
+</div>
+<form [formGroup]="notificationService.bedOccupancyQuestionGroup">
+  <formly-form [form]="notificationService.bedOccupancyQuestionGroup"
+              [model]="notificationService.bedOccupancyQuestionModel()"
+              [fields]="fieldConfig"/>
+</form>
+
+
+<ng-template #actionsLeft>
+  <button mat-stroked-button (click)="navigation.previous()" [disabled]="!navigation.canGoToPrevious()"
+          class="btn navigate--color style back" id="btn-nav-action-back"
+          mat-button type="button">
+    <mat-icon class="btn__icon margin--right" fontIcon="arrow_back_ios" aria-hidden="true" />
+    Zurück
+  </button>
+</ng-template>
+
+
+<ng-template #actionsRight>
+  <button class="btn style dark--color" id="btn-send-notification"
+          mat-button type="submit" (click)="notificationService.sendData()"
+          [gemDemisAriaDisabled]="!notificationService.isFormValid()"
+          [disableRipple]="!notificationService.isFormValid()">
+    Abschicken
+    <mat-icon class="btn__icon margin--left rotate" fontIcon="send" iconPositionEnd aria-hidden="true"/>
+  </button>
+</ng-template>

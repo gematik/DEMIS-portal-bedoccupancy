@@ -16,7 +16,7 @@
  */
 
 import { FormlyExtension } from '@ngx-formly/core';
-import { VALUE_DEFUALT_SELECT_PLACEHOLDER } from './common-utils';
+import { VALUE_DEFAULT_SELECT_PLACEHOLDER } from './common-utils';
 
 export const defaultPlaceholderExtension: FormlyExtension = {
   prePopulate(field): void {
@@ -27,7 +27,7 @@ export const defaultPlaceholderExtension: FormlyExtension = {
     if (field.type === 'select' || field.type === 'autocomplete') {
       field.props = {
         ...field.props,
-        placeholder: VALUE_DEFUALT_SELECT_PLACEHOLDER,
+        placeholder: VALUE_DEFAULT_SELECT_PLACEHOLDER,
       };
       return;
     }

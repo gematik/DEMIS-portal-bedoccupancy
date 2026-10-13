@@ -18,11 +18,9 @@
 import { inject, Injectable } from '@angular/core';
 import { BedOccupancyQuestion } from 'src/api/notification';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject } from 'rxjs';
 import { BedOccupancyQuestionClipboard } from './clipboard-enums';
 import { MatDialog } from '@angular/material/dialog';
 import { MessageDialogService } from '@gematik/demis-portal-core-library';
-import { BedOccupancyFormModel } from '../../../shared/models/bed-occupancy-form-model';
 
 @Injectable({
   providedIn: 'root',
@@ -32,8 +30,6 @@ export class BedOccupancyClipboardDataService {
   logger: NGXLogger;
   protected messageDialogeService: MessageDialogService;
 
-  private readonly clipboardData = new BehaviorSubject<BedOccupancyFormModel | null>(null);
-
   constructor() {
     const dialog = inject(MatDialog);
     const logger = inject(NGXLogger);
@@ -42,15 +38,6 @@ export class BedOccupancyClipboardDataService {
     this.dialog = dialog;
     this.logger = logger;
     this.messageDialogeService = messageDialogeService;
-  }
-
-  clipboardData$ = this.clipboardData.asObservable();
-
-  updateBedOccupancy(clipboardMap: Map<string, string>): void {
-    const bedquestion = this.getBedOccupancyQuestionFromClipBoard(clipboardMap);
-    this.clipboardData.next({
-      bedOccupancyQuestion: bedquestion,
-    });
   }
 
   getBedOccupancyQuestionFromClipBoard(paramMap: Map<string, string>): BedOccupancyQuestion {

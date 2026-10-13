@@ -21,11 +21,11 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MockBuilder, MockProvider } from 'ng-mocks';
 
 import { BedOccupancyNotificationService } from './bed-occupancy-notification.service';
-import { FhirBedOccupancyService } from '../shared/services/fhir-bed-occupancy.service';
-import { BedOccupancyStorageService } from '../shared/services/bed-occupancy-storage.service';
 import { FormlyFormBuilder } from '@ngx-formly/core';
 import { BedOccupancy, BedOccupancyQuestion } from 'src/api/notification';
-import { DeepPartial, NotifierFacilityFormModel } from '../shared/models/bed-occupancy-form-model';
+import { FhirBedOccupancyService } from '../../shared/services/fhir-bed-occupancy.service';
+import { BedOccupancyStorageService } from 'src/app/shared/services/bed-occupancy-storage.service';
+import { DeepPartial, NotifierFacilityFormModel } from '../../shared/models/bed-occupancy-form-model';
 
 describe('BedOccupancyNotificationService', () => {
   let service: BedOccupancyNotificationService;

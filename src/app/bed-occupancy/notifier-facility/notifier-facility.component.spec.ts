@@ -24,11 +24,11 @@ import { MessageDialogService, StepNavigation } from '@gematik/demis-portal-core
 
 import { NotifierFacilityComponent } from './notifier-facility.component';
 import { BedOccupancyStorageService } from '../../shared/services/bed-occupancy-storage.service';
-import { BedOccupancyNotificationService } from '../bed-occupancy-notification.service';
-import { BedOccupancyConstants } from '../../bed-occupancy/common/bed-occupancy-constants';
 import { HospitalLocation } from '../../shared/models/hospital-location';
 import { BedOccupancyNotifierFacility } from '../../../api/notification';
 import { FormGroup } from '@angular/forms';
+import { BedOccupancyNotificationService } from '../services/bed-occupancy-notification.service';
+import { BedOccupancyConstants } from '../common/bed-occupancy-constants';
 
 const TEST_DATA = {
   hospitalLocation: {

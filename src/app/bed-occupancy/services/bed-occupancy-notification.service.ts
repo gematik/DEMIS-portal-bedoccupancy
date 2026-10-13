@@ -18,11 +18,11 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { FormlyFormBuilder } from '@ngx-formly/core';
-import { FhirBedOccupancyService } from '../shared/services/fhir-bed-occupancy.service';
+import { FhirBedOccupancyService } from '../../shared/services/fhir-bed-occupancy.service';
 import { DeepMergeService } from '@gematik/demis-portal-core-library';
-import { notifierFacilityBedOccupancyFormConfigFields } from '../shared/formly/configs/bed-occupancy/notifier-facility.config';
-import { questionBedOccupancyHtmlConfigFieldsNew } from '../shared/formly/configs/bed-occupancy/question-new.config';
-import { BedOccupancyFormModel, DeepPartial, NotifierFacilityFormModel } from '../shared/models/bed-occupancy-form-model';
+import { notifierFacilityBedOccupancyFormConfigFields } from '../../shared/formly/configs/bed-occupancy/notifier-facility.config';
+import { questionBedOccupancyHtmlConfigFields } from '../../shared/formly/configs/bed-occupancy/question.config';
+import { BedOccupancyFormModel, DeepPartial, NotifierFacilityFormModel } from '../../shared/models/bed-occupancy-form-model';
 import { BedOccupancyQuestion } from 'src/api/notification';
 
 @Injectable({
@@ -60,7 +60,7 @@ export class BedOccupancyNotificationService {
     // Eagerly build both FormGroups so their controls and Formly validators
     // are available before the corresponding step is rendered.
     this.formlyBuilder.buildForm(this.notifierFacilityGroup, notifierFacilityBedOccupancyFormConfigFields('', []), this.notifierFacilityModel(), {});
-    this.formlyBuilder.buildForm(this.bedOccupancyQuestionGroup, questionBedOccupancyHtmlConfigFieldsNew(), this.bedOccupancyQuestionModel(), {});
+    this.formlyBuilder.buildForm(this.bedOccupancyQuestionGroup, questionBedOccupancyHtmlConfigFields(), this.bedOccupancyQuestionModel(), {});
   }
 
   sendData() {

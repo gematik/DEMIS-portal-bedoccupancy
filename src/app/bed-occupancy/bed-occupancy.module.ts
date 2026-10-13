@@ -27,16 +27,9 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
-import { FormlyModule } from '@ngx-formly/core';
 import { FormlySelectModule } from '@ngx-formly/core/select';
 import { AuthInterceptor } from '../shared/auth.interceptor';
 import { HexhexbuttonComponent } from '../shared/components/hexhexbutton/hexhexbutton.component';
-import { BedOccupancyComponent } from './bed-occupancy.component';
-import { BedOccupancyConstants } from './common/bed-occupancy-constants';
-import { FormWrapperComponent } from './components/form-wrapper/form-wrapper.component';
-import { SideNavigationStepperComponent } from './components/side-navigation-stepper/side-navigation-stepper.component';
-import { SideNavigationWrapperComponent } from './components/side-navigation-wrapper/side-navigation-wrapper.component';
-import { BedOccupancyNotificationFormDefinitionService } from './services/bed-occupancy-notification-form-definition.service';
 import { BedOccupancyClipboardDataService } from './services/clipboard/bed-occupancy-clipboard-data.service';
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
@@ -52,14 +45,6 @@ import {
 @NgModule({
   imports: [
     CommonModule,
-    FormlyModule.forRoot({
-      types: [
-        {
-          name: BedOccupancyConstants.DEMIS_FORM_WRAPPER_TEMPLATE_KEYWORD,
-          component: FormWrapperComponent,
-        },
-      ],
-    }),
     FormlyMaterialModule,
     FormlyMatDatepickerModule,
     FormlySelectModule,
@@ -78,15 +63,10 @@ import {
     SectionHeaderComponent,
     TiledContentComponent,
     FormsFooterComponent,
-    FormWrapperComponent,
-    SideNavigationWrapperComponent,
-    SideNavigationStepperComponent,
-    BedOccupancyComponent,
     HexhexbuttonComponent,
   ],
   providers: [
     BedOccupancyClipboardDataService,
-    BedOccupancyNotificationFormDefinitionService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

@@ -15,49 +15,24 @@
     find details in the "Readme" file.
  */
 
-import { NgTemplateOutlet } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import {
-  GemDemisAriaDisabledButtonDirective,
-  MaxHeightContentContainerComponent,
-  SectionHeaderComponent,
-  StepContentComponent,
-  StepNavigation,
-} from '@gematik/demis-portal-core-library';
+import { GemDemisAriaDisabledButtonDirective, SectionHeaderComponent, StepContentComponent, StepNavigation } from '@gematik/demis-portal-core-library';
 import { FormlyForm } from '@ngx-formly/core';
-import { environment } from 'src/environments/environment';
-import { BedOccupancyConstants } from '../../bed-occupancy/common/bed-occupancy-constants';
-import { questionBedOccupancyHtmlConfigFieldsNew } from '../../shared/formly/configs/bed-occupancy/question-new.config';
-import { BedOccupancyNotificationService } from '../bed-occupancy-notification.service';
+import { questionBedOccupancyHtmlConfigFields } from '../../shared/formly/configs/bed-occupancy/question.config';
+import { BedOccupancyConstants } from '../common/bed-occupancy-constants';
+import { BedOccupancyNotificationService } from '../services/bed-occupancy-notification.service';
 
 @Component({
   selector: 'app-bed-occupancy-question',
-  imports: [
-    FormlyForm,
-    MatButton,
-    MatIcon,
-    MatToolbar,
-    MatToolbarRow,
-    SectionHeaderComponent,
-    MaxHeightContentContainerComponent,
-    NgTemplateOutlet,
-    GemDemisAriaDisabledButtonDirective,
-    ReactiveFormsModule,
-  ],
+  imports: [FormlyForm, MatButton, MatIcon, SectionHeaderComponent, GemDemisAriaDisabledButtonDirective, ReactiveFormsModule],
   templateUrl: './bed-occupancy-question.component.html',
-  styleUrl: './bed-occupancy-question.component.scss',
 })
 export class BedOccupancyQuestionComponent extends StepContentComponent<void> {
   protected readonly notificationService = inject(BedOccupancyNotificationService);
-  protected readonly fieldConfig = questionBedOccupancyHtmlConfigFieldsNew();
-  protected navigation = inject(StepNavigation);
+  protected readonly fieldConfig = questionBedOccupancyHtmlConfigFields();
   protected readonly BedOccupancyConstants = BedOccupancyConstants;
-
-  get isPortalBedOccupancySidenavEnabled() {
-    return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV;
-  }
+  protected navigation = inject(StepNavigation);
 }

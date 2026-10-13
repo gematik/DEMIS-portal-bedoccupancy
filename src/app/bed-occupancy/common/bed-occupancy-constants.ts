@@ -16,7 +16,6 @@
  */
 
 export enum BedOccupancyConstants {
-  DEMIS_FORM_WRAPPER_TEMPLATE_KEYWORD = 'demis-formly-tab-navigation',
   MELDENDE_EINRICHTUNG = 'Meldende Einrichtung',
   BETTENBELEGUNG = 'Bettenbelegung',
 

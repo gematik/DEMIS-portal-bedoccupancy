@@ -27,7 +27,6 @@ interface NgxLoggerConfig {
 }
 
 interface FeatureFlags {
-  FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV?: boolean;
   FEATURE_FLAG_FOOTER_LINKS_CORRECTION?: boolean;
   FEATURE_FLAG_PORTAL_BED_TEXT?: boolean;
   FEATURE_FLAG_BED_A11Y_INFO_REQUIREDFIELDS?: boolean;
