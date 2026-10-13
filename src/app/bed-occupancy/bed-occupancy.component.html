@@ -1,9 +1,11 @@
 <gem-demis-max-height-content-container [elementSelectorsToSubtract]="['app-navbar']">
-  <form id="bed-occupancy-form" [formGroup]="form" (ngSubmit)="submit()">
-    <formly-form [model]="model"
-      [fields]="fields"
-      [options]="options"
-      [form]="form"
-     />
-  </form>
+  <gem-demis-side-navigation #sideNav sideNavTitle="Bettenbelegung" [stepsMap]="stepsMap()">
+    <ng-template #sideNavSubtitle>
+      <p>{{ isPortalBedTextEnabled ? 'Meldung der Krankenhausbettenbelegung gemäß § 13 Abs. 7 IfSG' : 'Meldung der Krankenhausbettenbelegung gemäß Infektionsschutzgesetz (§ 13 Abs. 7 IfSG)' }}</p>
+    </ng-template>
+    <ng-template #additionalSideNavActions>
+      <app-hexhexbutton (pasteClicked)="handleHexHexChange()" />
+      <gem-demis-paste-box (dataPasted)="onClipboardDataPasted($event)" />
+    </ng-template>
+  </gem-demis-side-navigation>
 </gem-demis-max-height-content-container>

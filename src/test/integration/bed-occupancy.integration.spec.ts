@@ -21,7 +21,7 @@ import type { Locator } from 'vitest/browser';
 import { page, userEvent } from 'vitest/browser';
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BedOccupancyNewComponent } from 'src/app/bed-occupancy-new/bed-occupancy-new.component';
+import { BedOccupancyComponent } from 'src/app/bed-occupancy/bed-occupancy.component';
 import { NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT, NUMBER_OF_BEDS_SUPPORT_TEXT } from 'src/app/shared/common-utils';
 import { BedOccupancyStorageService } from 'src/app/shared/services/bed-occupancy-storage.service';
 import { NotifierFacilityFormModel } from 'src/app/shared/models/bed-occupancy-form-model';
@@ -29,7 +29,7 @@ import { configureIntegrationTestBed, TEST_DATA } from './bed-occupancy.integrat
 import { environment } from '../../environments/environment';
 
 describe('BedOccupancy with new sidenav Integration and Playwright', () => {
-  let fixture: ComponentFixture<BedOccupancyNewComponent>;
+  let fixture: ComponentFixture<BedOccupancyComponent>;
   let root: Locator;
 
   const parameters = {
@@ -45,12 +45,11 @@ describe('BedOccupancy with new sidenav Integration and Playwright', () => {
       ...environment.bedOccupancyConfig,
       featureFlags: {
         ...environment.bedOccupancyConfig?.featureFlags,
-        FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV: true,
         FEATURE_FLAG_PORTAL_BED_TEXT: true,
       },
     };
     await configureIntegrationTestBed();
-    fixture = TestBed.createComponent(BedOccupancyNewComponent);
+    fixture = TestBed.createComponent(BedOccupancyComponent);
     document.body.appendChild(fixture.nativeElement);
     fixture.detectChanges();
     await fixture.whenStable();
@@ -278,7 +277,7 @@ describe('BedOccupancy with new sidenav Integration and Playwright', () => {
       storageMock.getLocalStorageBedOccupancyData.mockReturnValue(data);
 
       fixture.destroy();
-      fixture = TestBed.createComponent(BedOccupancyNewComponent);
+      fixture = TestBed.createComponent(BedOccupancyComponent);
       document.body.appendChild(fixture.nativeElement);
       fixture.detectChanges();
       await fixture.whenStable();

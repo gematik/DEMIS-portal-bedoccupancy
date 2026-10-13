@@ -17,11 +17,11 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { BedOccupancyConstants } from 'src/app/bed-occupancy/common/bed-occupancy-constants';
 import { EMPTY_DROPDOWN_MENU_MSG } from '../../../common-utils';
 import { HospitalLocation } from '../../../models/hospital-location';
 import { notifierFacilityBedOccupancyFormConfigFields } from './notifier-facility.config';
 import { environment } from 'src/environments/environment';
+import { BedOccupancyConstants } from '../../../../bed-occupancy/common/bed-occupancy-constants';
 
 describe('notifier-facility.config', () => {
   const ikNumber = '123456789';

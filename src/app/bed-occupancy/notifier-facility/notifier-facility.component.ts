@@ -15,15 +15,12 @@
     find details in the "Readme" file.
  */
 
-import { NgTemplateOutlet } from '@angular/common';
 import { afterNextRender, Component, ElementRef, inject, Injector, OnDestroy, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import {
   GemDemisAriaDisabledButtonDirective,
-  MaxHeightContentContainerComponent,
   MessageDialogService,
   SectionHeaderComponent,
   StepContentComponent,
@@ -32,31 +29,18 @@ import {
 import { FormlyFieldConfig, FormlyForm } from '@ngx-formly/core';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
+import { ContactPointInfo } from 'src/api/notification';
 import { BedOccupancyConstants } from '../../bed-occupancy/common/bed-occupancy-constants';
 import { notifierFacilityBedOccupancyFormConfigFields } from '../../shared/formly/configs/bed-occupancy/notifier-facility.config';
-import { ContactPointInfo } from 'src/api/notification';
 import { NotifierFacilityFormModel } from '../../shared/models/bed-occupancy-form-model';
 import { HospitalLocation } from '../../shared/models/hospital-location';
 import { BedOccupancyStorageService } from '../../shared/services/bed-occupancy-storage.service';
-import { BedOccupancyNotificationService } from '../bed-occupancy-notification.service';
+import { BedOccupancyNotificationService } from '../services/bed-occupancy-notification.service';
 
 @Component({
   selector: 'app-notifier-facility',
-  imports: [
-    FormlyForm,
-    MatButton,
-    MatIcon,
-    MatToolbar,
-    MatToolbarRow,
-    SectionHeaderComponent,
-    MaxHeightContentContainerComponent,
-    NgTemplateOutlet,
-    GemDemisAriaDisabledButtonDirective,
-    ReactiveFormsModule,
-  ],
+  imports: [FormlyForm, MatButton, MatIcon, SectionHeaderComponent, GemDemisAriaDisabledButtonDirective, ReactiveFormsModule],
   templateUrl: './notifier-facility.component.html',
-  styleUrl: './notifier-facility.component.scss',
 })
 export class NotifierFacilityComponent extends StepContentComponent<void> implements OnInit, OnDestroy {
   hospitalLocationsSubscription: Subscription | undefined;
@@ -73,10 +57,6 @@ export class NotifierFacilityComponent extends StepContentComponent<void> implem
   protected fieldConfig: FormlyFieldConfig[] = notifierFacilityBedOccupancyFormConfigFields('', []);
 
   private readonly unsubscriber = new Subject<void>();
-
-  get isPortalBedOccupancySidenavEnabled() {
-    return environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV;
-  }
 
   ngOnInit(): void {
     this.hospitalLocationsSubscription = this.bedOccupancyStorageService

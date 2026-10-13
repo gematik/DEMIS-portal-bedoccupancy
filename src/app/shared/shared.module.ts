@@ -20,7 +20,6 @@ import { FormlyModule } from '@ngx-formly/core';
 import { DemisPortalSharedModule, FormlyRepeaterComponent } from '@gematik/demis-portal-core-library';
 import { ValidationWrapperComponent } from './formly/wrappers/validation-wrapper/validation-wrapper.component';
 import { NotificationFormValidationModule } from './notification-form-validation-module';
-import { StringFormatPipe } from './pipes/string-format.pipe';
 
 @NgModule({
   imports: [
@@ -32,7 +31,6 @@ import { StringFormatPipe } from './pipes/string-format.pipe';
     }),
     DemisPortalSharedModule,
     ValidationWrapperComponent,
-    StringFormatPipe,
   ],
   exports: [],
   providers: [],

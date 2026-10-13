@@ -15,186 +15,170 @@
     find details in the "Readme" file.
  */
 
-import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ChangeDetectorRef } from '@angular/core';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { ActivatedRoute } from '@angular/router';
-import { MessageDialogService } from '@gematik/demis-portal-core-library';
-import { MockBuilder, MockedComponentFixture, MockProvider, MockRender } from 'ng-mocks';
-import { NGXLogger } from 'ngx-logger';
-import { of, throwError } from 'rxjs';
-import { HospitalLocation } from '../shared/models/hospital-location';
-import { BedOccupancyStorageService } from '../shared/services/bed-occupancy-storage.service';
-import { FhirBedOccupancyService } from '../shared/services/fhir-bed-occupancy.service';
-import { SharedModule } from '../shared/shared.module';
+import { MockBuilder, MockedComponentFixture, MockProvider, MockRender, MockRenderComponentBindings } from 'ng-mocks';
 import { BedOccupancyComponent } from './bed-occupancy.component';
-import { BedOccupancyModule } from './bed-occupancy.module';
-import { BedOccupancyConstants } from './common/bed-occupancy-constants';
-import { BedOccupancyNotificationFormDefinitionService } from './services/bed-occupancy-notification-form-definition.service';
+import { BedOccupancyQuestion } from 'src/api/notification';
+import { BedOccupancyNotificationService } from './services/bed-occupancy-notification.service';
 import { BedOccupancyClipboardDataService } from './services/clipboard/bed-occupancy-clipboard-data.service';
-
-const TEST_DATA = {
-  hospitalLocation: {
-    id: 654322,
-    ik: '123494546',
-    label: 'Krankenhaus Melissa David TEST-ONLY',
-    postalCode: '12346',
-    city: 'Mannheim',
-    line: 'Mittelweg',
-    houseNumber: '28',
-  },
-};
-
-const overrides = {
-  get bedOccupancyStorageService() {
-    return {
-      fetchHospitalLocations: vi
-        .fn()
-        .mockName('fetchHospitalLocations')
-        .mockReturnValue(of([TEST_DATA.hospitalLocation])),
-      getLocalStorageBedOccupancyData: vi
-        .fn()
-        .mockName('getLocalStorageBedOccupancyData')
-        .mockReturnValue(of({ address: {} })),
-    } as Partial<BedOccupancyStorageService>;
-  },
-  get bedOccupancyClipboardDataService() {
-    return {
-      clipboardData$: of(),
-    } as Partial<BedOccupancyClipboardDataService>;
-  },
-  get bedOccupancyNotificationFormDefinitionService() {
-    return {
-      hexhexButtonClick$: of(),
-    } as Partial<BedOccupancyNotificationFormDefinitionService>;
-  },
-  get activatedRoute() {
-    return {
-      fragment: of(''),
-    } as Partial<ActivatedRoute>;
-  },
-};
+import { BedOccupancyQuestionClipboard } from './services/clipboard/clipboard-enums';
+import { bedOccupancyDummyData } from './common/dummyData';
 
 describe('BedOccupancyComponent', () => {
   let component: BedOccupancyComponent;
-  let fixture: MockedComponentFixture<BedOccupancyComponent, BedOccupancyComponent>;
-  let loader: HarnessLoader;
+  let fixture: MockedComponentFixture<BedOccupancyComponent, MockRenderComponentBindings<BedOccupancyComponent>>;
+  let notificationService: BedOccupancyNotificationService;
+  let clipboardDataService: BedOccupancyClipboardDataService;
 
-  let fetchHospitalLocationsSpy: Mock;
-  let transformDataSpy: Mock;
-  let setLocalStorageBedOccupancyDataSpy: Mock;
-  let submitNotificationSpy: Mock;
+  beforeEach(() => {
+    return MockBuilder(BedOccupancyComponent).provide(MockProvider(BedOccupancyNotificationService)).provide(MockProvider(BedOccupancyClipboardDataService));
+  });
 
-  describe('Unit Tests', () => {
-    beforeEach(() =>
-      MockBuilder([BedOccupancyComponent, BedOccupancyModule, NoopAnimationsModule, SharedModule, ReactiveFormsModule, MatFormFieldModule, ChangeDetectorRef])
-        .provide(MockProvider(BedOccupancyStorageService, overrides.bedOccupancyStorageService))
-        .provide(MockProvider(FhirBedOccupancyService))
-        .provide(MockProvider(BedOccupancyClipboardDataService, overrides.bedOccupancyClipboardDataService))
-        .provide(MockProvider(BedOccupancyNotificationFormDefinitionService, overrides.bedOccupancyNotificationFormDefinitionService))
-        .provide(MockProvider(ActivatedRoute, overrides.activatedRoute))
-        .provide(MockProvider(NGXLogger))
-    );
+  beforeEach(() => {
+    fixture = MockRender(BedOccupancyComponent);
+    component = fixture.point.componentInstance;
+    notificationService = TestBed.inject(BedOccupancyNotificationService);
+    clipboardDataService = TestBed.inject(BedOccupancyClipboardDataService);
+  });
 
-    beforeEach(() => {
-      fixture = MockRender(BedOccupancyComponent);
-      fetchHospitalLocationsSpy = TestBed.inject(BedOccupancyStorageService).fetchHospitalLocations as Mock;
-      transformDataSpy = vi.spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData');
-      setLocalStorageBedOccupancyDataSpy = vi.spyOn(TestBed.inject(BedOccupancyStorageService), 'setLocalStorageBedOccupancyData');
-      submitNotificationSpy = vi.spyOn(TestBed.inject(FhirBedOccupancyService), 'submitNotification');
-      component = fixture.point.componentInstance;
-      loader = TestbedHarnessEnvironment.loader(fixture);
-      fixture.detectChanges();
-    });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 
-    it('should create', () => {
-      expect(component).toBeTruthy();
-    });
-
-    it('should fetch hospital locations on init', () => {
-      const hospitalLocations: HospitalLocation[] = [
-        {
-          id: 1,
-          ik: '12345',
-          label: 'Hospital A',
-          postalCode: '12345',
-          city: 'City A',
-          line: 'Street A',
-          houseNumber: '1',
+  describe('onClipboardDataPasted', () => {
+    it('should extract data from clipboard and patch form data', () => {
+      // Arrange
+      const clipboardData = new Map<string, string>([
+        [BedOccupancyQuestionClipboard.ADULTS_OCCUPIED, '10'],
+        [BedOccupancyQuestionClipboard.CHILDREN_OCCUPIED, '5'],
+      ]);
+      const extractedData: BedOccupancyQuestion = {
+        occupiedBeds: {
+          adultsNumberOfBeds: 10,
+          childrenNumberOfBeds: 5,
         },
-        {
-          id: 2,
-          ik: '98765',
-          label: 'Hospital B',
-          postalCode: '54321',
-          city: 'City B',
-          line: 'Street B',
-          houseNumber: '2',
+        operableBeds: {
+          adultsNumberOfBeds: 20,
+          childrenNumberOfBeds: 10,
         },
-      ];
-      fetchHospitalLocationsSpy.mockReturnValue(of(hospitalLocations));
+      };
+      const getBedOccupancyQuestionSpy = vi.spyOn(clipboardDataService, 'getBedOccupancyQuestionFromClipBoard').mockReturnValue(extractedData);
+      const patchFormDataSpy = vi.spyOn(notificationService, 'patchFormData');
 
-      component.ngOnInit();
+      // Act
+      component.onClipboardDataPasted(clipboardData);
 
-      expect(fetchHospitalLocationsSpy).toHaveBeenCalled();
-      expect(component.hospitalLocations).toEqual(hospitalLocations);
-      expect(component.IkNumber).toBe('12345');
-    });
-
-    it('should handle error when fetching hospital locations', () => {
-      const error = new Error('Failed to fetch locations');
-      fetchHospitalLocationsSpy.mockReturnValue(throwError(() => error));
-      const showErrorDialogSpy = vi.spyOn(TestBed.inject(MessageDialogService), 'showErrorDialog');
-      component.ngOnInit();
-
-      expect(fetchHospitalLocationsSpy).toHaveBeenCalled();
-      expect(showErrorDialogSpy).toHaveBeenCalledWith({
-        redirectToHome: true,
-        errorTitle: BedOccupancyConstants.ERROR_NO_LOCATIONS_DIALOG,
-        errors: [
-          {
-            text: 'Failed to fetch locations',
-          },
-        ],
+      // Assert
+      expect(getBedOccupancyQuestionSpy).toHaveBeenCalledWith(clipboardData);
+      expect(patchFormDataSpy).toHaveBeenCalledWith({
+        bedOccupancyQuestion: extractedData,
       });
     });
 
-    it('should mark form group as touched', () => {
-      const formGroup = new FormGroup({
-        testGroup: new FormGroup({
-          testControl: new FormControl('testValue'),
-        }),
-        testControl2: new FormControl('testValue2'),
+    it('should handle empty clipboard data', () => {
+      // Arrange
+      const clipboardData = new Map<string, string>();
+      const extractedData: BedOccupancyQuestion = {
+        occupiedBeds: {
+          adultsNumberOfBeds: undefined,
+          childrenNumberOfBeds: undefined,
+        },
+        operableBeds: {},
+      };
+      vi.spyOn(clipboardDataService, 'getBedOccupancyQuestionFromClipBoard').mockReturnValue(extractedData);
+      const patchFormDataSpy = vi.spyOn(notificationService, 'patchFormData');
+
+      // Act
+      component.onClipboardDataPasted(clipboardData);
+
+      // Assert
+      expect(patchFormDataSpy).toHaveBeenCalledWith({
+        bedOccupancyQuestion: extractedData,
       });
-      vi.spyOn(formGroup, 'markAsTouched');
-
-      component.markFormGroupTouched(formGroup);
-
-      expect(formGroup.markAsTouched).toHaveBeenCalled();
     });
 
-    it('should submit form', () => {
-      const transformedData = {};
-      transformDataSpy.mockReturnValue(transformedData);
-      component.submit();
-      expect(transformDataSpy).toHaveBeenCalledWith(component.model);
-      expect(setLocalStorageBedOccupancyDataSpy).toHaveBeenCalledWith(component.IkNumber, component.model.notifierFacility);
-      expect(submitNotificationSpy).toHaveBeenCalledWith(transformedData);
+    it('should handle partial clipboard data', () => {
+      // Arrange
+      const clipboardData = new Map<string, string>([[BedOccupancyQuestionClipboard.ADULTS_OCCUPIED, '15']]);
+      const extractedData: BedOccupancyQuestion = {
+        occupiedBeds: {
+          adultsNumberOfBeds: 15,
+          childrenNumberOfBeds: undefined,
+        },
+        operableBeds: {},
+      };
+      vi.spyOn(clipboardDataService, 'getBedOccupancyQuestionFromClipBoard').mockReturnValue(extractedData);
+      const patchFormDataSpy = vi.spyOn(notificationService, 'patchFormData');
+
+      // Act
+      component.onClipboardDataPasted(clipboardData);
+
+      // Assert
+      expect(patchFormDataSpy).toHaveBeenCalledWith({
+        bedOccupancyQuestion: extractedData,
+      });
+    });
+  });
+
+  describe('handleHexHexChange', () => {
+    it('should patch form data with dummy data', () => {
+      // Arrange
+      const patchFormDataSpy = vi.spyOn(notificationService, 'patchFormData');
+
+      // Act
+      component.handleHexHexChange();
+
+      // Assert
+      expect(patchFormDataSpy).toHaveBeenCalledWith({
+        notifierFacility: bedOccupancyDummyData.notifierFacility,
+        bedOccupancyQuestion: bedOccupancyDummyData.bedOccupancyQuestion,
+      });
     });
 
-    it('should unsubscribe on destroy', () => {
-      vi.spyOn(component.hospitalLocationsSubscription, 'unsubscribe');
-      vi.spyOn(component['copyPasteBoxData'], 'unsubscribe');
-      vi.spyOn(component['copyHexHexButtonData'], 'unsubscribe');
-      component.ngOnDestroy();
-      expect(component.hospitalLocationsSubscription.unsubscribe).toHaveBeenCalled();
-      expect(component['copyPasteBoxData'].unsubscribe).toHaveBeenCalled();
-      expect(component['copyHexHexButtonData'].unsubscribe).toHaveBeenCalled();
+    it('should call patchFormData exactly once', () => {
+      // Arrange
+      const patchFormDataSpy = vi.spyOn(notificationService, 'patchFormData');
+
+      // Act
+      component.handleHexHexChange();
+
+      // Assert
+      expect(patchFormDataSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('stepsMap', () => {
+    it('should create a map with correct number of steps', () => {
+      // Act
+      const stepsMap = component['stepsMap']();
+
+      // Assert
+      expect(stepsMap).toBeInstanceOf(Map);
+      expect(stepsMap.size).toBe(2);
+    });
+
+    it('should map steps to their content components', () => {
+      // Act
+      const stepsMap = component['stepsMap']();
+
+      // Assert
+      expect(stepsMap.size).toBe(2);
+      const steps = Array.from(stepsMap.keys());
+      expect(steps[0].key).toBe('notifierFacility');
+      expect(steps[1].key).toBe('bedOccupancyQuestion');
+    });
+  });
+
+  describe('services injection', () => {
+    it('should inject BedOccupancyNotificationService', () => {
+      expect(component.bedOccupancyNotificationService).toBeTruthy();
+      expect(component.bedOccupancyNotificationService).toBe(notificationService);
+    });
+
+    it('should inject BedOccupancyClipboardDataService', () => {
+      expect(component.bedOccupancyClipboardDataService).toBeTruthy();
+      expect(component.bedOccupancyClipboardDataService).toBe(clipboardDataService);
     });
   });
 });

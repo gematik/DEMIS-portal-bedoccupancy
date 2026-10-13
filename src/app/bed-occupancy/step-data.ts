@@ -15,19 +15,21 @@
     find details in the "Readme" file.
  */
 
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
-/**
- * @deprecated: this component can be removed with FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV
- */
-@Injectable({
-  providedIn: 'root',
-})
-export class BedOccupancyNotificationFormDefinitionService {
-  private readonly hexhexButtonClickSubject = new Subject<void>();
-  hexhexButtonClick$ = this.hexhexButtonClickSubject.asObservable();
+import { ProcessStep } from '@gematik/demis-portal-core-library';
+import { BedOccupancyNotificationService } from './services/bed-occupancy-notification.service';
+import { BedOccupancyConstants } from './common/bed-occupancy-constants';
 
-  handleHexHex() {
-    this.hexhexButtonClickSubject.next();
-  }
+export function getStepData(notificationService: BedOccupancyNotificationService): ProcessStep[] {
+  return [
+    {
+      key: 'notifierFacility',
+      label: BedOccupancyConstants.MELDENDE_EINRICHTUNG,
+      control: notificationService.notifierFacilityGroup,
+    },
+    {
+      key: 'bedOccupancyQuestion',
+      label: BedOccupancyConstants.BETTENBELEGUNG,
+      control: notificationService.bedOccupancyQuestionGroup,
+    },
+  ];
 }

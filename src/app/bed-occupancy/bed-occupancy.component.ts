@@ -15,181 +15,62 @@
     find details in the "Readme" file.
  */
 
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { BedOccupancy } from 'src/api/notification';
-import { HospitalLocation } from 'src/app/shared/models/hospital-location';
-import { FormlyFieldConfig, FormlyFormOptions, FormlyModule } from '@ngx-formly/core';
-import { Subscription } from 'rxjs';
+import { Component, computed, inject, OnInit } from '@angular/core';
+import {
+  createStepContent,
+  MaxHeightContentContainerComponent,
+  PasteBoxComponent,
+  provideStepNavigation,
+  SideNavigationComponent,
+} from '@gematik/demis-portal-core-library';
+import { BedOccupancyNotificationService } from './services/bed-occupancy-notification.service';
+import { NotifierFacilityComponent } from './notifier-facility/notifier-facility.component';
+import { BedOccupancyQuestionComponent } from './bed-occupancy-question/bed-occupancy-question.component';
+import { getStepData } from './step-data';
+import { BedOccupancyClipboardDataService } from '../bed-occupancy/services/clipboard/bed-occupancy-clipboard-data.service';
+import { HexhexbuttonComponent } from '../shared/components/hexhexbutton/hexhexbutton.component';
+import { bedOccupancyDummyData } from '../bed-occupancy/common/dummyData';
+import { FormlyModule } from '@ngx-formly/core';
+import { environment } from 'src/environments/environment';
 
-import { BedOccupancyConstants } from './common/bed-occupancy-constants';
-import { notifierFacilityBedOccupancyFormConfigFields } from '../shared/formly/configs/bed-occupancy/notifier-facility.config';
-import { questionBedOccupancyHtmlConfigFields } from '../shared/formly/configs/bed-occupancy/question.config';
-import { NotificationConstants } from '../shared/notification-constants';
-import { BedOccupancyStorageService } from '../shared/services/bed-occupancy-storage.service';
-import { FhirBedOccupancyService } from '../shared/services/fhir-bed-occupancy.service';
-import { bedOccupancyDummyData } from './common/dummyData';
-import { BedOccupancyNotificationFormDefinitionService } from './services/bed-occupancy-notification-form-definition.service';
-import { BedOccupancyClipboardDataService } from './services/clipboard/bed-occupancy-clipboard-data.service';
-import { MatDialog } from '@angular/material/dialog';
-import { MessageDialogService, MaxHeightContentContainerComponent } from '@gematik/demis-portal-core-library';
-import { BedOccupancyFormModel } from '../shared/models/bed-occupancy-form-model';
-
-/**
- * @deprecated: this component can be removed with FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV
- */
 @Component({
   selector: 'app-bed-occupancy',
+  imports: [MaxHeightContentContainerComponent, SideNavigationComponent, PasteBoxComponent, HexhexbuttonComponent, FormlyModule],
+  providers: [provideStepNavigation()],
   templateUrl: './bed-occupancy.component.html',
-  styleUrls: ['./bed-occupancy.component.scss'],
-  imports: [MaxHeightContentContainerComponent, ReactiveFormsModule, FormlyModule],
+  styleUrl: './bed-occupancy.component.scss',
 })
-export class BedOccupancyComponent implements OnInit, OnDestroy {
-  private readonly bedOccupancyStorageService = inject(BedOccupancyStorageService);
-  dialog = inject(MatDialog);
-  private readonly fhirBedOccupancyService = inject(FhirBedOccupancyService);
-  private readonly BedOccupancyClipboardDataService = inject(BedOccupancyClipboardDataService);
-  private readonly BedOccupancyNotificationFormDefinitionService = inject(BedOccupancyNotificationFormDefinitionService);
-  private readonly messageDialogeService = inject(MessageDialogService);
+export class BedOccupancyComponent implements OnInit {
+  readonly bedOccupancyNotificationService = inject(BedOccupancyNotificationService);
+  readonly bedOccupancyClipboardDataService = inject(BedOccupancyClipboardDataService);
+  readonly isPortalBedTextEnabled = environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_BED_TEXT ?? false;
 
-  hospitalLocations: HospitalLocation[] = [];
-  hospitalLocationsSubscription: Subscription | undefined;
-  form = new FormGroup({});
-  model: BedOccupancyFormModel = {
-    //this is needed to show the email and phone field on iniital load
-    notifierFacility: {
-      contacts: {
-        phoneNumbers: [
-          {
-            contactType: 'phone',
-            value: '',
-          },
-        ],
-        emailAddresses: [
-          {
-            contactType: 'email',
-            value: '',
-          },
-        ],
-      },
-    },
-  };
-  options: FormlyFormOptions = {};
-  fields: FormlyFieldConfig[] = [];
-  IkNumber: string;
-  bedOccupancyDummyData = bedOccupancyDummyData;
+  private readonly stepContents = computed(() => [
+    createStepContent({ component: NotifierFacilityComponent }),
+    createStepContent({ component: BedOccupancyQuestionComponent }),
+  ]);
 
-  sendFunction: (bo: BedOccupancy) => void;
-  private copyPasteBoxData: Subscription;
-  private copyHexHexButtonData: Subscription;
-
-  constructor() {
-    this.copyPasteBoxData = this.BedOccupancyClipboardDataService.clipboardData$.subscribe(data => {
-      this.handlePasteBoxOrHexhexChange(data);
-    });
-
-    this.copyHexHexButtonData = this.BedOccupancyNotificationFormDefinitionService.hexhexButtonClick$.subscribe(() => {
-      this.handlePasteBoxOrHexhexChange(bedOccupancyDummyData);
-    });
-
-    this.sendFunction = bo => {
-      this.fhirBedOccupancyService.submitNotification(bo);
-    };
-  }
-
-  handlePasteBoxOrHexhexChange(data: BedOccupancyFormModel) {
-    if (data === null) {
-      return;
-    }
-    this.model = { ...this.model, ...data };
-    this.markFormGroupTouched(this.form);
-  }
-
-  markFormGroupTouched(formGroup: FormGroup) {
-    Object.keys(formGroup.controls).forEach(key => {
-      const control = formGroup.get(key);
-      if (control instanceof FormGroup) {
-        this.markFormGroupTouched(control);
-      } else {
-        control.markAsTouched();
-      }
-    });
-  }
-
-  submit() {
-    const transformedData = this.fhirBedOccupancyService.transformData(this.model);
-    //set data to storage
-    this.bedOccupancyStorageService.setLocalStorageBedOccupancyData(this.IkNumber, {
-      ...this.model.notifierFacility,
-    });
-    this.sendFunction(transformedData);
-  }
+  /**
+   * Maps process steps to their corresponding content components
+   */
+  public readonly stepsMap = computed(() => {
+    return new Map(getStepData(this.bedOccupancyNotificationService).map((step, index) => [step, this.stepContents()[index]]));
+  });
 
   ngOnInit(): void {
-    this.hospitalLocationsSubscription = this.bedOccupancyStorageService.fetchHospitalLocations().subscribe({
-      next: (locations: HospitalLocation[]) => {
-        this.hospitalLocations = locations;
-        //looking for the IK Number
-        this.IkNumber = locations[0]?.ik || 'not-provided';
-        const notifierFields = notifierFacilityBedOccupancyFormConfigFields(this.IkNumber, this.hospitalLocations);
-        this.fields = [
-          {
-            key: '',
-            type: BedOccupancyConstants.DEMIS_FORM_WRAPPER_TEMPLATE_KEYWORD,
-            fieldGroup: [
-              {
-                key: 'notifierFacility',
-                props: {
-                  label: BedOccupancyConstants.MELDENDE_EINRICHTUNG,
-                  anchor: NotificationConstants.BED_OCCUPANCY_NOTIFIER_FACILITY,
-                },
-                fieldGroup: notifierFields,
-              },
-              {
-                key: 'bedOccupancyQuestion',
-                props: {
-                  label: BedOccupancyConstants.BETTENBELEGUNG,
-                  anchor: NotificationConstants.BED_OCCUPANCY_OCCUPIED_BEDS,
-                },
-                fieldGroup: questionBedOccupancyHtmlConfigFields,
-              },
-            ],
-          },
-        ];
-
-        //retrieve data from storage
-        if (this.bedOccupancyStorageService.getLocalStorageBedOccupancyData(this.IkNumber) !== null || undefined) {
-          const loadedData = this.bedOccupancyStorageService.getLocalStorageBedOccupancyData(this.IkNumber);
-          this.model = {
-            bedOccupancyQuestion: {},
-            notifierFacility: {
-              ...loadedData,
-              address: {
-                ...loadedData.address,
-                country: 'DE', //DEMIS-1801: overwrite old countryCode from storage
-              },
-            },
-          };
-        }
-      },
-      error: error => {
-        const errorMessage = this.messageDialogeService.extractMessageFromError(error);
-        this.messageDialogeService.showErrorDialog({
-          redirectToHome: true,
-          errorTitle: BedOccupancyConstants.ERROR_NO_LOCATIONS_DIALOG,
-          errors: [
-            {
-              text: errorMessage,
-            },
-          ],
-        });
-      },
-    });
+    // no validation errors should be shown when first visiting the component
+    this.bedOccupancyNotificationService.resetVisitedFlags();
   }
 
-  ngOnDestroy(): void {
-    this.hospitalLocationsSubscription?.unsubscribe();
-    this.copyPasteBoxData.unsubscribe();
-    this.copyHexHexButtonData.unsubscribe();
+  onClipboardDataPasted(clipboardData: Map<string, string>) {
+    const data = this.bedOccupancyClipboardDataService.getBedOccupancyQuestionFromClipBoard(clipboardData);
+    this.bedOccupancyNotificationService.patchFormData({ bedOccupancyQuestion: data });
+  }
+
+  handleHexHexChange() {
+    this.bedOccupancyNotificationService.patchFormData({
+      notifierFacility: bedOccupancyDummyData.notifierFacility,
+      bedOccupancyQuestion: bedOccupancyDummyData.bedOccupancyQuestion,
+    });
   }
 }

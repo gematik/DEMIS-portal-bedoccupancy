@@ -15,74 +15,74 @@
     find details in the "Readme" file.
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { page, userEvent } from 'vitest/browser';
 
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BedOccupancyClipboardDataService } from 'src/app/bed-occupancy/services/clipboard/bed-occupancy-clipboard-data.service';
 import { BedOccupancyStorageService } from 'src/app/shared/services/bed-occupancy-storage.service';
 import { FhirBedOccupancyService } from '../../app/shared/services/fhir-bed-occupancy.service';
-import { getButton, getInput, getSelect, selectOption } from '../shared/material-harness-utils';
-import { getHtmlButtonElement } from '../shared/html-element-utils';
 import { BedOccupancyComponent } from '../../app/bed-occupancy/bed-occupancy.component';
 import { configureIntegrationTestBed, TEST_DATA } from './bed-occupancy.integration-setup';
 
-// TODO: We've decided to go with Playwright. We need to determine whether these tests can be permanently removed.
-describe.skip('Bed Occupancy with new sidenav  - Data Model Tests', () => {
+describe('Bed Occupancy - Data Model Tests with playwright', () => {
   let fixture: ComponentFixture<BedOccupancyComponent>;
-  let loader: HarnessLoader;
 
   beforeEach(async () => {
     await configureIntegrationTestBed();
     fixture = TestBed.createComponent(BedOccupancyComponent);
     vi.spyOn(TestBed.inject(FhirBedOccupancyService), 'transformData');
     vi.spyOn(TestBed.inject(BedOccupancyStorageService), 'setLocalStorageBedOccupancyData');
-    loader = TestbedHarnessEnvironment.loader(fixture);
+    document.body.appendChild(fixture.nativeElement);
+    fixture.detectChanges();
+    await fixture.whenStable();
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    fixture.destroy();
+  });
+
+  const locate = (selector: string) => {
+    const element = fixture.nativeElement.querySelector(selector) as Element | null;
+    if (!element) {
+      throw new Error(`Element not found for selector: ${selector}`);
+    }
+    return page.elementLocator(element);
+  };
+
+  async function selectMatOption(triggerSelector: string, optionText: string) {
+    await userEvent.click(locate(triggerSelector));
+
+    const option = Array.from(document.querySelectorAll('mat-option')).find(el => el.textContent?.trim().includes(optionText)) as HTMLElement | undefined;
+    if (!option) {
+      throw new Error(`mat-option "${optionText}" not found for trigger "${triggerSelector}"`);
+    }
+    await userEvent.click(option);
+  }
+
   it('should handle magic (aka HexHex) button click', async () => {
-    const hexHexButton = getHtmlButtonElement(fixture.nativeElement, '#btn-magic');
-    hexHexButton.click();
+    await userEvent.click(locate('#btn-magic'));
 
-    const submitButton = await getButton(loader, '#btn-send-notification');
-
-    expect(await submitButton.isDisabled()).toBe(false);
+    await expect.element(locate('#btn-send-notification')).toBeEnabled();
   });
 
   it('should send, when form is filled correctly with the help from the clipboard', async () => {
     // Form page 1
-    const institutionNameSelect = await getSelect(loader, '#institutionName');
-    const firstnameInput = await getInput(loader, '#firstname');
-    const lastnameInput = await getInput(loader, '#lastname');
-    const phoneNoInput = await getInput(loader, '[id*="phoneNo"]');
-    const emailInput = await getInput(loader, '[id*="email"]');
-    const nextButton = await getButton(loader, '#btn-nav-action-next');
+    await selectMatOption('#institutionName', TEST_DATA.hospitalLocation.label);
+    await userEvent.fill(locate('#firstname'), 'Homer');
+    await userEvent.fill(locate('#lastname'), 'Simpson');
+    await userEvent.fill(locate('input[id*="phoneNo"]'), '0800123456');
+    await userEvent.fill(locate('input[id*="email"]'), 'homer@simpson.com');
 
-    await selectOption(institutionNameSelect, TEST_DATA.hospitalLocation.label);
-    await firstnameInput.setValue('Homer');
-    await lastnameInput.setValue('Simpson');
-    await phoneNoInput.setValue('0800123456');
-    await emailInput.setValue('homer@simpson.com');
+    await userEvent.click(locate('#btn-nav-action-next'));
 
-    await nextButton.click();
+    await userEvent.click(locate('#btn-fill-form'));
 
-    // Form page 2 - filled from clipboard
-    // Parse the clipboard data as the PasteBox component would
-    const clipboardString = 'B.adultsOccupied=47&B.childrenOccupied=11&B.adultsOperable=33&B.childrenOperable=5';
-    const clipboardMap = new Map<string, string>();
-    clipboardString.split('&').forEach(param => {
-      const [key, value] = param.split('=');
-      clipboardMap.set(key, value);
-    });
+    const clipboardString = 'URL B.adultsOccupied=47&B.childrenOccupied=11&B.adultsOperable=33&B.childrenOperable=5';
+    vi.spyOn(window.navigator.clipboard, 'readText').mockReturnValue(Promise.resolve(clipboardString));
 
-    // Call the service method directly to update the clipboard data
-    const clipboardService = TestBed.inject(BedOccupancyClipboardDataService);
-    clipboardService.updateBedOccupancy(clipboardMap);
+    await userEvent.click(locate('#btn-fill-form'));
 
-    const submitButton = await getButton(loader, '#btn-send-notification');
-
-    expect(await submitButton.isDisabled()).toBe(false);
+    await expect.element(locate('#btn-send-notification')).toBeEnabled();
   });
 });

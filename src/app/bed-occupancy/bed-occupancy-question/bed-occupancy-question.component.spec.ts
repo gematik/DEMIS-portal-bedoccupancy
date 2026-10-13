@@ -21,8 +21,8 @@ import { FormGroup } from '@angular/forms';
 import { TestBed } from '@angular/core/testing';
 import { MockBuilder, MockedComponentFixture, MockRender, MockRenderComponentBindings, ngMocks } from 'ng-mocks';
 import { BedOccupancyQuestionComponent } from './bed-occupancy-question.component';
-import { BedOccupancyNotificationService } from '../bed-occupancy-notification.service';
 import { StepNavigation } from '@gematik/demis-portal-core-library';
+import { BedOccupancyNotificationService } from '../services/bed-occupancy-notification.service';
 
 describe('BedOccupancyQuestionComponent', () => {
   let component: BedOccupancyQuestionComponent;

@@ -19,21 +19,21 @@ import { vi } from 'vitest';
 
 import { TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { BedOccupancyNewComponent } from 'src/app/bed-occupancy-new/bed-occupancy-new.component';
-import { BedOccupancyClipboardDataService } from 'src/app/bed-occupancy/services/clipboard/bed-occupancy-clipboard-data.service';
+import { BedOccupancyComponent } from 'src/app/bed-occupancy/bed-occupancy.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DemisProcessStepperComponent } from '@gematik/demis-portal-core-library';
-import { NotifierFacilityComponent } from 'src/app/bed-occupancy-new/notifier-facility/notifier-facility.component';
-import { BedOccupancyQuestionComponent } from 'src/app/bed-occupancy-new/bed-occupancy-question/bed-occupancy-question.component';
+import { NotifierFacilityComponent } from 'src/app/bed-occupancy/notifier-facility/notifier-facility.component';
+import { BedOccupancyQuestionComponent } from 'src/app/bed-occupancy/bed-occupancy-question/bed-occupancy-question.component';
 import { NGXLogger } from 'ngx-logger';
 import { MockProvider } from 'ng-mocks';
 import { BedOccupancyStorageService } from 'src/app/shared/services/bed-occupancy-storage.service';
 import { FhirBedOccupancyService } from '../../app/shared/services/fhir-bed-occupancy.service';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
-import { BedOccupancyModule } from '../../app/bed-occupancy/bed-occupancy.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { BedOccupancyModule } from '../../app/bed-occupancy/bed-occupancy.module';
+import { BedOccupancyClipboardDataService } from '../../app/bed-occupancy/services/clipboard/bed-occupancy-clipboard-data.service';
 
 export const TEST_DATA = {
   bedOccupancyQuestion: {
@@ -82,7 +82,7 @@ export async function configureIntegrationTestBed() {
     imports: [
       NoopAnimationsModule,
       SharedModule,
-      BedOccupancyNewComponent,
+      BedOccupancyComponent,
       DemisProcessStepperComponent,
       NotifierFacilityComponent,
       BedOccupancyQuestionComponent,

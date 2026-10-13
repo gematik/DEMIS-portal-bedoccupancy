@@ -2,6 +2,12 @@
 
 # Release portal-bedoccupancy
 
+## Release 1.7.8
+- Removed FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV
+- Removed material harness integration tests
+- Updated @gematik/demis-portal-core-library to 4.4.6 incl. a11y improvements
+- Updated Docker base image to nginx 1.31.6-alpine3.24-slim, which fixes CVE-2026-14456 (OpenSSL)
+
 ## Release 1.7.7
 - Updated @gematik/demis-portal-core-library to 4.4.3 incl. a11y improvements of repeater
 
@@ -9,7 +15,7 @@
 - Removed FEATURE_FLAG_PLACEHOLDER_REMOVAL
 - Updated @gematik/demis-portal-core-library to 4.4.2 incl. a11y improvements of pastebox
 - Added supporting text for occupancy fields and change validation error messages (FEATURE_FLAG_PORTAL_BED_TEXT)
-- Fixed bug in side navigation due to contacts array and localstorage behavior 
+- Fixed bug in side navigation due to contacts array and localstorage behavior
 
 ## Release 1.7.5
 - Added supporting text for occupancy fields and change validation error messages (FEATURE_FLAG_PORTAL_BED_TEXT)

@@ -17,7 +17,6 @@
 
 //current docs under:  https://wiki.gematik.de/pages/viewpage.action?pageId=474108853
 
-// Bettenbelegung
 export enum BedOccupancyQuestionClipboard {
   ADULTS_OCCUPIED = 'B.adultsOccupied',
   CHILDREN_OCCUPIED = 'B.childrenOccupied',
