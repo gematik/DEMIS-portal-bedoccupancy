@@ -88,7 +88,7 @@ export class NotifierFacilityComponent extends StepContentComponent<void> implem
           // Rebuilding fieldConfig above replaces the rendered controls, discarding any focus SideNavigationComponent
           // already set right after this step became visible. Re-focus once Angular has actually rendered the new
           // controls, but only if this render was supposed to receive focus (e.g. not on the initial page load).
-          if (this.autoFocusRequested()) {
+          if (this.autoFocusRequested() && this.stepFocusTarget() === 'first-control') {
             afterNextRender(() => this.navigation.getFocusableElements(this.elementRef.nativeElement)[0]?.focus({ preventScroll: true }), {
               injector: this.injector,
             });

@@ -17,23 +17,18 @@
 
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { environment } from 'src/environments/environment';
-import {
-  NUMBER_OF_BEDS_ERROR_MSG,
-  NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT,
-  NUMBER_OF_BEDS_REQUIRED_ERROR_MSG,
-  NUMBER_OF_BEDS_SUPPORT_TEXT,
-} from '../../../common-utils';
+import { getNumberOfBedsInputTexts } from '../../../common-utils';
 import { FormlyConstants } from '../formly-constants';
 import { formlyIntro, formlyRequiredFieldsHint } from '../reusable/commons';
 import { BedOccupancyConstants } from '../../../../bed-occupancy/common/bed-occupancy-constants';
 
 const isPortalBedTextEnabled = (): boolean => environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_BED_TEXT ?? false;
 const isA11yRequiredFieldsInfoEnabled = (): boolean => environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_BED_A11Y_INFO_REQUIREDFIELDS ?? false;
-const getBedNumberValidation = (): FormlyFieldConfig['validation'] => ({
+const getBedNumberValidation = (texts: ReturnType<typeof getNumberOfBedsInputTexts>): FormlyFieldConfig['validation'] => ({
   messages: {
-    ...(isPortalBedTextEnabled() ? { required: () => NUMBER_OF_BEDS_REQUIRED_ERROR_MSG } : {}),
-    min: () => (isPortalBedTextEnabled() ? NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT : NUMBER_OF_BEDS_ERROR_MSG),
-    max: () => (isPortalBedTextEnabled() ? NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT : NUMBER_OF_BEDS_ERROR_MSG),
+    ...(texts.requiredErrorMessage ? { required: () => texts.requiredErrorMessage } : {}),
+    min: () => texts.errorMessage,
+    max: () => texts.errorMessage,
   },
 });
 
@@ -64,20 +59,24 @@ const createBedNumberField = (
   child: boolean,
   required: boolean,
   sectionKey: BedOccupancyConstants.OCCUPIED_BEDS | BedOccupancyConstants.OPERABLE_BEDS
-): FormlyFieldConfig => ({
-  id: `${prefix}-${child ? BedOccupancyConstants.NO_OF_BEDS_CHILDREN_ID : BedOccupancyConstants.NO_OF_BEDS_ADULTS_ID}`,
-  key: child ? BedOccupancyConstants.NO_OF_BEDS_CHILDREN : BedOccupancyConstants.NO_OF_BEDS_ADULTS,
-  className: FormlyConstants.LAYOUT_FULL_LINE,
-  props: {
-    label: getBedLabel(sectionKey, child),
-    max: 999999,
-    min: 0,
-    ...(isPortalBedTextEnabled() ? { description: NUMBER_OF_BEDS_SUPPORT_TEXT } : {}),
-    ...(required ? { required: true } : {}),
-  },
-  type: 'number',
-  validation: getBedNumberValidation(),
-});
+): FormlyFieldConfig => {
+  const texts = getNumberOfBedsInputTexts();
+  return {
+    id: `${prefix}-${child ? BedOccupancyConstants.NO_OF_BEDS_CHILDREN_ID : BedOccupancyConstants.NO_OF_BEDS_ADULTS_ID}`,
+    key: child ? BedOccupancyConstants.NO_OF_BEDS_CHILDREN : BedOccupancyConstants.NO_OF_BEDS_ADULTS,
+    className: FormlyConstants.LAYOUT_FULL_LINE,
+    props: {
+      label: getBedLabel(sectionKey, child),
+      max: 999999,
+      min: 0,
+      ...(texts.supportText ? { description: texts.supportText } : {}),
+      ...(required ? { required: true } : {}),
+    },
+    type: 'number',
+    validators: { validation: ['numberOfBedsValidator'] },
+    validation: getBedNumberValidation(texts),
+  };
+};
 
 const createBedSection = (
   sectionKey: BedOccupancyConstants.OCCUPIED_BEDS | BedOccupancyConstants.OPERABLE_BEDS,
@@ -95,12 +94,26 @@ export const questionBedOccupancyHtmlConfigFields = (): FormlyFieldConfig[] => {
     ? `<div role="note">
     <div class="info-notification-text"><span class="material-icons-outlined primary-color-icon" aria-hidden="true">error_outline</span><div class="message"><p>Die Anzahl der belegten Betten auf Normalstationen wird getrennt nach Betten für Kinder und Erwachsene gemeldet. Wird ein Kind auf einer Station für Erwachsene behandelt, zählt dieses Bett als Bett für Erwachsene.</p>
     <p>Ein Bett gilt als betreibbar, wenn entsprechend der Versorgungsstufe jeweils ein vorgesehener Raum, funktionsfähige Geräte und Material pro Bettenplatz, Betten und personelle Besetzung mit pflegerischem und ärztlichem Fachpersonal vorhanden sind und eingesetzt werden können. Aufgrund dieser zahlreichen Betriebsfaktoren kann sich die Anzahl von aktuell betreibbaren Betten in einem Meldebereich kontinuierlich verändern. Diese Zahl kann auch (deutlich) von der Zahl der Planbetten im Krankenhauslandesplan abweichen.</p>
-    <p>Für die Meldung ist der Bettenbelegungsstand des Vortages um 12:00 Uhr maßgeblich; die Übermittlung hat täglich bis 11:00 Uhr zu erfolgen.</p></div></div>
+    <p>Für die Meldung ist der Bettenbelegungsstand des Vortages um 12:00 Uhr maßgeblich; die Übermittlung hat täglich bis 11:00 Uhr zu erfolgen.</p>
+    </div></div>
     </div>`
     : null;
 
+  const intro = questionText ? formlyIntro(questionText, isA11yRequiredFieldsInfoEnabled()) : null;
+  intro?.fieldGroup?.forEach(field => {
+    field.props = { ...field.props, safeHtml: true };
+  });
+
   return [
-    ...(questionText ? [formlyIntro(questionText, isA11yRequiredFieldsInfoEnabled())] : []),
+    ...(intro
+      ? [intro]
+      : [
+          {
+            className: FormlyConstants.LAYOUT_FULL_LINE,
+            template: `<p>Für die Meldung ist der Bettenbelegungsstand des Vortages um 12:00 Uhr maßgeblich; die Übermittlung hat täglich bis 11:00 Uhr zu erfolgen.</p>`,
+            props: { safeHtml: true },
+          },
+        ]),
     ...(!questionText && isA11yRequiredFieldsInfoEnabled() ? [formlyRequiredFieldsHint()] : []),
     createHeader('Belegte Betten auf Normalstationen des meldenden Standortes'),
     createBedSection(BedOccupancyConstants.OCCUPIED_BEDS, 'occupied-beds', true),

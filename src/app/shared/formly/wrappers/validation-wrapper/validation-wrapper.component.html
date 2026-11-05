@@ -1,6 +1,8 @@
 <ng-container #fieldComponent />
-<div [id]="field.id + '-error'" role="alert">
-  <mat-error>
-    <formly-validation-message [field]="field" />
-  </mat-error>
-</div>
+@if (showError && formControl.errors) {
+  <div [id]="field.id + '-error'" role="alert">
+    <mat-error>
+      <formly-validation-message [field]="field" />
+    </mat-error>
+  </div>
+}

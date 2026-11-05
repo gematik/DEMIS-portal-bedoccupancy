@@ -66,7 +66,7 @@ export default defineConfig({
     // testTimeout even though the test itself is not broken. Retry once before failing.
     retry: 1,
     coverage: {
-      provider: 'v8',
+      provider: 'istanbul',
       exclude: ['src/api/**'],
       reporter: ['text', 'text-summary', 'html', 'lcov', 'cobertura'],
       reportsDirectory: './coverage',

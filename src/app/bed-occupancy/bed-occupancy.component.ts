@@ -17,6 +17,7 @@
 
 import { Component, computed, inject, OnInit } from '@angular/core';
 import {
+  type ClipboardImportResult,
   createStepContent,
   MaxHeightContentContainerComponent,
   PasteBoxComponent,
@@ -28,6 +29,7 @@ import { NotifierFacilityComponent } from './notifier-facility/notifier-facility
 import { BedOccupancyQuestionComponent } from './bed-occupancy-question/bed-occupancy-question.component';
 import { getStepData } from './step-data';
 import { BedOccupancyClipboardDataService } from '../bed-occupancy/services/clipboard/bed-occupancy-clipboard-data.service';
+import { BedOccupancyQuestionClipboard } from './services/clipboard/clipboard-enums';
 import { HexhexbuttonComponent } from '../shared/components/hexhexbutton/hexhexbutton.component';
 import { bedOccupancyDummyData } from '../bed-occupancy/common/dummyData';
 import { FormlyModule } from '@ngx-formly/core';
@@ -44,6 +46,15 @@ export class BedOccupancyComponent implements OnInit {
   readonly bedOccupancyNotificationService = inject(BedOccupancyNotificationService);
   readonly bedOccupancyClipboardDataService = inject(BedOccupancyClipboardDataService);
   readonly isPortalBedTextEnabled = environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_BED_TEXT ?? false;
+  readonly importClipboardData = (clipboardData: Map<string, string>): ClipboardImportResult => {
+    const bedKeys = new Set<string>(Object.values(BedOccupancyQuestionClipboard));
+    const usableData = new Map(Array.from(clipboardData).filter(([key]) => bedKeys.has(key)));
+    if (usableData.size === 0) {
+      return 'empty';
+    }
+    this.onClipboardDataPasted(usableData);
+    return usableData.size === clipboardData.size ? 'success' : 'partial';
+  };
 
   private readonly stepContents = computed(() => [
     createStepContent({ component: NotifierFacilityComponent }),

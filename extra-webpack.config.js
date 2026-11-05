@@ -15,7 +15,7 @@
     find details in the "Readme" file.
  */
 
-const singleSpaAngularWebpack = require('@single-spa-community/angular/lib/webpack').default;
+const singleSpaAngularWebpack = require('single-spa-angular/lib/webpack').default;
 
 module.exports = (angularWebpackConfig, options) => {
   const singleSpaWebpackConfig = singleSpaAngularWebpack(angularWebpackConfig, options);

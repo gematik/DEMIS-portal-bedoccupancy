@@ -18,7 +18,7 @@
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { MockBuilder, MockedComponentFixture, MockProvider, MockRender, MockRenderComponentBindings, ngMocks } from 'ng-mocks';
 import { MessageDialogService, StepNavigation } from '@gematik/demis-portal-core-library';
 
@@ -251,6 +251,42 @@ describe('NotifierFacilityComponent', () => {
       await localFixture.whenStable();
 
       expect(getFocusableElementsSpy).toHaveBeenCalled();
+    });
+
+    it('does not override the heading focus after hospital locations load in heading mode', async () => {
+      fetchHospitalLocationsSpy.mockReturnValue(of([TEST_DATA.hospitalLocation]));
+      ngMocks.flushTestBed();
+      const localFixture = MockRender(NotifierFacilityComponent, { autoFocusRequested: true, stepFocusTarget: 'heading' });
+      const getFocusableElementsSpy = vi.mocked(TestBed.inject(StepNavigation)).getFocusableElements;
+
+      await localFixture.whenStable();
+
+      expect(getFocusableElementsSpy).not.toHaveBeenCalled();
+    });
+
+    it('preserves heading focus when hospital locations arrive after the step has rendered', async () => {
+      const locations = new Subject<HospitalLocation[]>();
+      fetchHospitalLocationsSpy.mockReturnValue(locations);
+      ngMocks.flushTestBed();
+      const localFixture = MockRender(NotifierFacilityComponent, { autoFocusRequested: true, stepFocusTarget: 'heading' });
+      document.body.appendChild(localFixture.nativeElement);
+      const heading = document.createElement('h1');
+      heading.tabIndex = -1;
+      localFixture.nativeElement.prepend(heading);
+      const input = document.createElement('input');
+      localFixture.nativeElement.appendChild(input);
+      const focusable = vi.mocked(TestBed.inject(StepNavigation)).getFocusableElements;
+      focusable.mockReturnValue([input]);
+      heading.focus();
+
+      locations.next([TEST_DATA.hospitalLocation]);
+      localFixture.detectChanges();
+      await localFixture.whenStable();
+
+      expect(focusable).not.toHaveBeenCalled();
+      expect(document.activeElement).toBe(heading);
+      locations.complete();
+      localFixture.nativeElement.remove();
     });
   });
 });
