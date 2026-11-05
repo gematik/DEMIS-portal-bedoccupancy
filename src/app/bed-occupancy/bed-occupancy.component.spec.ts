@@ -46,6 +46,57 @@ describe('BedOccupancyComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  describe('importClipboardData', () => {
+    it.each(['1.5', '-1', '1000000', 'Infinity', 'invalid', ' '])('imports bed value %s for field validation', value => {
+      const data = new Map([[BedOccupancyQuestionClipboard.ADULTS_OCCUPIED, value]]);
+      const numberValue = Number(value);
+      const extractedData: BedOccupancyQuestion = {
+        occupiedBeds: { adultsNumberOfBeds: Number.isNaN(numberValue) ? undefined : numberValue, childrenNumberOfBeds: undefined },
+        operableBeds: {},
+      };
+      const extract = vi.spyOn(clipboardDataService, 'getBedOccupancyQuestionFromClipBoard').mockReturnValue(extractedData);
+      const patch = vi.spyOn(notificationService, 'patchFormData');
+      expect(component.importClipboardData(data)).toBe('success');
+      expect(extract).toHaveBeenCalledWith(data);
+      expect(patch).toHaveBeenCalledWith({ bedOccupancyQuestion: extractedData });
+    });
+
+    it('rejects foreign clipboard keys without modifying the form', () => {
+      const patch = vi.spyOn(notificationService, 'patchFormData');
+      expect(component.importClipboardData(new Map([['P.family', 'Audit']]))).toBe('empty');
+      expect(patch).not.toHaveBeenCalled();
+    });
+
+    it('accepts zero and reports successful domain processing', () => {
+      const data = new Map([[BedOccupancyQuestionClipboard.ADULTS_OCCUPIED, '0']]);
+      const patch = vi.spyOn(notificationService, 'patchFormData');
+      const extract = vi
+        .spyOn(clipboardDataService, 'getBedOccupancyQuestionFromClipBoard')
+        .mockReturnValue({ occupiedBeds: { adultsNumberOfBeds: 0, childrenNumberOfBeds: undefined }, operableBeds: {} });
+      expect(component.importClipboardData(data)).toBe('success');
+      expect(extract).toHaveBeenCalledWith(data);
+      expect(patch).toHaveBeenCalled();
+    });
+
+    it('imports all bed values and reports a partial outcome for foreign keys', () => {
+      const data = new Map([
+        [BedOccupancyQuestionClipboard.ADULTS_OCCUPIED, '12'],
+        [BedOccupancyQuestionClipboard.CHILDREN_OCCUPIED, '1.5'],
+        ['P.family', 'Audit'],
+      ]);
+      const extract = vi
+        .spyOn(clipboardDataService, 'getBedOccupancyQuestionFromClipBoard')
+        .mockReturnValue({ occupiedBeds: { adultsNumberOfBeds: 12, childrenNumberOfBeds: 1.5 }, operableBeds: {} });
+      expect(component.importClipboardData(data)).toBe('partial');
+      expect(extract).toHaveBeenCalledWith(
+        new Map([
+          [BedOccupancyQuestionClipboard.ADULTS_OCCUPIED, '12'],
+          [BedOccupancyQuestionClipboard.CHILDREN_OCCUPIED, '1.5'],
+        ])
+      );
+    });
+  });
+
   describe('onClipboardDataPasted', () => {
     it('should extract data from clipboard and patch form data', () => {
       // Arrange

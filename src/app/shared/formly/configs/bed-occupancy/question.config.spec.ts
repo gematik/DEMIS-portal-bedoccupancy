@@ -18,14 +18,19 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { environment } from 'src/environments/environment';
 import {
+  getNumberOfBedsInputTexts,
   NUMBER_OF_BEDS_ERROR_MSG,
-  NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT,
+  NUMBER_OF_BEDS_ERROR_MSG_FEATURE_FLAG_PORTAL_BED_TEXT,
+  NUMBER_OF_BEDS_ERROR_MSG_FEATURE_FLAG_BED_INPUT_TEXTS,
   NUMBER_OF_BEDS_REQUIRED_ERROR_MSG,
+  NUMBER_OF_BEDS_REQUIRED_ERROR_MSG_FEATURE_FLAG_BED_INPUT_TEXTS,
   NUMBER_OF_BEDS_SUPPORT_TEXT,
+  NUMBER_OF_BEDS_SUPPORT_TEXT_FEATURE_FLAG_BED_INPUT_TEXTS,
 } from '../../../common-utils';
 import { questionBedOccupancyHtmlConfigFields } from './question.config';
 import { BedOccupancyConstants } from '../../../../bed-occupancy/common/bed-occupancy-constants';
 
+// Retiring FEATURE_FLAG_PORTAL_BED_TEXT: remove this helper's parameter and flag entry; keep the remaining test configuration.
 const createTestConfig = (isPortalBedTextEnabled: boolean) => ({
   production: false,
   pathToGateway: '/gateway',
@@ -47,12 +52,39 @@ describe('question-new.config', () => {
 
   const getTemplate = (field: any): string => String(field?.template ?? field?.fieldGroup?.[0]?.template ?? '');
 
+  // Retiring FEATURE_FLAG_PORTAL_BED_TEXT: keep this coverage, dropping only its explicit false setup.
+  // Retiring FEATURE_FLAG_BED_INPUT_TEXTS: keep the new-text assertion as the baseline and remove the disabled/unset cases.
+  describe('FEATURE_FLAG_BED_INPUT_TEXTS', () => {
+    it('selects the new input texts independently of FEATURE_FLAG_PORTAL_BED_TEXT', () => {
+      environment.bedOccupancyConfig = createTestConfig(false);
+      environment.bedOccupancyConfig.featureFlags.FEATURE_FLAG_BED_INPUT_TEXTS = true;
+
+      expect(getNumberOfBedsInputTexts()).toEqual({
+        supportText: NUMBER_OF_BEDS_SUPPORT_TEXT_FEATURE_FLAG_BED_INPUT_TEXTS,
+        requiredErrorMessage: NUMBER_OF_BEDS_REQUIRED_ERROR_MSG_FEATURE_FLAG_BED_INPUT_TEXTS,
+        errorMessage: NUMBER_OF_BEDS_ERROR_MSG_FEATURE_FLAG_BED_INPUT_TEXTS,
+      });
+    });
+
+    it.each([false, undefined])('preserves the existing text selection with FEATURE_FLAG_BED_INPUT_TEXTS=%s', inputTexts => {
+      const existingTexts = getNumberOfBedsInputTexts();
+      environment.bedOccupancyConfig.featureFlags.FEATURE_FLAG_BED_INPUT_TEXTS = inputTexts;
+
+      expect(getNumberOfBedsInputTexts()).toEqual(existingTexts);
+    });
+  });
+
   it('returns intro text and detailed labels when FEATURE_FLAG_PORTAL_BED_TEXT is true', () => {
     const fields = questionBedOccupancyHtmlConfigFields();
 
-    expect(fields.length).toBe(5);
+    expect(fields).toHaveLength(5);
     expect(getTemplate(fields[0])).toContain('Die Anzahl der belegten Betten');
+    expect(getTemplate(fields[0])).toContain('class="info-notification-text"');
+    expect(getTemplate(fields[0])).toContain(
+      'Für die Meldung ist der Bettenbelegungsstand des Vortages um 12:00 Uhr maßgeblich; die Übermittlung hat täglich bis 11:00 Uhr zu erfolgen.'
+    );
     expect(fields.some(field => getTemplate(field).includes('bed-occupancy-section-heading--spaced'))).toBe(true);
+
     const occupiedSection = fields.find(field => field.key === BedOccupancyConstants.OCCUPIED_BEDS);
     const occupiedAdultsField = occupiedSection?.fieldGroup?.[0];
     const occupiedChildrenField = occupiedSection?.fieldGroup?.[1];
@@ -63,21 +95,31 @@ describe('question-new.config', () => {
     expect(occupiedAdultsField?.type).toBe('number');
     expect(occupiedAdultsField?.props?.description).toBe(NUMBER_OF_BEDS_SUPPORT_TEXT);
     expect(occupiedChildrenField?.props?.description).toBe(NUMBER_OF_BEDS_SUPPORT_TEXT);
+    const bedFields = fields
+      .filter(field => field.fieldGroup)
+      .flatMap(field => field.fieldGroup ?? [])
+      .filter(field => field.type === 'number');
+    expect(bedFields).toHaveLength(4);
+    expect(bedFields.every(field => !field.props?.attributes || field.props.attributes['aria-describedby'] === undefined)).toBe(true);
 
     const validation = occupiedAdultsField?.validation as {
       messages: { required: () => string; min: () => string; max: () => string };
     };
     expect(validation.messages.required()).toBe(NUMBER_OF_BEDS_REQUIRED_ERROR_MSG);
-    expect(validation.messages.min()).toBe(NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT);
-    expect(validation.messages.max()).toBe(NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT);
+    expect(validation.messages.min()).toBe(NUMBER_OF_BEDS_ERROR_MSG_FEATURE_FLAG_PORTAL_BED_TEXT);
+    expect(validation.messages.max()).toBe(NUMBER_OF_BEDS_ERROR_MSG_FEATURE_FLAG_PORTAL_BED_TEXT);
   });
 
+  // Retiring FEATURE_FLAG_PORTAL_BED_TEXT: delete this disabled-variant test, not the FEATURE_FLAG_BED_INPUT_TEXTS coverage above.
   it('returns legacy labels and no intro text when FEATURE_FLAG_PORTAL_BED_TEXT is false', () => {
     environment.bedOccupancyConfig = createTestConfig(false);
 
     const fields = questionBedOccupancyHtmlConfigFields();
 
-    expect(fields.length).toBe(4);
+    expect(fields).toHaveLength(5);
+    expect(getTemplate(fields[0])).toContain(
+      'Für die Meldung ist der Bettenbelegungsstand des Vortages um 12:00 Uhr maßgeblich; die Übermittlung hat täglich bis 11:00 Uhr zu erfolgen.'
+    );
     expect(fields.some(field => getTemplate(field).includes('bed-occupancy-section-heading--spaced'))).toBe(true);
 
     const occupiedSection = fields.find(field => field.key === BedOccupancyConstants.OCCUPIED_BEDS);
@@ -89,6 +131,8 @@ describe('question-new.config', () => {
     expect(operableSection?.fieldGroup?.[1]?.props?.label).toBe('Kinder');
     expect(operableSection?.fieldGroup?.[0]?.props?.required).toBeUndefined();
     expect(occupiedSection?.fieldGroup?.[0]?.props?.description).toBeUndefined();
+    expect(occupiedSection?.fieldGroup?.[0]?.props?.attributes?.['aria-describedby']).toBeUndefined();
+    expect(operableSection?.fieldGroup?.[0]?.props?.attributes?.['aria-describedby']).toBeUndefined();
     const validation = occupiedSection?.fieldGroup?.[0]?.validation as {
       messages: { required?: () => string; min: () => string; max: () => string };
     };

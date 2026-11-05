@@ -11,9 +11,9 @@
 
 
 <ng-template #actionsLeft>
-  <button mat-stroked-button (click)="navigation.previous()" [disabled]="!navigation.canGoToPrevious()"
-          class="btn navigate--color style back" id="btn-nav-action-back"
-          mat-button type="button">
+  <button mat-button (click)="navigation.previous()" [disabled]="!navigation.canGoToPrevious()"
+          class="btn navigate--color color style back" id="btn-nav-action-back"
+          type="button">
     <mat-icon class="btn__icon margin--right" fontIcon="arrow_back_ios" aria-hidden="true" />
     Zurück
   </button>

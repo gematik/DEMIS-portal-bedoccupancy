@@ -15,8 +15,7 @@
     find details in the "Readme" file.
  */
 
-import { FocusMonitor } from '@angular/cdk/a11y';
-import { Component, ElementRef, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { FieldWrapper, FormlyModule } from '@ngx-formly/core';
 import { MatError } from '@angular/material/form-field';
 
@@ -26,14 +25,4 @@ import { MatError } from '@angular/material/form-field';
   styleUrls: ['./validation-wrapper.component.scss'],
   imports: [MatError, FormlyModule],
 })
-export class ValidationWrapperComponent extends FieldWrapper {
-  private readonly focusMonitor = inject(FocusMonitor);
-  private readonly elementRef = inject(ElementRef);
-  constructor() {
-    super();
-  }
-
-  override get showError(): boolean {
-    return true;
-  }
-}
+export class ValidationWrapperComponent extends FieldWrapper {}

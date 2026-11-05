@@ -20,6 +20,8 @@ import { TestBed } from '@angular/core/testing';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MockBuilder, MockProvider } from 'ng-mocks';
 
+import { DeepMergeService } from '@gematik/demis-portal-core-library';
+
 import { BedOccupancyNotificationService } from './bed-occupancy-notification.service';
 import { FormlyFormBuilder } from '@ngx-formly/core';
 import { BedOccupancy, BedOccupancyQuestion } from 'src/api/notification';
@@ -36,6 +38,7 @@ describe('BedOccupancyNotificationService', () => {
 
   beforeEach(() =>
     MockBuilder(BedOccupancyNotificationService)
+      .keep(DeepMergeService)
       .provide(MockProvider(FhirBedOccupancyService))
       .provide(MockProvider(BedOccupancyStorageService))
       .provide(MockProvider(FormlyFormBuilder))

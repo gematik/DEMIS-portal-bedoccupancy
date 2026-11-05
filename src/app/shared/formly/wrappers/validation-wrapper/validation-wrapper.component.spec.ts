@@ -20,7 +20,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ValidationWrapperComponent } from './validation-wrapper.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormArray, FormControl, Validators } from '@angular/forms';
+import { FormlyConfig, FormlyFormBuilder, FormlyModule, FormlyValueChangeEvent } from '@ngx-formly/core';
+import { Subject } from 'rxjs';
 
 describe('ValidationWrapperComponent', () => {
   let component: ValidationWrapperComponent;
@@ -28,17 +30,24 @@ describe('ValidationWrapperComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ValidationWrapperComponent],
+      imports: [ValidationWrapperComponent, FormlyModule.forRoot({ validationMessages: [{ name: 'required', message: 'Contact is required' }] })],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
   });
 
   beforeEach(() => {
+    TestBed.inject(FormlyFormBuilder);
     fixture = TestBed.createComponent(ValidationWrapperComponent);
     component = fixture.componentInstance;
 
-    // Mock form control
-    component.field = { formControl: new FormControl() };
+    component.field = {
+      id: 'contacts',
+      formControl: new FormArray([]),
+      options: {
+        showError: TestBed.inject(FormlyConfig).extras.showError,
+        fieldChanges: new Subject<FormlyValueChangeEvent>(),
+      },
+    };
 
     fixture.detectChanges();
   });
@@ -47,7 +56,67 @@ describe('ValidationWrapperComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should return true for showError', () => {
+  it('should not render an alert for a valid contact group', () => {
+    expect(component.showError).toBe(false);
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
+  });
+
+  it('should not render an alert for an untouched group error', () => {
+    component.formControl.setErrors({ required: true });
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    expect(component.showError).toBe(false);
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
+  });
+
+  it('should render the message for a touched group error', async () => {
+    component.formControl.setErrors({ required: true });
+    component.formControl.markAsTouched();
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const alert = fixture.nativeElement.querySelector('[role="alert"]') as HTMLElement;
     expect(component.showError).toBe(true);
+    expect(alert.id).toBe('contacts-error');
+    expect(alert.textContent?.trim()).toBe('Contact is required');
+  });
+
+  it('should not render a group alert when only a child is invalid', () => {
+    component.field.formControl = new FormArray([new FormControl('', Validators.required)]);
+    component.formControl.markAllAsTouched();
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    expect(component.showError).toBe(true);
+    expect(component.formControl.errors).toBeNull();
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
+  });
+
+  it('should honor explicitly requested group error display', async () => {
+    component.formControl.setErrors({ required: true });
+    component.field.validation = { show: true };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent?.trim()).toBe('Contact is required');
+  });
+
+  it('should remove the alert when the group error is resolved', () => {
+    component.formControl.setErrors({ required: true });
+    component.formControl.markAsTouched();
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).not.toBeNull();
+
+    component.formControl.setErrors(null);
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
   });
 });

@@ -40,7 +40,7 @@ import {
   MINIMUM_LENGTH_NOT_REACHED,
   NAME_REG_EXP,
   NUMBER_OF_BEDS,
-  NUMBER_OF_BEDS_ERROR_MSG,
+  getNumberOfBedsErrorMessage,
   PARTIAL_DATE_FORMAT_ERROR_MSG,
   PHONE_ERROR_MSG,
   PHONE_REG_EXP,
@@ -238,7 +238,7 @@ function validateEmailRegex(email: string): ValidationResult {
 
 export function checkNumberOfBeds(noOfBeds: string): ValidationResult {
   if (!noOfBeds) return null;
-  return matchesRegExp(NUMBER_OF_BEDS, noOfBeds) ? null : setValidationMessage(NUMBER_OF_BEDS_ERROR_MSG);
+  return matchesRegExp(NUMBER_OF_BEDS, noOfBeds) ? null : setValidationMessage(getNumberOfBedsErrorMessage());
 }
 
 export function matchesRegExp(regExp: RegExp, value: string): boolean {

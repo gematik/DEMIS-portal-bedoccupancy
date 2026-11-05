@@ -2,11 +2,20 @@
 
 # Release portal-bedoccupancy
 
+## Release 1.7.9
+- Improved screen reader support (FEATURE_FLAG_BED_INPUT_TEXTS)
+- Removed FEATURE_FLAG_FOOTER_LINKS_CORRECTION
+- Updated @gematik/demis-portal-core-library to 4.4.8
+- Adapted renovate.json
+- Added min-release-age to .npmrc
+- Updated minor/patch versions of dependencies
+
 ## Release 1.7.8
 - Removed FEATURE_FLAG_PORTAL_BED_OCCUPANCY_SIDENAV
 - Removed material harness integration tests
 - Updated @gematik/demis-portal-core-library to 4.4.6 incl. a11y improvements
 - Updated Docker base image to nginx 1.31.6-alpine3.24-slim, which fixes CVE-2026-14456 (OpenSSL)
+- Added several accessibility improvements across various components
 
 ## Release 1.7.7
 - Updated @gematik/demis-portal-core-library to 4.4.3 incl. a11y improvements of repeater

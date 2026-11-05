@@ -26,6 +26,7 @@ import { FileService } from './file.service';
 import { FhirBedOccupancyService } from './fhir-bed-occupancy.service';
 import { environment } from '../../../environments/environment';
 import { BedOccupancy } from 'src/api/notification';
+import { BedOccupancyFormModel } from '../models/bed-occupancy-form-model';
 
 describe('FhirBedOccupancyService', () => {
   let service: FhirBedOccupancyService;
@@ -82,6 +83,24 @@ describe('FhirBedOccupancyService', () => {
 
   afterEach(() => {
     httpMock.verify();
+  });
+
+  it.each(['', 'honeypot-probe'])('preserves honeypot value "%s" in the outgoing JSON request', honeypotValue => {
+    const model: BedOccupancyFormModel = {
+      notifierFacility: {
+        oneTimeCode: honeypotValue,
+        contacts: { phoneNumbers: [], emailAddresses: [] },
+      },
+      bedOccupancyQuestion: {},
+    };
+
+    service.submitNotification(service.transformData(model));
+
+    const request = httpMock.expectOne(environment.pathToBedOccupancy);
+    expect(request.request.method).toBe('POST');
+    const payload = JSON.parse(request.request.body) as BedOccupancy;
+    expect(payload.notifierFacility.oneTimeCode).toBe(honeypotValue);
+    request.flush({ message: 'Test-only response' }, { status: 400, statusText: 'Bad Request' });
   });
 
   it('should post notification and show submit dialog on success', () => {

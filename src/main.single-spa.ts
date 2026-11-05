@@ -17,9 +17,6 @@
 
 import { enableProdMode, importProvidersFrom, NgZone, provideZoneChangeDetection } from '@angular/core';
 import { NavigationStart, Router, RouterLink, RouterModule } from '@angular/router';
-
-import { getSingleSpaExtraProviders, singleSpaAngular } from '@single-spa-community/angular';
-
 import { environment } from './environments/environment';
 import { singleSpaPropsSubject } from './single-spa/single-spa-props';
 import { AppProps } from 'single-spa';
@@ -38,6 +35,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { LoggerModule } from 'ngx-logger';
 import { AppComponent } from './app/app.component';
 import { AuthInterceptor } from './app/shared/auth.interceptor';
+import { singleSpaAngular, provideSingleSpaPlatform } from 'single-spa-angular';
 
 const appId = 'notification-portal-mf-bed-occupancy';
 
@@ -67,7 +65,7 @@ const lifecycles = singleSpaAngular({
           useClass: AuthInterceptor,
           multi: true,
         },
-        getSingleSpaExtraProviders(),
+        provideSingleSpaPlatform(),
         provideHttpClient(withInterceptorsFromDi()),
         provideAnimations(),
         JwtHelperService,

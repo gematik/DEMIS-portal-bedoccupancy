@@ -19,6 +19,7 @@ import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
 import localeDeExtra from '@angular/common/locales/extra/de';
 import { DateTime } from 'luxon';
+import { environment } from 'src/environments/environment';
 
 // CONST:..................................
 
@@ -71,11 +72,47 @@ export const ZIP_INTERNATIONAL_ERROR_MSG = 'Die Postleitzahl muss aus mindestens
 export const NUMBER_OF_BEDS_SUPPORT_TEXT = 'Erlaubt sind positive ganze Zahlen';
 export const NUMBER_OF_BEDS_REQUIRED_ERROR_MSG = 'Dies ist eine Pflichtangabe. Bitte geben Sie eine positive ganze Zahl ein.';
 export const NUMBER_OF_BEDS_ERROR_MSG = 'Bitte geben Sie eine positive Zahl kleiner 1000000 ein.';
-export const NUMBER_OF_BEDS_ERROR_MSG_PORTAL_BED_TEXT = 'Ungültige Angabe: Bitte geben Sie positive ganze Zahlen von 0 bis n ein.';
+export const NUMBER_OF_BEDS_ERROR_MSG_FEATURE_FLAG_PORTAL_BED_TEXT = 'Ungültige Angabe: Bitte geben Sie positive ganze Zahlen von 0 bis n ein.';
+export const NUMBER_OF_BEDS_SUPPORT_TEXT_FEATURE_FLAG_BED_INPUT_TEXTS = 'Erlaubt sind ganze Zahlen von 0 bis 999999.';
+export const NUMBER_OF_BEDS_REQUIRED_ERROR_MSG_FEATURE_FLAG_BED_INPUT_TEXTS =
+  'Dies ist eine Pflichtangabe. Bitte geben Sie eine ganze Zahl von 0 bis 999999 ein.';
+export const NUMBER_OF_BEDS_ERROR_MSG_FEATURE_FLAG_BED_INPUT_TEXTS = 'Ungültige Angabe: Bitte geben Sie eine ganze Zahl von 0 bis 999999 ein.';
 export const EMPTY_DROPDOWN_MENU_MSG = 'Es konnten keine Standorte zu Ihrem Institutionskennzeichen gefunden werden!';
 export const VALUE_DEFAULT_SELECT_PLACEHOLDER = 'Bitte auswählen';
 
 // FUNCTIONS:...............................
+
+interface NumberOfBedsInputTexts {
+  supportText?: string;
+  requiredErrorMessage?: string;
+  errorMessage: string;
+}
+
+/**
+ * Retiring FEATURE_FLAG_PORTAL_BED_TEXT: keep its enabled texts as the fallback below FEATURE_FLAG_BED_INPUT_TEXTS.
+ * Retiring FEATURE_FLAG_BED_INPUT_TEXTS: keep its texts unconditionally and remove the older input-text branches.
+ */
+export function getNumberOfBedsInputTexts(): NumberOfBedsInputTexts {
+  if (environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_BED_INPUT_TEXTS) {
+    return {
+      supportText: NUMBER_OF_BEDS_SUPPORT_TEXT_FEATURE_FLAG_BED_INPUT_TEXTS,
+      requiredErrorMessage: NUMBER_OF_BEDS_REQUIRED_ERROR_MSG_FEATURE_FLAG_BED_INPUT_TEXTS,
+      errorMessage: NUMBER_OF_BEDS_ERROR_MSG_FEATURE_FLAG_BED_INPUT_TEXTS,
+    };
+  }
+  if (environment.bedOccupancyConfig?.featureFlags?.FEATURE_FLAG_PORTAL_BED_TEXT) {
+    return {
+      supportText: NUMBER_OF_BEDS_SUPPORT_TEXT,
+      requiredErrorMessage: NUMBER_OF_BEDS_REQUIRED_ERROR_MSG,
+      errorMessage: NUMBER_OF_BEDS_ERROR_MSG_FEATURE_FLAG_PORTAL_BED_TEXT,
+    };
+  }
+  return { errorMessage: NUMBER_OF_BEDS_ERROR_MSG };
+}
+
+export function getNumberOfBedsErrorMessage(): string {
+  return getNumberOfBedsInputTexts().errorMessage;
+}
 
 /***
  * to convert string to Luxon date
